@@ -1,28 +1,19 @@
 import net from 'net';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { logger } from './logger';
-
-const filePath = fileURLToPath(import.meta.url);
-const staticFilePath = path.join(filePath, "../../", "static");
+import { Request } from './dto/Request';
+import { staticRouter } from './route/staticRouter';
 
 const server = net.createServer(socket => {
     socket.on("data", (data) => {
-        const request = data.toString();
-        //logger.debug(request);
-        if (request.includes("GET")) {
-            const indexHtml = fs.readFileSync(path.join(staticFilePath, "html/index.html"), "utf8");
-
-            socket.write("HTTP/1.1 200 OK\r\n");
-            socket.write("Content-Type: text/html\r\n");
-            socket.write("\r\n");
-            socket.write(indexHtml);
-            socket.end();
-        }
+        const socketData = data.toString();
+        const request =  new Request(socketData);
+        const response = staticRouter.requestHandler(request);
+        
+        socket.write(response.responseMsg);
+        if(request.headers.Connection == null) socket.end();
     });
 });
 
 server.listen(3000, () => {
-  console.log("HTTP server running on port 3000");
+    console.log("HTTP server running on port 3000");
 });
