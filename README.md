@@ -118,6 +118,10 @@
 
 ## ✏️ 고민과 해결 과정 쌓아가기
 
+<details>
+<summary>월요일</summary>
+<div markdown="1">
+
 ### 설계
 
 #### 디렉토리 구조
@@ -247,3 +251,241 @@ const staticFilePath = path.join(filePath, "../../", "static");
             socket.end();
             ...
 ```
+
+</div>
+</details>
+
+### HTTP Message 구문 분석하기
+
+이전에 HTTP Message를 로깅하고, HTTP Response Message와 index.html을 응답하는 과정까지 수행했었고,
+HTTP Request Message를 전달받았을 때 요청에 대한 내용을 편리하게 이용하고자 HTTP Request 클래스를 정의하게 되었습니다.
+
+```ts
+// ./DTO/Request.ts
+class Request {
+    headers: {[key: string]: string} = {};
+    body: string;
+    method: string;
+    path: string;
+    version: string;
+    constructor(msg) {
+        this.parseMsg(msg);
+    }
+}
+```
+
+HTTP Reqeust Message를 분리할 때 요청에 들어오는 Header와 Body를 분리하고자 했고, Header에서도 StartLine을 구분해 객체의 필드로 저장할 수 있도록 내부 메서드를 만들어줬습니다.
+
+```ts
+// ./DTO/Request.ts
+    private parseMsg(msg) {
+        const [headerMsg, bodyMsg] = msg.split("\r\n\r\n");
+        const [startLine, ...requestHeader] = headerMsg.split("\r\n");
+        this.body = bodyMsg;
+        this.parseStartLine(startLine);
+        this.parseHeader(requestHeader);
+    }
+
+    private parseStartLine(startLine) {
+        [this.method, this.path, this.version] = startLine.split(' ');
+    }
+
+    private parseHeader(headerMsg) {
+        headerMsg.forEach((line) => {
+            const [key, value] = line.split(":");
+            this.headers[key] = value.trim();
+        });
+    }
+```
+
+
+### HTTP Response 정의하기
+
+HTTP Request에 대한 정의가 끝나 이용하기 편한 상태로 만들어줬고, 요청에 따라
+index.html 뿐만 아니라 다른 확장자의 파일도 응답해주고자 반복되는 패턴에서 응답 내용만 다르게 생성 가능한 HTTP Response에 대한 모델 객체를 정의하기로 했습니다.
+
+```ts
+// ./DTO/Response.ts
+export class Response {
+    responseMsg:string;
+    connection:string;
+    constructor(statusCode, connection, ext: string|null = null, body: string|null = null) {
+        this.connection = connection;
+        this.setStatusLine(statusCode);
+        this.setHeaders(connection, ext, body);
+    }
+}
+```
+
+Response 클래스에서는 HTTP Response Message String을 구성하기 위해 인자를 전달받고, 이를 통해 `responseMsg`를 구성하는 내부 메서드들로 구성되어 있습니다. 
+
+
+### HTTP Response 객체에서 컨텐츠 타입을 지정하는 방법
+
+1. `setHeader`와 같은 메소드를 사용하여 사용자가 직접 헤더에 Content-Type을 지정하기
+2. `sendJson`, `sendFile`와 같은 메소드를 생성하여 문자열 전송과 파일 전송을 분리하기
+3. 파라미터로 컨텐츠 확장자를 입력받아 처리하기
+
+`Response` 객체에서 파일 시스템에 접근하는 것은 올바르지 않다고 생각하여 2번은 제외했습니다.
+또한 사용자가 직접 헤더를 설정하게 되면 예외처리가 번거로워질 것이라 생각하였고, 따라서 3번으로 결정하였습니다.
+
+```ts
+// ./DTO/Response.ts
+
+    //setHeaders() {
+    if (body) {
+        this.responseMsg += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
+        this.responseMsg += `Content-Length: ${body.length}\r\n`;
+	}
+```
+
+
+### Response 객체 응답 확인
+
+이후 만들어진 Response 인스턴스의 메시지를 전달했을 때 정상적으로 수신이 되는지 확인해줬습니다.
+
+
+```
+//정상적인 응답
+< HTTP/1.1 200 OK
+< Server: Web29-A
+< Date: Tue, 24 Sep 2024 06:00:58 GMT
+< Content-Type: text/html; charset=UTF-8
+< Content-Length: 289
+< Connection: close
+```
+
+```
+//잘못된 경로의 응답
+< HTTP/1.1 404 Not Found
+< Server: Web29-A
+< Date: Tue, 24 Sep 2024 06:01:58 GMT
+< Connection: close
+```
+
+### Router와 Response 객체
+
+express의 router와 유사하게 `Router.requestHandler`에서 파라미터로 `res` 객체를 넘겨 `res.end`와 같은 처리를 하려고 계획했습니다.
+
+1. `response` 객체에서 `socket`을 넘겨 처리하는 방식으로 재구성
+2. `req` 객체만 넘기고 Controller에서 `res` 객체 생성 후 반환
+
+현재 `response` 객체의 구현을 변경하지 않도록 2번을 선택했습니다.
+
+```ts
+// ./route/Router.ts
+
+  //requestHandler()
+    if(exist) return this.route[req.method][routePath](req);
+```
+
+### HTTP Path 구분에 관하여
+
+HTTP 요청에 맞게 정적 파일을 응답해주기 위해서 요청의 Path와 method를 구분해 해당 경로에 파일이 존재하는지의 여부와 파일을 응답하는 과정을 수행해야 했습니다.
+
+추후 확장성을 고려해 `route` 라는 디렉토리를 만들어, 경로를 사전에 등록할 수 있게 했고, 등록된 경로를 판단 후 미리 선언된 경로에 등록된 콜백 함수로 Response를 응답할 수 있는 로직을 작성하게 됐는데,
+
+```ts
+class Router {
+    //경로 보관
+    route = {
+        "GET": {},
+        "POST": {},
+        "PUT": {},
+        "PATCH": {},
+        "DELETE": {},
+        "UPDATE": {}
+    }
+    //경로 설정
+    get(path: string, func: Function) {
+        this.route.GET[path] = func;
+    }
+}
+```
+
+해당 방법대로 했을 때의 문제가 하나 존재했습니다.
+
+예를 들어 사전에 등록된 Path가 `/`일 경우에 `/html/index.html`과 같이 요청이 들어오는 경우에도 `/` 경로를 통해 등록된 함수를 실행할 수 있도록 만들고 싶었는데
+
+`object` 타입의 key-value 특성 상 요청이 들어온 Path를 통해 key를 대입했을 때 원하는 방식으로 동작할 수 없었고, `/html/index.html` 처럼 하위 Path로 들어오는 경우에 `/`와 같이 등록된 상위 Path의 함수가 동작할 수 있도록 작성해야 했습니다.
+
+```ts
+고민한 흔적들
+//router.get('path', callback);
+//router.requestHandler(req);
+
+// "/"
+// '/stylesheets/index.css'
+
+// 해당 path로 라우트에 등록이 되어있는지 검사하는 로직
+// 경로를 한 개씩 빼는 로직
+//while ->등록 여부 검사  o = 탈출 / x = 한 개 빼는 로직 실행 -> 검사 로직 / 한 개 빼는 로직이 실패할 경우 (root) => 404 탈출
+
+/*
+staticRoute['/stylesheets/index.css'] << 검사 
+x -> staticRoute['/stylesheets']; << 검사
+x -> staticRoute['/'] < 검사
+x -> 404
+
+staticRoute['/stylesheets/'] << method 있을 수 있음
+staticRoute['/'] << method 있을 수 있음
+*/
+```
+
+함께 고민한 끝에 `/html/index.html`처럼 들어오는 경로에 대해 경로를 한 개씩 제외하면서 등록된 함수가 있는지 탐색하는 과정을 거치자는 결론에 이르렀고, 아래와 같이 상위 경로에 등록된 함수의 존재 여부를 확인하고, 없다면 경로를 한 개씩 제외하는 로직을 작성할 수 있었습니다.
+
+```ts
+    requestHandler(req): Response {
+        let routePath = req.path;
+        while(true) {
+            const exist = this.checkRouteExist(req.method, routePath);
+            if(routePath === "/" && !exist) throw new Error("No Route");
+            if(exist) return this.route[req.method][routePath](req);
+            else routePath = this.reducePath(routePath);
+        }
+    }
+
+//해당 경로로 등록된 method가 존재하는지 판단하는 함수
+    private checkRouteExist(method, path) {
+        const callback: Function | null = this.route[method][path];
+        return callback != null;
+    }
+
+//경로를 한 개씩 제외하는 함수
+    private reducePath(path) {
+        if (path.endsWith('/')) {
+            path = path.slice(0, -1);
+        }
+        
+        const lastSlashIndex = path.lastIndexOf('/');
+
+        if(lastSlashIndex === - 1){
+            return '/';
+        }
+        return path.substring(0, lastSlashIndex + 1);
+    }
+```
+
+
+### staticController 구현
+
+정적 파일을 서빙하는 컨트롤러를 구현했습니다.
+`req.path`를 이용하여 서빙할 정적 파일의 경로를 확인하고,
+파일이 존재할 경우 Response 객체에 담아 리턴하는 방식을 사용하였습니다.
+기본경로 `/`는 `index.html`을 반환하도록 하였습니다.
+
+```ts
+const filePath = path.join(staticFilePath,  req.path === '/' ? 'html/index.html' : req.path);
+    const ext = path.extname(filePath);
+    if(fs.existsSync(filePath)){
+        const file = fs.readFileSync(filePath,'utf-8');
+        const response = new Response(200, req.headers.Connection ?? "close", ext, file);
+        return response;
+    }
+    const response = new Response(404, req.headers.Connection ?? "close");
+    return response;
+```
+
+### 정적 파일 응답 결과
+<img src="https://i.postimg.cc/4N47dzhS/2024-09-24-6-39-23.png" alt="2024-09-24-6-34-42" 
+ width=350px>
