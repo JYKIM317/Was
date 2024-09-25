@@ -7,8 +7,9 @@ const server = net.createServer(socket => {
     socket.on("data", (data) => {
         const socketData = data.toString();
         const request =  new Request(socketData);
+        console.log(request);
         const response = staticRouter.requestHandler(request);
-        
+       
         socket.write(response.responseMsg);
         if(request.headers.Connection == null) socket.end();
     });
