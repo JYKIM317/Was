@@ -88,8 +88,6 @@
 ### 수요일
 
   - 웹 페이지 구현
-
-    - CSS 컬러 및 사이즈 템플릿 선언
     - 리액트 학습
     - 컴포넌트 구현
       - 로그인/회원가입 네비게이터 버튼 컴포넌트 구현
@@ -254,6 +252,10 @@ const staticFilePath = path.join(filePath, "../../", "static");
 
 </div>
 </details>
+
+<details>
+<summary>화요일</summary>
+<div markdown="1">
 
 ### HTTP Message 구문 분석하기
 
@@ -489,3 +491,166 @@ const filePath = path.join(staticFilePath,  req.path === '/' ? 'html/index.html'
 ### 정적 파일 응답 결과
 <img src="https://i.postimg.cc/4N47dzhS/2024-09-24-6-39-23.png" alt="2024-09-24-6-34-42" 
  width=350px>
+
+</div>
+</details>
+
+### 브라우저 화면 구현하기
+
+프론트엔드 코드를 작성하기 이전에 저희는 고민을 했습니다.
+
+이전에 템플릿 엔진으로 SR을, 바닐라 자바스크립트, html, CSS를 이용해 CSR을 경험해봤는데 
+학습을 위해 제약이 있는 서버측 코드와 달리 제약이 없는 프론트엔드 파트에서도 새로운 도전을 해볼 수 있지 않을까? 라는 고민이었습니다.
+
+구현해야 할 웹 페이지 디자인을 봤을 때 재사용하는 컴포넌트가 굉장히 많아 보였고,
+어떻게 구현해도 제약이 없다는 점 때문에 평소에 경험해보지 않았던 리액트를 사용해보자는 의견이 나왔습니다.
+
+해당 의견에 모두가 재밌는 경험일 것이라고 생각해 브라우저 화면 렌더링에 리액트를 사용하기로 결정했습니다.
+
+### 리액트 환경 구성
+
+리액트를 이용하기 위해 기존에 구성했던 서버 디렉토리 구조를 `src`에서 `BE`라는 이름으로 리네이밍을 했고,
+리액트 환경 구성을 위해 Vite 빌더를 이용해 리액트 환경을 `FE`라는 디렉토리로 생성해 줬습니다.
+
+```console
+
+npm create vite@latest
+
+✔ Project name: FE
+✔ Select a framework: › React
+✔ Select a variant: › TypeScript
+
+cd FE
+
+npm install
+
+npm run dev
+```
+
+### 컴포넌트 작성
+
+전체 화면을 구성하기 이전에 디자인을 토대로 재사용되는 컴포넌트들을 먼저 작성하기로 했습니다.
+
+대표적으로 입력 폼, 네비게이터, 버튼이 재사용됨을 확인했고 
+
+해당 컴포넌트와 적용될 stylesheets를 작성해줬씁니다.
+
+```tsx
+// FE/src/components/Button.tsx
+const Button: React.FC<ButtonProps> = ({ text, size, onClick, disabled = false }) => {
+  return (
+    <button 
+      className={`button ${size}`} 
+      onClick={onClick} 
+      disabled={disabled}
+    >
+      {text}
+    </button>
+  );
+};
+```
+
+```tsx
+// FE/src/components/InputBox.tsx
+const InputBox: React.FC<InputBoxProps> = ({
+    label,
+    type,
+    placeholder,
+    value,
+    onChange,
+    required = true,
+}) => {
+    return(
+        <div className = "input-container" >
+            <label>{label}</label>
+            <input
+                type={type}
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                required={required}
+            />
+        </div>
+    )
+};
+```
+
+로그인과 회원가입을 위한 위 두 가지 컴포넌트를 생성했고,
+
+해당 컴포넌트들이 배치될 프레임을 컴포넌트로 만들었습니다.
+
+```tsx
+// FE/src/components/Frame.tsx
+const Navigation: React.FC<NavigationProps> = ({title, children}) => {
+    return (
+        <div className="navigation">
+            <h3>{title}</h3>
+            {children}
+        </div>
+    );
+}
+
+const Information: React.FC<TitleProps> = ({title}) => {
+    return (
+        <div className="information">
+            <h1>{title}</h1>
+        </div>
+    );
+}
+
+const HugFrame: React.FC<{children: React.ReactNode }> = ({children}) => {
+    return (
+        <div className="hug-frame">
+            {children}
+        </div>
+    );
+}
+```
+
+실제로 사용되는 모습은 아래처럼 구성중입니다.
+
+```tsx
+// FE/src/main.tsx
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
+  </StrictMode>,
+)
+
+// FE/src/layouts/Login.tsx
+const Login: React.FC = () => {
+      return (
+        <>
+            <Navigation title="HELLO, WEB!">
+                <Button text="로그인/회원가입" size="small" onClick={navigateToRegister} />
+            </Navigation>
+            <Information title="로그인" />
+            <HugFrame>
+                <InputBox label="이메일" type="email" placeholder="이메일을 입력해주세요" value={email} onChange={(e) => setEmail(e.target.value)} />
+                <InputBox label="비밀번호" type="password" placeholder="비밀번호를 입력해주세요" value={password} onChange={(e) => setPassword(e.target.value)} />
+            </HugFrame>
+            <HugFrame>
+                <Button text="로그인" size="large" onClick= {fetchLogin}/>
+                <span className='signup-info'>
+                  아직 회원가입을 안하셨나요?
+                  <a href="http://localhost:5417/signup" className="text-link"> 회원가입하기</a>
+                </span>
+            </HugFrame>
+        </>
+    );
+}
+```
+
+### 만들어진 결과 (회원가입 페이지)
+
+<img src="https://i.ibb.co/JqWJtt5/image.png" alt="register">
+
+이번 주를 계획할 때는 가입 완료 페이지도 따로 만들 계획을 세웠지만,
+로그인 페이지와 기능이 동일하기 때문에 기존 로그인 페이지를 재활용해 리디렉션 후 
+DOM Object를 수정하는 방향으로 결정했습니다.
+
