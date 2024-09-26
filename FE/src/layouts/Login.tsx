@@ -13,7 +13,7 @@ const Login: React.FC = () => {
     const [password, setPassword] = useState<string>('');
 
     const fetchLogin = async () => {
-        await fetch(`${baseURL}/login?email=${email}&password=${password}`, {
+        await fetch(`${baseURL}/user/login?email=${email}&password=${password}`, {
             method: "GET"
         });
     }
@@ -36,7 +36,7 @@ const Login: React.FC = () => {
                 <Button text="로그인" size="large" onClick= {fetchLogin}/>
                 <span className='signup-info'>
                   아직 회원가입을 안하셨나요?
-                  <a href="http://localhost:5417/signup" className="text-link"> 회원가입하기</a>
+                  <a className="text-link" onClick={navigateToRegister}> 회원가입하기</a>
                 </span>
             </HugFrame>
         </>

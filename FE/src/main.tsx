@@ -9,6 +9,8 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Router>
       <Routes>
+        <Route path="/" element={<Login />} />
+        {/* 추후 메인 페이지로 대체 */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
