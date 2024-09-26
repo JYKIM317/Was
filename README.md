@@ -1,5 +1,20 @@
 # web-p2-was
+## dev 시작하기
+```terminal
+cd FE
 
+npm install
+
+npm run build
+
+cd ../BE
+
+npm install
+
+docker compose up
+
+nodemon
+```
 # 🔥 우리의 주간 계획서 (1)
 
 ## 계획
@@ -495,6 +510,12 @@ const filePath = path.join(staticFilePath,  req.path === '/' ? 'html/index.html'
 </div>
 </details>
 
+
+<details>
+<summary>수요일</summary>
+<div markdown="1">
+
+
 ### 브라우저 화면 구현하기
 
 프론트엔드 코드를 작성하기 이전에 저희는 고민을 했습니다.
@@ -654,3 +675,254 @@ const Login: React.FC = () => {
 로그인 페이지와 기능이 동일하기 때문에 기존 로그인 페이지를 재활용해 리디렉션 후 
 DOM Object를 수정하는 방향으로 결정했습니다.
 
+</div>
+</details>
+
+
+### path에 동적 경로가 있을 경우에 해결 방법
+
+사실 미션과는 관계 없는 부분이긴 했지만 router를 구현한 이상 route에 동적 경로를 설정했을 때
+어떻게 처리할 수 있을지에 대한 고민도 함께 수반되어야 했습니다.
+
+이 과정에서 함께 많은 시간을 고민했고, 최종적으로 아래와 같은 제안이 나오게 되었습니다.
+
+```
+/*
+제안하고 싶은 부분
+
+1. path가 라우터에 등록될 때 `:` 로 시작하는 경우 뒤의 문자열을 날려서 변수 Path임을 파악할 수 있게 만드는 로직 작성
+   
+2. request path에 대해 모든 경우의 수를 만드는 로직 작성  
+   ex) /user/data -> /user/:, /:/data, /:/:  
+(경우의 수 만들 때 변수 : 로 변환되는 Path는 따로 parameters로 저장되어야 함)
+
+3. 경우의 수로 route 탐색하도록 변경
+   
+4. parameters를 분리해서 반환하는 함수 만들기 (편집됨)
+*/
+```
+
+위와 같이 정리했을 때 대부분은 구현을 간단하게 할 수 있었지만 
+2.request path에 대해 모든 경우의 수를 만드는 로직 작성 를 만드는 과정이 조금 복잡해졌는데
+
+path를 각각 분리한 이후 모든 자리에 `:`으로 변환하며 path를 다시 재조합해 저장하는 과정과,
+해당 동적 경로로 변환된 자리의 값을 parameter로 저장하는 과정,
+`:`의 개수로 우선 순위를 둬 정렬하는 로직까지 포함되어
+
+실제로 아래의 로직이 `/user/jinyoung` 과 같이 요청이 들어온다면
+`/:/jinyoung, /user/:, /:/:`처럼 경우의 수를 생성합니다.
+
+```ts
+    private createCaseOfRoute(pathList: Array<string>) : Route[] {
+        const caseResult: Route[] = [];
+        
+        pathList.forEach((_, index) => {
+            const tempPathList = [...pathList];
+            let tempParameters: Array<string> = [];
+            for(let idx = index; idx >= 0; idx--) {
+                tempPathList[idx] = ":";
+                tempParameters.push(pathList[idx]);
+
+                const parameters = [...tempParameters];
+                const path = "/" + tempPathList.join("/");
+                caseResult.push({path, parameters});
+            }
+            tempParameters = [];
+        });
+        caseResult.push({path: "/" + pathList.join("/"), parameters: []});
+        
+        const sortedCaseResult = this.sortCaseOfRoutes(caseResult);
+        return sortedCaseResult;
+    }
+```
+
+만들고 보니 로직이 너무 복잡해진 것 같아서 이를 개선할 수 없을까? 에 대한 질문을 던지게 되었고, 실제 많은 프레임워크에서는 동적 경로에 대한 처리를 어떻게 하고 있는지 알 수 있었습니다.
+
+하지만 당장에 개선할 부분은 아닌 것 같아서, 이후에 구현보다 개선에 집중하는 순간이 온다면 반드시 개선하고 싶다고 생각했습니다.
+
+나중에 개선한다면?
+https://dear-sawfish-e55.notion.site/1-10dd6568ef4b803f8e23cf39bac56c20
+
+
+### router를 분리했을 때 요청으로 들어온 경로를 어떤 router에 연결할 것인가
+
+각 기능별로 라우터를 분리하였을 때, 엔트리포인트인 `app.ts`에서 `request.path`에 적합한 `Router` 객체를 어떤 방식으로 매칭할 지에 대한 고민이 있었습니다.
+실제 express에서는 전역미들웨어를 통해 위의 문제를 처리하지만, 저희는 미들웨어를 구현하기는 무리가 있다고 판단하여 `RouteStack`에서 이를 처리하기로 하였습니다.
+
+
+```ts
+// ./route/RouteStack.ts
+
+class RouteStack {
+    routes: Array<{ [key: string]: Router }> = [];
+
+    use(route, router) {
+        this.routes.push({[route]: router});
+        this.routes.sort((a, b) => {
+            const aKey = Object.keys(a)[0];
+            const bKey = Object.keys(b)[0];
+            
+            return bKey.length - aKey.length
+        });
+    }
+
+    find(path) {
+        for(let i = 0; i < this.routes.length; i++) {
+            const routePath = Object.keys(this.routes[i])[0];
+            if(path.startsWith(routePath))
+                return this.routes[i][routePath];
+        }
+        return null;
+    }
+}
+```
+
+`RouteStack`의 `routes` 프로퍼티에는 `{경로: 해당 라우터 객체}`가 배열에 담겨있습니다.
+처음 `RouteStack`에서 `use` 메소드를 이용하여 라우터 객체를 등록하게 되면 `경로`의 길이를 기준으로 `routes` 배열을 정렬하게 됩니다.
+
+`find` 메소드의 경우 `request.path`를 기준으로 `routes` 배열에서 적절한 라우터 객체를 찾아 반환해주게 됩니다.
+
+처음에 `request.path`와 라우터 객체를 어떻게 매칭 시킬 것인가에 대한 고민이 많았습니다.
+실제 express의 라우터에서는 등록된 순서대로 경로를 매칭하게 되지만, 저희는 이 기능의 필요성에 대해 의문을 가졌고
+이러한 방식 대신 `Longest prefix matching` 방식을 이용하여, 배열 정렬을 사용한 더 단순한 구조를 채택하였습니다.
+
+
+
+### 리액트 빌드
+
+최소한의 동작 확인을 위한 FE 구성이 끝나고, 이를 빌드해서 서버에서 배포할 수 있도록 만들어야 했습니다.
+vite로 리액트에 관한 환경 구성을 쉽게 할 수 있었기 때문에 빌드 또한 vite를 이용할 수 있었습니다.
+
+```console
+npm run build
+```
+
+### Docker 사용하기
+
+회원가입 로직 구현을 위해서 DB에 데이터를 저장하기 위한 설치와 연결이 필요했습니다.
+
+처음에는 사용할 DBMS로 MySQL을 어디에 설치하면 좋을까? 고민했고, 선택지가 다양하게 있었습니다.
+
+1. VM을 이용해 가상 환경에 설치 후 연결
+2. AWS같은 클라우드에 설치 후 연결
+3. Docker를 이용해 로컬에 설치 후 연결
+
+VM을 이용하여 연결하는 것은 현재 프로젝트를 공유하고 있는 로컬 PC의 용량적 한계 때문에 수행하지 못한다고 판단했고,
+
+클라우드의 경우 현재 3인이서 한 개의 로컬 PC에서 공유하며 프로젝트를 수행하고 있기 때문에 이후에 개인으로 분할됐을 때 활용하기 어렵다고 판단했습니다.
+
+Docker를 사용한 이유 
+1. VM보다 성능 상 이점,
+2. 도커 허브에서 컨테이너 이미지를 이용해 보다 간편한 환경 구성이 가능
+
+
+`docker-compose.yml`과 `Dockerfile`을 생성해 간편하게 환경을 구성할 수 있었고, 연결 또한 문제 없이 수행할 수 있었습니다.
+
+```
+docker compose up
+docker ps //현재 실행중인 컨테이너
+docker ps -a //전체 컨테이너
+docker start [CONTAINER ID]
+```
+
+```
+# ./Dockerfile
+
+# MySQL 공식 이미지를 기반으로 생성
+FROM mysql:latest
+
+# 환경 변수 설정
+ENV MYSQL_ROOT_PASSWORD=0000
+ENV MYSQL_DATABASE=db1004
+ENV MYSQL_USER=zizone
+ENV MYSQL_PASSWORD=ganzi
+COPY ./init.sql /docker-entrypoint-initdb.d/
+
+# MySQL의 기본 포트(3306) 노출
+EXPOSE 3306
+
+# MySQL 서버 실행
+CMD ["mysqld"]
+
+```
+
+lmysql의 공식 이미지를 사용하였습니다.
+환경 변수의 경우 추후 `docker-compose.yml`에서 받아오도록 개선할 예정입니다.
+
+
+```
+# ./docker-compose.yml
+
+version: '3.8'
+
+services:
+  db:
+    image: p2-was-db
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: p2-was-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "0000"
+      MYSQL_DATABASE: "db1004"
+      MYSQL_USER: "zizone"
+      MYSQL_PASSWORD: "ganzi"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+```
+
+`volumn` 연결을 통해 `init.sql`을 컨테이너로 전달시켜 DB가 자동으로 초기화 되도록 하였습니다.
+추후 보안을 위해 도커 관련 파일에서도 `.env` 파일을 사용할 예정입니다.
+
+
+### DB 연결
+
+도커를 통해 MySQL을 이용할 수 있는 환경을 구성해줬고, 서버에서도 MySQL에 연결할 수 이도록 만들어 줬습니다.
+
+```console
+npm install mysql2
+```
+
+이후 DB와 연결해 커넥션 풀을 만들어줄 클래스 `DB1004`를 만들어 repository에서 접근할 수 있도록 만들어줬습니다.
+
+```ts
+class DB1004 {
+    connectionPool: mysql.Pool;
+    constructor() {
+        dotenv.config();
+        this.connectionPool = mysql.createPool({
+            host: process.env.DB_HOST,
+            port: parseInt(process.env.DB_PORT!),
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
+            connectionLimit: 10,
+            queueLimit: 0
+        });
+    }
+}
+```
+
+추가적으로 `query`, `select`, `insert`, `delete`, `update`와 같이 DB에 직접 접근하는 기능들은 `dao` 디렉토리에 존재해야 한다고 생각했기에 `DB1004` 클래스 내부에 각 메소드들을 구현하였습니다.
+
+```ts
+// ./dao.db1004.ts
+// class DB1004
+  async #query(query, values = null) {
+          const connection = await this.connectionPool.getConnection();
+          const result = connection.query(query, values);
+          connection.release();
+          return result;
+      }
+```
+
+
+### 회원가입 로직 구현
+
+회원가입의 경우 `userRouter`와 `userController`에서 담당하게 됩니다.
+`/user/register/{query}` 엔드포인트로 접속하게되면, `userRouter` 객체의 `parseQueryString` 메소드를 이용하여 쿼리를 파싱합니다.
+이를 `request` 객체에 담아 `userController`로 넘기게 되고, 컨트롤러에서는 `dao`를 이용하여 DB의 `users` 테이블에 레코드를 추가합니다.
+현재는 컨트롤러 단에서 `dao`에 직접 접근하고 있지만, 추후 `repository` 계층을 추가할 예정입니다.
