@@ -18,7 +18,7 @@ const Register : React.FC = () => {
   };
 
   const fetchRegister  = async () => {
-    await fetch(`${baseURL}/login?email=${email}&password=${password}&name=${name}`, {
+    await fetch(`${baseURL}/user/register?email=${email}&password=${password}&name=${name}`, {
         method: "GET"
     });
   }

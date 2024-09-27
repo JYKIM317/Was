@@ -3,6 +3,8 @@
     "dev": "nodemon"
   },
   "dependencies": {
+    "dotenv": "^16.4.5",
+    "mysql2": "^3.11.3",
     "net": "^1.0.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.1",
