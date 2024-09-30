@@ -18,6 +18,12 @@ class Router {
         this.route.GET[dynamicPath] = func;
     }
 
+    post(path: string, func: Function) {
+        const pathList = this.separatePath(path);
+        const dynamicPath = this.convertToDynamicPath(pathList);
+        this.route.POST[dynamicPath] = func;
+    }
+
     requestHandler(req): Response {
         const separatedURL = this.separateURL(req.path);
         const [routePath, queryString] = [separatedURL.path, separatedURL.queryString];

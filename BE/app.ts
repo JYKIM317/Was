@@ -9,23 +9,26 @@ import { notFoundResponse } from './util/response';
 routeStack.use("/", staticRouter);
 routeStack.use("/user", userRouter);
 
+const PORT = 3000;
+
 const server = net.createServer(socket => {
     socket.on("data", (data) => {
         const socketData = data.toString();
-        const request =  new Request(socketData);
+        const request = new Request(socketData);
         const router = routeStack.find(request.path);
+        logger.debug(socketData);
 
-        if(router) {
+        if (router) {
             const response = router.requestHandler(request);
             socket.write(response.responseMsg);
         } else {
             socket.write(notFoundResponse(request).responseMsg);
         }
 
-        if(request.headers.Connection == null) socket.end();
+        if (request.headers.Connection == null) socket.end();
     });
 });
 
-server.listen(3000, () => {
+server.listen(PORT, () => {
     console.log("HTTP server running on port 3000");
 });
