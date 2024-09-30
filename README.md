@@ -43,6 +43,8 @@
 
 ### 월요일
 
+- VM 환경의 DB와 연동
+
 - POST로 회원가입
 	- HTTP Message Body Parser 구현
 	- Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
@@ -66,16 +68,16 @@
 ### 수요일
 
 - Custom Error 구현
-- VM 환경의 DB와 연동
+  
 - 리액트에서 바닐라로 FE 사양 변경 
 	- 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
 	- 전체 페이지를 리액트에서 바닐라로 변환
 	- 웹 프론트 이벤트 및 기능 Script로 변환
 
-### 목요일
-
 - 웹 프론트 구현
 	- 메인 페이지 구현
+
+### 목요일
 
 - 테스트 코드 작성
 	- Jest 세부 기능 학습
