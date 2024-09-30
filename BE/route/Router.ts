@@ -24,15 +24,15 @@ class Router {
         const pathList = this.separatePath(routePath);
         const caseOfRoute: Array<Route> = this.createCaseOfRoute(pathList);
 
-        for(let idx = 0; idx < caseOfRoute.length; idx++) {
+        for (let idx = 0; idx < caseOfRoute.length; idx++) {
             const exist = this.checkRouteExist(req.method, caseOfRoute[idx].path);
-            if(exist) {
+            if (exist) {
                 req.params = caseOfRoute[idx].parameters;
                 req.query = this.parseQueryString(queryString);
                 return this.route[req.method][caseOfRoute[idx].path](req);
             }
         }
-        
+
         return new Response(404, req.headers.Connection);
     }
 
@@ -42,18 +42,18 @@ class Router {
     }
 
     private separateURL(url) {
-        
+
         const [prePath, anchor] = url.split("#");
         const [path, queryString] = prePath.split("?");
         return {
             path: path,
-            queryString : queryString || null,
-            anchor : anchor || null
+            queryString: queryString || null,
+            anchor: anchor || null
         };
     }
 
     private parseQueryString(queryString) {
-        if(!queryString)
+        if (!queryString)
             return null;
         const result = {};
         const queries = queryString.split("&");
@@ -61,13 +61,13 @@ class Router {
             const [key, value] = query.split("=");
             result[key] = value;
         });
-        
+
         return result;
     }
 
     private separatePath(path): Array<string> {
-        
-        const [empty,  ...pathList] = path.split("/");
+
+        const [empty, ...pathList] = path.split("/");
         return pathList;
     }
 
@@ -77,38 +77,38 @@ class Router {
         return dynamicPath;
     }
 
-    private createCaseOfRoute(pathList: Array<string>) : Route[] {
+    private createCaseOfRoute(pathList: Array<string>): Route[] {
         const caseResult: Route[] = [];
-        
+
         pathList.forEach((_, index) => {
             const tempPathList = [...pathList];
             let tempParameters: Array<string> = [];
-            for(let idx = index; idx >= 0; idx--) {
+            for (let idx = index; idx >= 0; idx--) {
                 tempPathList[idx] = ":";
                 tempParameters.push(pathList[idx]);
 
                 const parameters = [...tempParameters];
                 const path = "/" + tempPathList.join("/");
-                caseResult.push({path, parameters});
+                caseResult.push({ path, parameters });
             }
             tempParameters = [];
         });
-        caseResult.push({path: "/" + pathList.join("/"), parameters: []});
-        
+        caseResult.push({ path: "/" + pathList.join("/"), parameters: [] });
+
         const sortedCaseResult = this.sortCaseOfRoutes(caseResult);
         return sortedCaseResult;
     }
-    
-    private sortCaseOfRoutes(routes:Route[]):Route[]  {
+
+    private sortCaseOfRoutes(routes: Route[]): Route[] {
         const sortedRoutes = routes.sort((a, b) => {
             const colonACnt = this.countColons(a.path);
             const colonBCnt = this.countColons(b.path);
-    
+
             return colonACnt - colonBCnt;
         });
         return sortedRoutes;
     }
-    
+
     private countColons(route) {
         return (route.match(/:/g) || []).length;
     }

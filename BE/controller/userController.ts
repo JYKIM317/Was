@@ -15,10 +15,10 @@ function userController(req: Request): Response {
     const table = "users";
     const columns = ["email", "password", "name"];
     const values = [email, password, name];
-    try{
-        db1004.insert({table, columns, values});
+    try {
+        db1004.insert({ table, columns, values });
     }
-    catch{
+    catch {
         const response = new Response(404, req.headers.Connection ?? "close");
         return response;
     }
@@ -27,4 +27,4 @@ function userController(req: Request): Response {
 }
 
 
-export {userController}
+export { userController }

@@ -1,8 +1,8 @@
 import { statusMsg, contentType } from "../util/const";
 
 export class Response {
-    responseMsg:string;
-    constructor(statusCode, connection, ext: string|null = null, body: string|null = null) {
+    responseMsg: string;
+    constructor(statusCode, connection, ext: string | null = null, body: string | null = null) {
         this.setStatusLine(statusCode);
         this.setHeaders(connection, ext, body);
         this.setBody(body);
@@ -19,11 +19,11 @@ export class Response {
         if (body) {
             this.responseMsg += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
             this.responseMsg += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
-		}
-		this.responseMsg += `Connection: ${connection}\r\n`;
-		if (connection === 'Keep-Alive') {
-			this.responseMsg += `Keep-Alive: timeout=5, max=1000\r\n`;
-		}
+        }
+        this.responseMsg += `Connection: ${connection}\r\n`;
+        if (connection === 'Keep-Alive') {
+            this.responseMsg += `Keep-Alive: timeout=5, max=1000\r\n`;
+        }
         this.responseMsg += '\r\n';
     }
 

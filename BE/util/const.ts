@@ -68,7 +68,7 @@ const contentType = {
     '.js': 'application/javascript',
     '.ico': 'image/x-icon',
     '.png': 'image/png',
-    '.jpg': 'image/jpeg' 
+    '.jpg': 'image/jpeg'
 }
 
-export {statusMsg, contentType}
+export { statusMsg, contentType }
