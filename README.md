@@ -1,4 +1,96 @@
-# web-p2-was
+
+# 🔥 나만의 주간 계획서 (2)
+
+## ✅ 나만의 체크포인트 ⭕❌
+
+❌ POST로 회원가입
+	❌ HTTP Message Body Parser 구현
+	❌ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
+	❌ 서버 측 회원가입 비즈니스 로직 구현
+	❌ 성공 시, 실패 시 응답 구현 
+		- 성공 시 로그인 페이지로 Redirection (302)
+		- 실패 시 서버 에러 응답
+
+❌ Custom Error 구현
+
+❌ VM 환경의 DB와 연동
+
+❌ 쿠키를 이용한 로그인
+	❌ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
+	❌ HTTP Message 쿠키 검사 로직 추가
+	❌ HTTP Message 쿠키를 활용할 수 있도록 변경
+	❌ Redis를 이용해 Session 저장
+	❌ 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
+	❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
+
+❌ 라우트 방식 개선
+
+❌ 리액트에서 바닐라로 FE 사양 변경 
+	❌ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+	❌ 전체 페이지를 리액트에서 바닐라로 변환
+	❌ 웹 프론트 이벤트 및 기능 Script로 변환
+
+❌ 웹 프론트 구현
+	❌ 메인 페이지 구현
+
+❌ 테스트 코드 작성
+	❌ Jest 세부 기능 학습
+	❌ HTTP Message에 대한 테스트 코드 작성
+	❌ 비즈니스 로직에 대한 테스트 코드 작성
+
+
+## 📝 학습 및 구현 계획
+
+### 월요일
+
+- POST로 회원가입
+	- HTTP Message Body Parser 구현
+	- Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
+	- 서버 측 회원가입 비즈니스 로직 구현
+	- 성공 시, 실패 시 응답 구현 
+		- 성공 시 로그인 페이지로 Redirection (302)
+		- 실패 시 서버 에러 응답
+
+- 라우트 방식 개선
+
+### 화요일
+
+- 쿠키를 이용한 로그인
+	- 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
+	- HTTP Message 쿠키 검사 로직 추가
+	- HTTP Message 쿠키를 활용할 수 있도록 변경
+	- Redis를 이용해 Session 저장
+	- 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
+	- 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
+ 
+### 수요일
+
+- Custom Error 구현
+- VM 환경의 DB와 연동
+- 리액트에서 바닐라로 FE 사양 변경 
+	- 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+	- 전체 페이지를 리액트에서 바닐라로 변환
+	- 웹 프론트 이벤트 및 기능 Script로 변환
+
+### 목요일
+
+- 웹 프론트 구현
+	- 메인 페이지 구현
+
+- 테스트 코드 작성
+	- Jest 세부 기능 학습
+	- HTTP Message에 대한 테스트 코드 작성
+	- 비즈니스 로직에 대한 테스트 코드 작성
+
+## ✏️ 고민과 해결 과정 쌓아가기
+
+
+
+
+<details>
+<summary>1주차</summary>
+<div markdown="1">
+
 ## dev 시작하기
 ```terminal
 cd FE
@@ -130,6 +222,7 @@ nodemon
     - 3단계: 테스트 라이브러리를 활용해서 단위 테스트를 적용
 
 ## ✏️ 고민과 해결 과정 쌓아가기
+
 
 <details>
 <summary>월요일</summary>
@@ -679,6 +772,10 @@ DOM Object를 수정하는 방향으로 결정했습니다.
 </details>
 
 
+<details>
+<summary>목요일</summary>
+<div markdown="1">
+
 ### path에 동적 경로가 있을 경우에 해결 방법
 
 사실 미션과는 관계 없는 부분이긴 했지만 router를 구현한 이상 route에 동적 경로를 설정했을 때
@@ -926,3 +1023,11 @@ class DB1004 {
 `/user/register/{query}` 엔드포인트로 접속하게되면, `userRouter` 객체의 `parseQueryString` 메소드를 이용하여 쿼리를 파싱합니다.
 이를 `request` 객체에 담아 `userController`로 넘기게 되고, 컨트롤러에서는 `dao`를 이용하여 DB의 `users` 테이블에 레코드를 추가합니다.
 현재는 컨트롤러 단에서 `dao`에 직접 접근하고 있지만, 추후 `repository` 계층을 추가할 예정입니다.
+
+
+</div>
+</details>
+
+
+</div>
+</details>
