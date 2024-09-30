@@ -4,16 +4,16 @@
 ## ✅ 나만의 체크포인트 ⭕❌
 
 ❌ POST로 회원가입
-	❌ HTTP Message Body Parser 구현
+	⭕ HTTP Message Body Parser 구현
 	❌ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
-	❌ 서버 측 회원가입 비즈니스 로직 구현
+	⭕ 서버 측 회원가입 비즈니스 로직 구현
 	❌ 성공 시, 실패 시 응답 구현 
 		- 성공 시 로그인 페이지로 Redirection (302)
 		- 실패 시 서버 에러 응답
 
 ❌ Custom Error 구현
 
-❌ VM 환경의 DB와 연동
+⭕ VM 환경의 DB와 연동
 
 ❌ 쿠키를 이용한 로그인
 	❌ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
@@ -85,6 +85,124 @@
 	- 비즈니스 로직에 대한 테스트 코드 작성
 
 ## ✏️ 고민과 해결 과정 쌓아가기
+
+
+### VM 환경의 DB와 연동
+
+기존에 Docker로 로컬에 DB환경을 구성했지만 원격 환경을 이용하기 위해 VM에 설치한 MySQL로 마이그레이션을 진행하기로 했습니다.
+
+환경만 VM으로 옮기는 것이었기 때문에 크게 달라진 사항은 없었고, DB연결만 VM으로 옮기기 위해 포트포워딩함으로 마이그레이션 할 수 있었습니다.
+
+```console
+>mysql
+CREATE DATABASE IF NOT EXISTS db1004;
+
+USE db1004;
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email varchar(50),
+  name varchar(50),
+  password varchar(200)
+);
+```
+
+새롭게 만들어준 DB에 접근할 수 있는 유저 계정이 필요해서 권한 부여와 함께 생성해줄 수 있었습니다.
+
+```sql
+-- 유저 생성
+CREATE USER 'atach_express'@'%' IDENTIFIED BY 'mypassword';
+
+-- 권한 부여
+GRANT ALL ON db1004.* TO 'atach_express'@'%';
+-- 변경된 설정 반영
+FLUSH PRIVILEGES;
+```
+
+### POST로 회원가입
+
+우선 기존 GET 메소드를 이용해 URI에 회원가입 정보를 포함하던 것과 다르게 POST를 이용해 데이터를 전달해야 했습니다.
+
+```tsx
+//기존 FE/src/layouts/Register.tsx
+  const fetchRegister  = async () => {
+    await fetch(`${baseURL}/user/register?email=${email}&password=${password}&name=${name}`, {
+        method: "GET"
+    });
+  }
+```
+
+```tsx
+//변경 FE/src/layouts/Register.tsx
+  const fetchRegister = async () => {
+    await fetch(`${baseURL}/user/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, name })
+    });
+  }
+```
+
+결과도 정상적으로 잘 들어오는 것을 확인했습니다.
+
+```JSON
+{
+  headers: {
+    Host: 'localhost',
+    Connection: 'keep-alive',
+    'Content-Length': '65',
+    'sec-ch-ua-platform': '"Windows"',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
+    'sec-ch-ua': '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
+    'Content-Type': 'application/json',
+    'sec-ch-ua-mobile': '?0',
+    Accept: '*/*',
+    Origin: 'http',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Dest': 'empty',
+    Referer: 'http',
+    'Accept-Encoding': 'gzip, deflate, br, zstd',
+    'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
+  },
+  body: '{"email":"augu202@naver.com","password":"000","name":"김진영"}',
+  method: 'POST',
+  path: '/user/register',
+  version: 'HTTP/1.1',
+  params: [],
+  query: {}
+}
+```
+
+이후 Request의 Content-Type이 application/json일 경우에 Body를 object 타입으로 전환해주는 로직을 작성했습니다.
+
+```ts
+// BE/dto/Request.ts
+//Request { 
+    private parseBody(bodyMsg) {
+        const contentJSON = 'application/json';
+        if (this.headers["Content-Type"] === contentJSON) {
+            this.body = JSON.parse(bodyMsg);
+        } else {
+            this.body = bodyMsg;
+        }
+    }
+```
+
+기존에 GET 메소드에 관한 경로 지정만 구현되어 있던 Router에 post를 추가해줬습니다.
+
+```ts
+// BE/route/Router.ts
+//Router {
+    post(path: string, func: Function) {
+        const pathList = this.separatePath(path);
+        const dynamicPath = this.convertToDynamicPath(pathList);
+        this.route.POST[dynamicPath] = func;
+    }
+```
+
+이후 정상적으로 POST 요청이 발생했을 때 DB에 저장됨을 확인했습니다.
+
 
 
 
