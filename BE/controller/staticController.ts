@@ -1,7 +1,5 @@
-import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { statusMsg } from "../util/const";
 
 const filePath = fileURLToPath(import.meta.url);
 const staticFilePath = path.join(filePath, "../../../", "static");
