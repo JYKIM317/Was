@@ -13,8 +13,10 @@ const Login: React.FC = () => {
     const [password, setPassword] = useState<string>('');
 
     const fetchLogin = async () => {
-        await fetch(`${baseURL}/user/login?email=${email}&password=${password}`, {
-            method: "GET"
+        await fetch(`${baseURL}/user/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
         });
     }
 
@@ -33,10 +35,10 @@ const Login: React.FC = () => {
                 <InputBox label="비밀번호" type="password" placeholder="비밀번호를 입력해주세요" value={password} onChange={(e) => setPassword(e.target.value)} />
             </HugFrame>
             <HugFrame>
-                <Button text="로그인" size="large" onClick= {fetchLogin}/>
+                <Button text="로그인" size="large" onClick={fetchLogin} />
                 <span className='signup-info'>
-                  아직 회원가입을 안하셨나요?
-                  <a className="text-link" onClick={navigateToRegister}> 회원가입하기</a>
+                    아직 회원가입을 안하셨나요?
+                    <a className="text-link" onClick={navigateToRegister}> 회원가입하기</a>
                 </span>
             </HugFrame>
         </>
