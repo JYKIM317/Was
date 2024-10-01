@@ -1,5 +1,5 @@
-import { Response } from "../dto/Response"
-import { Url } from "./Url";
+import { Response } from "../http/Response"
+import { Url } from "../url/Url";
 
 class Router extends Url {
     constructor() { super() }

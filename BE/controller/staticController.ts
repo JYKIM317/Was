@@ -1,5 +1,5 @@
 import { Response } from "../dto/Response.ts";
-import { Request } from "../dto/Request.ts";
+import { Request } from "../core/http/Request.ts";
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';

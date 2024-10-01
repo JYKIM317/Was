@@ -1,4 +1,4 @@
-import { statusMsg, contentType } from "../util/const";
+import { statusMsg, contentType } from "../../util/const";
 
 export class Response {
     responseMsg: string;

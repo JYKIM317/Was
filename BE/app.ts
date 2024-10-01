@@ -1,7 +1,7 @@
 import net from 'net';
 import { logger } from './logger';
-import { Request } from './dto/Request';
-import { routeStack } from './route/RouteStack';
+import { Request } from './core/http/Request';
+import { routeStack } from './core/router/RouteStack';
 import { staticRouter } from './route/staticRouter';
 import { userRouter } from './route/userRouter';
 import { notFoundResponse } from './util/response';

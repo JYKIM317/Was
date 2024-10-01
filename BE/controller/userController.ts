@@ -1,5 +1,5 @@
 import { Response } from "../dto/Response.ts";
-import { Request } from "../dto/Request.ts";
+import { Request } from "../core/http/Request.ts";
 import { db1004 } from "../dao/db1004.ts";
 
 type userInfo = {
