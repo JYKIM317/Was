@@ -1,9 +1,8 @@
 import { Response } from "../dto/Response"
-interface Route {
-    path: string;
-    parameters: Array<string>;
-}
-class Router {
+import { Url } from "./Url";
+
+class Router extends Url {
+    constructor() { super() }
     route = {
         "GET": {},
         "POST": {},
@@ -12,111 +11,80 @@ class Router {
         "DELETE": {},
         "UPDATE": {}
     }
+
     get(path: string, func: Function) {
         const pathList = this.separatePath(path);
-        const dynamicPath = this.convertToDynamicPath(pathList);
-        this.route.GET[dynamicPath] = func;
+        const [convertedPath, dynamicPathName] = this.convertToDynamicPathIfExist(pathList);
+        this.route.GET[convertedPath] = {
+            pathName: dynamicPathName,
+            callback: func
+        };
     }
 
     post(path: string, func: Function) {
         const pathList = this.separatePath(path);
-        const dynamicPath = this.convertToDynamicPath(pathList);
-        this.route.POST[dynamicPath] = func;
+        const [convertedPath, dynamicPathName] = this.convertToDynamicPathIfExist(pathList);
+        this.route.POST[convertedPath] = {
+            pathName: dynamicPathName,
+            callback: func
+        };
     }
 
     requestHandler(req): Response {
         const separatedURL = this.separateURL(req.path);
         const [routePath, queryString] = [separatedURL.path, separatedURL.queryString];
-        const pathList = this.separatePath(routePath);
-        const caseOfRoute: Array<Route> = this.createCaseOfRoute(pathList);
+        const isStaticRouteExist = this.checkRouteExist(req.method, routePath)
+        req.query = this.parseQueryString(queryString);
 
-        for (let idx = 0; idx < caseOfRoute.length; idx++) {
-            const exist = this.checkRouteExist(req.method, caseOfRoute[idx].path);
-            if (exist) {
-                req.params = caseOfRoute[idx].parameters;
-                req.query = this.parseQueryString(queryString);
-                return this.route[req.method][caseOfRoute[idx].path](req);
-            }
+        if (isStaticRouteExist) {
+            return this.route[req.method][routePath].callback(req);
+        } else {
+            return this.routeDynamicPath(req, routePath);
         }
-
-        return new Response(404, req.headers.Connection);
     }
 
     private checkRouteExist(method, path) {
-        const callback: Function | null = this.route[method][path];
+        const callback: object | null = this.route[method][path];
         return callback != null;
     }
 
-    private separateURL(url) {
-
-        const [prePath, anchor] = url.split("#");
-        const [path, queryString] = prePath.split("?");
-        return {
-            path: path,
-            queryString: queryString || null,
-            anchor: anchor || null
-        };
-    }
-
-    private parseQueryString(queryString) {
-        if (!queryString)
-            return null;
-        const result = {};
-        const queries = queryString.split("&");
-        queries.forEach((query) => {
-            const [key, value] = query.split("=");
-            result[key] = value;
-        });
-
-        return result;
-    }
-
-    private separatePath(path): Array<string> {
-
-        const [empty, ...pathList] = path.split("/");
-        return pathList;
-    }
-
-    private convertToDynamicPath(pathList) {
-        const transPathList = pathList.map((path) => path[0] === ":" ? path[0] : path);
-        const dynamicPath = "/" + transPathList.join("/");
-        return dynamicPath;
-    }
-
-    private createCaseOfRoute(pathList: Array<string>): Route[] {
-        const caseResult: Route[] = [];
-
-        pathList.forEach((_, index) => {
-            const tempPathList = [...pathList];
-            let tempParameters: Array<string> = [];
-            for (let idx = index; idx >= 0; idx--) {
-                tempPathList[idx] = ":";
-                tempParameters.push(pathList[idx]);
-
-                const parameters = [...tempParameters];
-                const path = "/" + tempPathList.join("/");
-                caseResult.push({ path, parameters });
+    private convertToDynamicPathIfExist(pathList): [string, Array<string>] {
+        const dynamicPathDelimiter = ":";
+        const dynamicPathName: Array<string> = [];
+        const transPathList = pathList.map((path) => {
+            if (path.startsWith(dynamicPathDelimiter)) {
+                const thisPathName = path.replace(dynamicPathDelimiter, "");
+                dynamicPathName.push(thisPathName);
+                return "([^/]+)";
+            } else {
+                return path;
             }
-            tempParameters = [];
         });
-        caseResult.push({ path: "/" + pathList.join("/"), parameters: [] });
-
-        const sortedCaseResult = this.sortCaseOfRoutes(caseResult);
-        return sortedCaseResult;
+        const dynamicPath = "/" + transPathList.join("/");
+        return [dynamicPath, dynamicPathName];
     }
 
-    private sortCaseOfRoutes(routes: Route[]): Route[] {
-        const sortedRoutes = routes.sort((a, b) => {
-            const colonACnt = this.countColons(a.path);
-            const colonBCnt = this.countColons(b.path);
-
-            return colonACnt - colonBCnt;
+    private routeDynamicPath(req, path) {
+        const notExist = -1;
+        const allRoutes = Object.keys(this.route[req.method]);
+        const matchRouteIdx = allRoutes.findIndex((thisRoute) => {
+            const checkMatch = path.match(thisRoute) ?? [];
+            if (checkMatch[0] === path) {
+                const dynamicPathNames = this.route[req.method][thisRoute].pathName;
+                const dynamicPathValues = checkMatch.slice(1);
+                dynamicPathNames.forEach((key, idx) => {
+                    req.params[key] = dynamicPathValues[idx];
+                });
+                return true;
+            }
         });
-        return sortedRoutes;
-    }
 
-    private countColons(route) {
-        return (route.match(/:/g) || []).length;
+        if (matchRouteIdx === notExist) {
+            return new Response(404, req.headers.Connection);
+        } else {
+            const matchedRoute = allRoutes[matchRouteIdx]
+            return this.route[req.method][matchedRoute].callback(req);
+        }
     }
 }
 
