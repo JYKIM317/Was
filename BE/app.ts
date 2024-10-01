@@ -9,7 +9,7 @@ import { notFoundResponse } from './util/response';
 routeStack.use("/", staticRouter);
 routeStack.use("/user", userRouter);
 
-const PORT = 3000;
+const PORT = 8080;
 
 const server = net.createServer(socket => {
     socket.on("data", (data) => {
@@ -30,5 +30,5 @@ const server = net.createServer(socket => {
 });
 
 server.listen(PORT, () => {
-    console.log("HTTP server running on port 3000");
+    console.log(`HTTP server running on port ${PORT}`,);
 });
