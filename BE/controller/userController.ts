@@ -1,6 +1,4 @@
-import { Response } from "../dto/Response.ts";
-import { Request } from "../core/http/Request.ts";
-import { db1004 } from "../dao/db1004.ts";
+import { db1004 } from "../dao/db1004";
 
 type userInfo = {
     email: string,
@@ -8,19 +6,20 @@ type userInfo = {
     name: string
 }
 
-function userController(req: Request): Response {
+function userController(req, res) {
     const userData: userInfo = req.body as userInfo;
     const table = "users";
     const columns = ["email", "password", "name"];
     const values = [userData.email, userData.password, userData.name];
     try {
         db1004.insert({ table, columns, values });
-        const response = new Response(302, req.headers.Connection ?? "close");
-        return response;
-    }
-    catch {
-        const response = new Response(404, req.headers.Connection ?? "close");
-        return response;
+        res
+            .setStatus(302)
+            .send();
+    } catch (e) {
+        res
+            .setStatus(400)
+            .send();
     }
 }
 

@@ -1,4 +1,3 @@
-import { Response } from "../http/Response"
 import { Url } from "../url/Url";
 
 class Router extends Url {
@@ -30,22 +29,22 @@ class Router extends Url {
         };
     }
 
-    requestHandler(req): Response {
+    handler(req, res) {
         const separatedURL = this.separateURL(req.path);
         const [routePath, queryString] = [separatedURL.path, separatedURL.queryString];
         const isStaticRouteExist = this.checkRouteExist(req.method, routePath)
         req.query = this.parseQueryString(queryString);
 
         if (isStaticRouteExist) {
-            return this.route[req.method][routePath].callback(req);
+            return this.route[req.method][routePath].callback(req, res);
         } else {
-            return this.routeDynamicPath(req, routePath);
+            return this.routeDynamicPath(req, res, routePath);
         }
     }
 
     private checkRouteExist(method, path) {
-        const callback: object | null = this.route[method][path];
-        return callback != null;
+        const registeredData: object | null = this.route[method][path];
+        return registeredData != null;
     }
 
     private convertToDynamicPathIfExist(pathList): [string, Array<string>] {
@@ -64,7 +63,7 @@ class Router extends Url {
         return [dynamicPath, dynamicPathName];
     }
 
-    private routeDynamicPath(req, path) {
+    private routeDynamicPath(req, res, path) {
         const notExist = -1;
         const allRoutes = Object.keys(this.route[req.method]);
         const matchRouteIdx = allRoutes.findIndex((thisRoute) => {
@@ -80,10 +79,12 @@ class Router extends Url {
         });
 
         if (matchRouteIdx === notExist) {
-            return new Response(404, req.headers.Connection);
+            res
+                .setStatus(404)
+                .send();
         } else {
             const matchedRoute = allRoutes[matchRouteIdx]
-            return this.route[req.method][matchedRoute].callback(req);
+            this.route[req.method][matchedRoute].callback(req, res);
         }
     }
 }

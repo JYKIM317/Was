@@ -1,10 +1,10 @@
 import net from 'net';
 import { logger } from './logger';
 import { Request } from './core/http/Request';
+import { Response } from './core/http/Response';
 import { routeStack } from './core/router/RouteStack';
 import { staticRouter } from './route/staticRouter';
 import { userRouter } from './route/userRouter';
-import { notFoundResponse } from './util/response';
 
 routeStack.use("/", staticRouter);
 routeStack.use("/user", userRouter);
@@ -14,18 +14,26 @@ const PORT = 8080;
 const server = net.createServer(socket => {
     socket.on("data", (data) => {
         const socketData = data.toString();
-        const request = new Request(socketData);
-        const router = routeStack.find(request.path);
+        const req = new Request(socketData);
+        const res = new Response(socket, req.headers.Connection);
+        const router = routeStack.find(req.path);
         logger.debug(socketData);
 
-        if (router) {
-            const response = router.requestHandler(request);
-            socket.write(response.responseMsg);
-        } else {
-            socket.write(notFoundResponse(request).responseMsg);
+        try {
+            if (router) {
+                router.handler(req, res);
+            } else {
+                res
+                    .setStatus(404)
+                    .send();
+            }
+        } catch (_) {
+            res
+                .setStatus(500)
+                .send();
+        } finally {
+            if (res.connection != "Keep-Alive") socket.end();
         }
-
-        if (request.headers.Connection == null) socket.end();
     });
 });
 
