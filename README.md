@@ -4,10 +4,15 @@
 ## ✅ 나만의 체크포인트 ⭕❌
 
 ❌ POST로 회원가입
+
 	⭕ HTTP Message Body Parser 구현
-	❌ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
+
+	❌ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request)
+
 	⭕ 서버 측 회원가입 비즈니스 로직 구현
+
 	⭕ 성공 시, 실패 시 응답 구현 
+
 		- 성공 시 로그인 페이지로 Redirection (302)
 		- 실패 시 서버 에러 응답
 
@@ -16,26 +21,39 @@
 ⭕ VM 환경의 DB와 연동
 
 ❌ 쿠키를 이용한 로그인
+
 	❌ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
+
 	❌ HTTP Message 쿠키 검사 로직 추가
+
 	❌ HTTP Message 쿠키를 활용할 수 있도록 변경
+
 	❌ Redis를 이용해 Session 저장
+
 	❌ 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
+
 	❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
 
 ⭕ 라우트 방식 개선
 
 ❌ 리액트에서 바닐라로 FE 사양 변경 
+
 	❌ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+
 	❌ 전체 페이지를 리액트에서 바닐라로 변환
+
 	❌ 웹 프론트 이벤트 및 기능 Script로 변환
 
 ❌ 웹 프론트 구현
+
 	❌ 메인 페이지 구현
 
 ❌ 테스트 코드 작성
+
 	❌ Jest 세부 기능 학습
+
 	❌ HTTP Message에 대한 테스트 코드 작성
+  
 	❌ 비즈니스 로직에 대한 테스트 코드 작성
 
 
