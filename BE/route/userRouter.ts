@@ -1,4 +1,4 @@
-import { Router } from "./Router";
+import { Router } from "../core/router/Router";
 import { userController } from "../controller/userController";
 
 const userRouter = new Router();

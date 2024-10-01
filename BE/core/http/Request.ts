@@ -4,7 +4,7 @@ export class Request {
     method: string;
     path: string;
     version: string;
-    params: Array<string> = [];
+    params: { [key: string]: string } = {};
     query: { [key: string]: string } = {};
 
     constructor(msg) {
