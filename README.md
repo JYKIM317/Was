@@ -7,7 +7,7 @@
 	⭕ HTTP Message Body Parser 구현
 	❌ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
 	⭕ 서버 측 회원가입 비즈니스 로직 구현
-	❌ 성공 시, 실패 시 응답 구현 
+	⭕ 성공 시, 실패 시 응답 구현 
 		- 성공 시 로그인 페이지로 Redirection (302)
 		- 실패 시 서버 에러 응답
 
@@ -23,7 +23,7 @@
 	❌ 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
 	❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
 
-❌ 라우트 방식 개선
+⭕ 라우트 방식 개선
 
 ❌ 리액트에서 바닐라로 FE 사양 변경 
 	❌ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
@@ -86,6 +86,9 @@
 
 ## ✏️ 고민과 해결 과정 쌓아가기
 
+<details>
+<summary>월요일</summary>
+<div markdown="1">
 
 ### VM 환경의 DB와 연동
 
@@ -203,8 +206,423 @@ FLUSH PRIVILEGES;
 
 이후 정상적으로 POST 요청이 발생했을 때 DB에 저장됨을 확인했습니다.
 
+</div>
+</details>
 
 
+### 라우트 방식 개선
+
+기존의 Route에서 동적 경로임을 확인하는 방법은 HTTP Request가 왔을 때 해당 경로로 만들 수 있는 모든 동적 경로 경우의 수를 만들어 등록된 Route가 있는지 확인하는 방법으로 구현했습니다.
+
+```ts
+console.time("test");
+const caseOfRoute: Array<Route> = this.createCaseOfRoute(pathList);
+console.timeEnd("test");
+
+    private createCaseOfRoute(pathList: Array<string>): Route[] {
+        const caseResult: Route[] = [];
+
+        pathList.forEach((_, index) => {
+            const tempPathList = [...pathList];
+            let tempParameters: Array<string> = [];
+            for (let idx = index; idx >= 0; idx--) {
+                tempPathList[idx] = ":";
+                tempParameters.push(pathList[idx]);
+
+                const parameters = [...tempParameters];
+                const path = "/" + tempPathList.join("/");
+                caseResult.push({ path, parameters });
+            }
+            tempParameters = [];
+        });
+        caseResult.push({ path: "/" + pathList.join("/"), parameters: [] });
+
+        const sortedCaseResult = this.sortCaseOfRoutes(caseResult);
+        return sortedCaseResult;
+    }
+```
+
+테스트를 위해 경로를 많이 생성해 HTTP 요청을 발생시켜봤고,
+
+```bash
+curl localhost:3000/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z
+```
+
+무려 한 번의 요청에 5.104ms 소요되는 결과를 받을 수 있었습니다.
+
+```console
+test: 5.104ms
+```
+
+해당 로직에 대한 문제점이 2가지가 있었는데
+
+1. 다른 개발자가 봤을 때 다소 복잡한 로직으로 인해 어떤 기능을 수행하는 함수인지 빠르게 파악하는게 어려움
+2. 모든 경우의 수를 만들다 보니 경로가 많아질 때 시간이 많이 소요됨
+
+이 문제점을 가지고, 개선을 하기 위해 정규식으로 동적 경로를 매칭하고자 했습니다.
+
+우선 라우터에 등록하는 함수를 수정해야 나머지 로직을 구상하기 쉬울 것 같아 등록 함수를 먼저 수정해줬습니다.
+
+```ts
+//Router.ts
+//기존 로직
+
+get(path: string, func: Function) {
+	const pathList = this.separatePath(path);
+	const convertedPath = this.convertToDynamicPath(pathList);
+	this.route.GET[convertedPath] = func;
+}
+
+private convertToDynamicPath(pathList) {
+	const transPathList = pathList.map((path) => path[0] === ":" ? path[0] : path);
+	const dynamicPath = "/" + transPathList.join("/");
+	return dynamicPath;
+}
+```
+
+기존 로직은 Path를 등록했을 때 path를 각각의 경로로 분해해서 만약 동적 경로 표시인 `:`가 포함된 경우 해당 경로를 `:`만 남긴채 등록했고,
+
+실제로 요청이 들어올 때는 Path를 다시 분리해서 각각의 경로를 `:`로 바꿔서 등록한 Path가 있는지 찾는 방식이었습니다.
+
+새롭게 바뀐 로직은 동적 경로가 포함된 경우 해당 동적 경로의 변수를 정규 표현식 `([^/]+)` 로 바꾸고, 해당 변수 이름을 배열 `dynamicPathName`에 저장해 함께 저장하는 방식으로 구현했습니다.
+
+```ts
+//Router.ts
+//변경 로직
+
+get(path: string, func: Function) {
+	const pathList = this.separatePath(path);
+	const [convertedPath, dynamicPathName] = this.convertToDynamicPathIfExist(pathList);
+	this.route.GET[convertedPath] = {
+		pathName: dynamicPathName,
+		callback: func
+	};
+}
+
+private convertToDynamicPathIfExist(pathList): [string, Array<string>] {
+	const dynamicPathDelimiter = ":";
+	const dynamicPathName: Array<string> = [];
+	const transPathList = pathList.map((path) => {
+		if (path.startsWith(dynamicPathDelimiter)) {
+			const thisPathName = path.replace(dynamicPathDelimiter, "");
+			dynamicPathName.push(thisPathName);
+			 return "([^/]+)";
+		} else {
+			return path;
+		}
+	});
+	const dynamicPath = "/" + transPathList.join("/");
+	return [dynamicPath, dynamicPathName];
+}
+```
+
+등록 방식이 새롭게 바뀌어 경우의 수를 생성하던 기존 함수는 제거했고,
+
+Request로 Route를 판단하던 `requestHandler` 함수도 함께 변경되었습니다.
+
+```ts
+//Router.ts
+
+//기존
+    requestHandler(req): Response {
+        const separatedURL = this.separateURL(req.path);
+        const [routePath, queryString] = [separatedURL.path, separatedURL.queryString];
+        const pathList = this.separatePath(routePath);
+        const caseOfRoute: Array<Route> = this.createCaseOfRoute(pathList);
+
+        for (let idx = 0; idx < caseOfRoute.length; idx++) {
+            const exist = this.checkRouteExist(req.method, caseOfRoute[idx].path);
+            if (exist) {
+                req.params = caseOfRoute[idx].parameters;
+                req.query = this.parseQueryString(queryString);
+                return this.route[req.method][caseOfRoute[idx].path](req);
+            }
+        }
+
+        return new Response(404, req.headers.Connection);
+    }
+
+////////////////////////////////////////////////////////////////
+
+//변경
+    requestHandler(req): Response {
+        const separatedURL = this.separateURL(req.path);
+        const [routePath, queryString] = [separatedURL.path, separatedURL.queryString];
+        const isStaticRouteExist = this.checkRouteExist(req.method, routePath)
+        req.query = this.parseQueryString(queryString);
+
+        if (isStaticRouteExist) {
+            return this.route[req.method][routePath].callback(req);
+        } else {
+            return this.routeDynamicPath(req, routePath);
+        }
+    }
+```
+
+개선한 코드에선 Request가 발생했을 때 우선 요청이 발생한 Path로 등록된 Route에 존재하는지 한 번 검사하고,
+
+만약 존재하지 않는다면 등록된 Route를 불러와 매칭할 수 있는 동적 경로가 등록되어 있는지 검사하는 로직을 수행합니다.
+
+동적 경로가 등록되어 있는지 검사하는 로직에서 만약 존재하지 않는다면 404 Response를 반환하도록 구현했습니다.
+
+```ts
+//Router.ts
+    private routeDynamicPath(req, path) {
+        const notExist = -1;
+        const allRoutes = Object.keys(this.route[req.method]);
+        const matchRouteIdx = allRoutes.findIndex((thisRoute) => {
+            const checkMatch = path.match(thisRoute) ?? [];
+            if (checkMatch[0] === path) {
+                const dynamicPathNames = this.route[req.method][thisRoute].pathName;
+                const dynamicPathValues = checkMatch.slice(1);
+                dynamicPathNames.forEach((key, idx) => {
+                    req.params[key] = dynamicPathValues[idx];
+                });
+                return true;
+            }
+        });
+
+        if (matchRouteIdx === notExist) {
+            return new Response(404, req.headers.Connection);
+        } else {
+            const matchedRoute = allRoutes[matchRouteIdx]
+            return this.route[req.method][matchedRoute].callback(req);
+        }
+    }
+```
+
+### 동적 경로 처리 개선 결과
+
+개선한 코드에선 모든 경우의 수를 만들 필요가 없었기 때문에 요청으로 들어온 경로의 수가 많았을 때 특히 더욱 체감된 결과를 얻을 수 있었습니다.
+
+기존 동일한 요청에 대해 5.104ms의 소요시간이 걸렸던 것에 비해 결과는 아래와 같습니다.
+
+```bash
+curl localhost:3000/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z
+```
+
+```console
+test: 0.166ms
+```
+
+
+### 기존 Router 내 함수 분리
+
+기존에 Router에서 함께 관리하던 url 관련 파싱 함수들을 Router 클래스의 복잡도를 낮추기 위해 분리해서 상속했습니다.
+
+```ts
+// Url.ts
+class Url {
+    separateURL(url) {
+        const [prePath, anchor] = url.split("#");
+        const [path, queryString] = prePath.split("?");
+        return {
+            path: path,
+            queryString: queryString || null,
+            anchor: anchor || null
+        };
+    }
+
+    separatePath(path): Array<string> {
+        const [empty, ...pathList] = path.split("/");
+        return pathList;
+    }
+
+    parseQueryString(queryString) {
+        if (!queryString)
+            return null;
+        const result = {};
+        const queries = queryString.split("&");
+        queries.forEach((query) => {
+            const [key, value] = query.split("=");
+            result[key] = value;
+        });
+        
+        return result;
+    }
+}
+
+//Router.ts
+class Router extends Url {
+    constructor() { super() }
+	...
+```
+
+
+### 디렉토리 일부 구조 변경
+
+```
+📦dto  
+ ┣ 📜Request.ts  
+ ┗ 📜Response.ts
+
+📦route  
+ ┣ 📜Router.ts  
+ ┣ 📜RouteStack.ts  
+ ┣ 📜staticRouter.ts  
+ ┣ 📜Url.ts  
+ ┗ 📜userRouter.ts
+```
+
+현재는 전 범위에서 사용되는 Router, Request, Response 등이 각 디렉토리에 일부로 편입되어있는 상태입니다.
+
+이에 대한 책임을 옮기고자 core 디렉토리를 만들어 다양한 범위에서 사용되는 기능 및 모델을 분리하도록 하겠습니다.
+
+```
+📦core  
+ ┣ 📂http  
+ ┃ ┣ 📜Request.ts  
+ ┃ ┗ 📜Response.ts  
+ ┣ 📂router  
+ ┃ ┣ 📜Router.ts  
+ ┃ ┗ 📜RouteStack.ts  
+ ┗ 📂url  
+ ┃ ┗ 📜Url.ts
+```
+
+# Response 객체 생성 위치 변경
+
+기존에는 라우터에 Request만 전달해 만들어지는 결과에 따라 Response 객체를 생성해 반환하도록 구현했는데 Response 객체를 처음에 생성하고 넘기는 방식으로 변경하려고 합니다.
+
+기존에 Response 객체를 만들고 반환하도록 구현했던 이유는 socket을 여는 계층과, write하는 계층, end하는 계층이 모두 동일해야 한다고 생각했기 때문인데,
+
+```ts
+//Response.ts 기존
+class Response {
+    responseMsg: string;
+
+    constructor(statusCode, connection, ext: string | null = null, body: string | null = null) {
+        this.setStatusLine(statusCode);
+        this.setHeaders(connection, ext, body);
+        this.setBody(body);
+    }
+
+    private setStatusLine(statusCode) {
+        const startLine = `HTTP/1.1 ${statusCode} ${statusMsg[statusCode]}\r\n`;
+        this.responseMsg = startLine;
+    }
+
+    private setHeaders(connection, ext, body) {
+        this.responseMsg += `Server: Jinyoung\r\n`;
+        this.responseMsg += `Date: ${new Date().toString()}\r\n`;
+        if (body) {
+            this.responseMsg += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
+            this.responseMsg += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
+        }
+        this.responseMsg += `Connection: ${connection}\r\n`;
+        if (connection === 'Keep-Alive') {
+            this.responseMsg += `Keep-Alive: timeout=5, max=1000\r\n`;
+        }
+        this.responseMsg += '\r\n';
+    }
+
+    private setBody(body) {
+        this.responseMsg += body ?? "";
+    }
+}
+```
+
+변경하려는 이유는 이미지 등 바이너리 파일을 전달할 때 파일을 읽는 위치와 Response Message를 작성하는 위치가 다르기 때문에 현재처럼 Message를 완성해서 전달할 때 구현하기 힘들다는 점,
+
+지금 모습에선 header와 body를 구분해서 Message를 작성하기 힘들다는 점이 문제라고 생각해 변경하려고 계획 했습니다.
+
+```ts
+//Response.ts 변경 후
+class Response {
+    private socket: net.Socket;
+    private statusCode: number = 0;
+    private cookie: string;
+    connection: string;
+
+    constructor(socket, connection) {
+        this.socket = socket;
+        this.connection = connection ?? "close";
+    }
+
+    send() {
+        if (!this.statusCode) throw new Error("Status code has not been set yet.");
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
+        let header = this.setInitialHeaderOption();
+
+        this.socket.write(startLine);
+        this.socket.write(header);
+        this.socket.write(emptyLine);
+    }
+
+    sendFile(filePath) {
+        if (!this.statusCode) throw new Error("Status code has not been set yet.");
+        if (!fs.existsSync(filePath)) throw new Error("File does not exist");
+        const ext = path.extname(filePath);
+        const file = fs.readFileSync(filePath);
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
+        let header = this.setInitialHeaderOption();
+        header += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
+        header += `Content-Length: ${Buffer.byteLength(file)}\r\n`;
+
+        this.socket.write(startLine);
+        this.socket.write(header);
+        this.socket.write(emptyLine);
+        this.socket.write(file);
+    }
+
+    json(data: object) {
+        if (!this.statusCode) throw new Error("Status code has not been set yet.");
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
+        const body = JSON.stringify(data);
+        let header = this.setInitialHeaderOption();
+        header += `Content-Type: application/json; charset=UTF-8\r\n`;
+        header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
+
+        this.socket.write(startLine);
+        this.socket.write(header);
+        this.socket.write(emptyLine);
+        this.socket.write(body);
+    }
+
+    setStatus(statusCode) {
+        const message = statusMsg[statusCode];
+        if (message) {
+            this.statusCode = statusCode;
+        } else {
+            throw new Error("This status code does not exist")
+        }
+
+        return this;
+    }
+
+    setCookie(key: string, value, option: cookieOption | null) {
+        this.cookie = `${key}=${value};` + ` ${JSON.stringify(option)}`;
+        return this;
+    }
+
+    private setInitialHeaderOption() {
+        let header = "";
+        header += `Server: Jinyoung\r\n`;
+        header += `Date: ${new Date().toString()}\r\n`;
+        header += `Connection: ${this.connection}\r\n`;
+        if (this.connection === 'Keep-Alive') {
+            header += `Keep-Alive: timeout=5, max=1000\r\n`;
+        }
+        return header;
+    }
+}
+```
+
+
+```ts
+//기존 Response를 사용하던 모습
+const response = new Response(400, req.headers.Connection ?? "close");
+return response;
+
+socket.write(response.responseMsg);
+
+//////////////////////////
+
+//변경 후
+res
+  .setStatus(400)
+  .send();
+```
 
 
 <details>
