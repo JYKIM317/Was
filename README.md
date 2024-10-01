@@ -498,7 +498,7 @@ class Router extends Url {
  ┃ ┗ 📜Url.ts
 ```
 
-# Response 객체 생성 위치 변경
+### Response 객체 생성 위치 변경
 
 기존에는 라우터에 Request만 전달해 만들어지는 결과에 따라 Response 객체를 생성해 반환하도록 구현했는데 Response 객체를 처음에 생성하고 넘기는 방식으로 변경하려고 합니다.
 
