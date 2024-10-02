@@ -22,11 +22,11 @@
 
 ❌ 쿠키를 이용한 로그인
 
-	❌ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
+	⭕ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
 
-	❌ HTTP Message 쿠키 검사 로직 추가
+	⭕ HTTP Message 쿠키 검사 로직 추가
 
-	❌ HTTP Message 쿠키를 활용할 수 있도록 변경
+	⭕ HTTP Message 쿠키를 활용할 수 있도록 변경
 
 	❌ Redis를 이용해 Session 저장
 
@@ -227,6 +227,9 @@ FLUSH PRIVILEGES;
 </div>
 </details>
 
+<details>
+<summary>화요일</summary>
+<div markdown="1">
 
 ### 라우트 방식 개선
 
@@ -642,6 +645,164 @@ res
   .send();
 ```
 
+</div>
+</details>
+
+<details>
+<summary>수요일</summary>
+<div markdown="1">
+
+### 쿠키 설정
+
+우선 쿠키를 설정해주기 위해서 쿠키에 설정할 수 있는 옵션들에 대한 정의를 해줬습니다.
+
+```ts
+//Cookie.ts
+type cookieSameSiteOption = "Strict" | "Lax" | "None";
+
+type cookieOption = {
+    Domain?: string;
+    Expires?: Date;
+    HttpOnly?: boolean;
+    "Max-Age"?: number;
+    Path?: string;
+    Secure?: boolean;
+    SameSite?: cookieSameSiteOption;
+    Partitioned?: boolean;
+}
+```
+
+이후에 Response의 setCookie 메서드를 통해 쿠키를 설정한 경우 HTTP Response header를 생성할 때 Set-Cookie 속성도 함께 보내질 수 있도록 만들었습니다.
+
+```ts
+//Response.ts
+    setCookie(key: string, value, option?: cookieOption) {
+        this.cookie = `${key}=${value}`;
+        if (option) Object.keys(option).forEach((opt) => {
+            if (typeof option[opt] !== 'boolean') {
+                this.cookie += `; ${opt}=${option[opt]}`;
+            } else if (option[opt]) {
+                this.cookie += `; ${opt}`;
+            }
+        });
+        return this;
+    }
+```
+
+
+### 잘못된 HTTP Response Message
+
+HTTP Response Message를 완성해서 보내는 것에서 개별적으로 보내는 것으로 방식을 바꾼 이후부터 
+
+Failed to load resource: net::ERR_INVALID_HTTP_RESPONSE
+
+에러를 받을 수 있었습니다. HTTP Response Message가 잘못되었다는 뜻이었는데,
+
+이전에는 발생하지 않다가 Response 를 리팩토링 하는 과정에서 발생한 문제라고 판단할 수 있었습니다.
+
+```ts
+	this.socket.write(startLine);
+	this.socket.write(header);
+	this.socket.write(emptyLine);
+	this.socket.write(body);
+```
+
+현재는 위 처럼 HTTP Response Message를 보내고 있었는데, 
+
+문제의 원인은 emptyLine에 있었습니다.
+
+HTTP에서 header와 body의 구분은 빈 문자열인 empty line으로 판단하는데, 제가 이 empty line을 정의하는 부분에서 `\r\n`으로 처리했기 때문에 발생한 문제였고, 해당 부분을 `\r\n\r\n` 으로 바꿔 해결할 수 있었습니다.
+
+```ts
+//해결 전
+const emptyLine = "\r\n";
+
+//해결 후
+const emptyLine = "\r\n\r\n";
+```
+
+
+### DB 접근 및 비즈니스 로직 처리 계층 분리
+
+기존에는 빠르게 기능 구현을 확인하기 위해서 라우팅 과정에서 호출하는 controller 함수에 DB로 접근해 데이터를 가져오는 기능을 포함시켰습니다.
+
+이제는 확장성과 계층 별 책임과 역할 분리를 목적으로 Repository라는 데이터 접근 계층을 만들고, Controller 계층에선 비즈니스 로직만 처리하도록 분리하려고 합니다.
+
+```ts
+//UserRepository.ts
+class UserRepository {
+    static tableName = "users";
+
+    static async getUser(email) {
+        return await db1004.select({
+            table: this.tableName,
+            column: "*",
+            condition: `email="${email}"`
+        });
+    }
+
+    static async createUser(email, password, name) {
+        return await db1004.insert({
+            table: this.tableName,
+            columns: ["email", "password", "name"],
+            values: [email, password, name]
+        });
+    }
+}
+```
+
+```ts
+//signUpController.ts
+function signUpController(req, res) {
+    const userData: signUpInfo = req.body as signUpInfo;
+    const [email, password, name] = [userData.email, md5Encryption(userData.password), userData.name];
+
+    try {
+        UserRepository.getUser(email).then((response) => {
+            const result = response[0][0];
+            const emailAvailable = result == null;
+            if (emailAvailable) {
+                UserRepository.createUser(email, password, name);
+
+                res
+                    .setStatus(302)
+                    .send();
+            }
+        });
+    } catch (e) {
+        res
+            .setStatus(400)
+            .send();
+    }
+}
+```
+
+### HTTP Request Cookie Parsing
+
+쿠키를 설정하고 이후에 쿠키가 Request로 오기 시작하면서 Cookie가 있는 경우 이용하기 쉽도록 object로 파싱하는 과정이 필요하다고 느꼈습니다.
+
+```ts
+//Request.ts
+    private parseHeader(headerMsg) {
+	...중략
+        if (this.headers.Cookie != null) cookieParser(this.headers);
+    }
+
+//Cookie.ts
+function cookieParser(header) {
+    const cookieString = header.Cookie;
+    const cookies = cookieString.split(";");
+    const cookieObject = cookies.reduce((obj, thisCookie) => {
+        const [key, value] = thisCookie.trim().split("=");
+        obj[key] = value;
+        return obj;
+    }, {});
+    header.Cookie = cookieObject;
+}
+```
+
+</div>
+</details>
 
 <details>
 <summary>1주차</summary>
