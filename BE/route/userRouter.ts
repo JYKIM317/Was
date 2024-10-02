@@ -1,6 +1,6 @@
 import { Router } from "../core/router/Router";
 import { signUpController } from "../controller/signUpController";
-import { signInController } from "../controller/signInContorller";
+import { signInController } from "../controller/signInController";
 
 const userRouter = new Router();
 
