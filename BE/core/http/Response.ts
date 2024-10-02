@@ -4,7 +4,7 @@ import net from 'net';
 import { statusMsg, contentType } from "../../util/const";
 import { cookieOption } from "./Cookie";
 
-const emptyLine = "\r\n";
+const emptyLine = "\r\n\r\n";
 
 export class Response {
     private socket: net.Socket;
