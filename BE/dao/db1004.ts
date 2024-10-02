@@ -1,7 +1,6 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
-
 class DB1004 {
     connectionPool: mysql.Pool;
     constructor() {
@@ -24,7 +23,7 @@ class DB1004 {
         return result;
     }
 
-    async select({ table, column, condition = null }) {
+    async select({ table, column, condition }) {
         const where = condition == null ? "" : ` WHERE ${condition}`;
         const query = `SELECT ${column} FROM ${table}${where};`;
         return await this.#query(query);
