@@ -1,5 +1,7 @@
+import { cookieParser } from "./Cookie";
+
 export class Request {
-    headers: { [key: string]: string } = {};
+    headers: { [key: string]: string | object } = {};
     body: string | { [key: string]: any };
     method: string;
     path: string;
@@ -28,6 +30,8 @@ export class Request {
             const [key, value] = line.split(":");
             this.headers[key] = value.trim();
         });
+
+        if (this.headers.Cookie != null) cookieParser(this.headers);
     }
 
     private parseBody(bodyMsg) {
