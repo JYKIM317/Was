@@ -23,6 +23,10 @@ function signUpController(req, res) {
                 res
                     .setStatus(302)
                     .send();
+            } else {
+                res
+                    .setStatus(409)
+                    .send();
             }
         });
     } catch (e) {

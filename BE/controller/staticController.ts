@@ -7,11 +7,13 @@ const staticFilePath = path.join(filePath, "../../../", "static");
 function staticController(req, res) {
     const filePath = path.join(staticFilePath, req.path === '/' ? 'index.html' : req.path);
     try {
-        res.setStatus(200);
-        res.sendFile(filePath);
+        res
+            .setStatus(200)
+            .sendFile(filePath);
     } catch (e) {
-        res.setStatus(404);
-        res.send();
+        res
+            .setStatus(404)
+            .send();
     }
 }
 

@@ -102,7 +102,7 @@ export class Response {
         header += `Server: Jinyoung\r\n`;
         header += `Date: ${new Date().toUTCString()}\r\n`;
         header += `Connection: ${this.connection}\r\n`;
-        if (this.connection === 'Keep-Alive') {
+        if (this.connection.toLowerCase() === 'keep-alive') {
             header += `Keep-Alive: timeout=5, max=1000\r\n`;
         }
         if (this.cookie) {
