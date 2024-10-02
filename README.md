@@ -3,11 +3,11 @@
 
 ## ✅ 나만의 체크포인트 ⭕❌
 
-❌ POST로 회원가입
+⭕ POST로 회원가입
 
 	⭕ HTTP Message Body Parser 구현
 
-	❌ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request)
+	⭕ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request)
 
 	⭕ 서버 측 회원가입 비즈니스 로직 구현
 
@@ -28,9 +28,9 @@
 
 	⭕ HTTP Message 쿠키를 활용할 수 있도록 변경
 
-	❌ Redis를 이용해 Session 저장
+	⭕ Session 저장
 
-	❌ 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
+	❌ 쿠키의 SID와 세션을 이용해 로그인 유지 기능 추가
 
 	❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
 
@@ -648,10 +648,6 @@ res
 </div>
 </details>
 
-<details>
-<summary>수요일</summary>
-<div markdown="1">
-
 ### 쿠키 설정
 
 우선 쿠키를 설정해주기 위해서 쿠키에 설정할 수 있는 옵션들에 대한 정의를 해줬습니다.
@@ -801,8 +797,90 @@ function cookieParser(header) {
 }
 ```
 
-</div>
-</details>
+
+### HTTP Request Content 검사
+
+서버에서 HTTP Request Message의 위변조를 검사하기 위해서 body가 존재할 경우에 Content-length와 body의 크기를 비교하는 로직을 작성했습니다.
+
+```ts
+//Request.ts
+    private parseBody(bodyMsg) {
+        const bodyMsgExist = bodyMsg !== "";
+		
+		...중략
+		
+        if (bodyMsgExist) {
+            const checkContentLength = this.headers["Content-Length"] === Buffer.byteLength(bodyMsg).toString();
+            if (!checkContentLength) this.error = "Invalid Content-Length";
+        }
+    }
+```
+
+
+로직은 body를 parsing해서 저장할 때 검사하도록 했고,
+만약 일치하지 않는다면 this.error을 해당 에러로 설정해 app.ts에서 로직을 수행하기 전 검사하도록 작성했습니다.
+
+```ts
+//app.ts
+const server = net.createServer(socket => {
+    socket.on("data", (data) => {
+        const socketData = data.toString();
+        const req = new Request(socketData);
+        const res = new Response(socket, req.headers.Connection);
+
+        if (req.error != null) res.setStatus(400).send(req.error);
+        else try {
+        ...중략
+```
+
+### 회원가입 정보 유효성 검사
+
+만약 회원가입 시 비정상적인 규격 혹은 공백의 문자열이 들어왔을 경우 이를 검사하는 로직을 추가했습니다.
+
+```ts
+//signUpController.ts
+    const emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$"
+    const isEmailStandard = email.match(emailRegexp) != null;
+    const isPasswordStandard = password.trim() !== "";
+    const isNameStandard = name.trim() !== "";
+
+    if (!isEmailStandard || !isPasswordStandard || !isNameStandard) res.setStatus(400).send();
+```
+
+
+### 세션 구현
+
+세션을 어떻게 구현할지 고민을 했는데 당장은 굳이 어렵게 혹은 복잡하게 구현할 필요가 없다고 생각해 간단히 Session 클래스를 만들어 외부에서 사용할 수 있도록 만들었습니다.
+
+```ts
+//Session.ts
+class Session {
+    private storage = {};
+
+    set(sid, data) {
+        this.storage[sid] = data;
+    }
+
+    get(sid) {
+        return this.storage[sid];
+    }
+
+    isExist(sid) {
+        return this.storage[sid] != null;
+    }
+}
+```
+
+그리고, 구현된 Session을 활용해 로그인에 성공 시 Session에 user id를 저장하도록 구현했습니다.
+
+```ts
+//signInController.ts
+if (password === result.password) {
+	const sid = sha1Encryption(email + Date.now().toString());
+	session.set(sid, result.id);
+	...중략
+```
+
 
 <details>
 <summary>1주차</summary>
