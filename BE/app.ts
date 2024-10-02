@@ -19,7 +19,8 @@ const server = net.createServer(socket => {
         const router = routeStack.find(req.path);
         logger.debug(socketData);
 
-        try {
+        if (req.error != null) res.setStatus(400).send(req.error);
+        else try {
             if (router) {
                 router.handler(req, res);
             } else {

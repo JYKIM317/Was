@@ -8,6 +8,7 @@ export class Request {
     version: string;
     params: { [key: string]: string } = {};
     query: { [key: string]: string } = {};
+    error?: string;
 
     constructor(msg) {
         this.parseMsg(msg);
@@ -35,11 +36,17 @@ export class Request {
     }
 
     private parseBody(bodyMsg) {
+        const bodyMsgExist = bodyMsg !== "";
         const contentJSON = 'application/json';
         if (this.headers["Content-Type"] === contentJSON) {
             this.body = JSON.parse(bodyMsg);
         } else {
             this.body = bodyMsg;
+        }
+
+        if (bodyMsgExist) {
+            const checkContentLength = this.headers["Content-Length"] === Buffer.byteLength(bodyMsg).toString();
+            if (!checkContentLength) this.error = "Invalid Content-Length";
         }
     }
 }
