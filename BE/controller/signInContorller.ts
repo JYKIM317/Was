@@ -1,5 +1,6 @@
-import { md5Encryption } from "../util/crypto";
+import { session } from "../core/session/Session";
 import { UserRepository } from "../repository/UserRepository";
+import { md5Encryption } from "../util/crypto";
 import { sha1Encryption } from "../util/crypto";
 
 type signInInfo = {
@@ -11,18 +12,15 @@ function signInController(req, res) {
     const userData: signInInfo = req.body as signInInfo;
     const [email, password] = [userData.email, md5Encryption(userData.password)];
 
-    //TODO: req.headers.Cookie.sid 가 세션에 존재한다면 세션 데이터 반환
-    //
     try {
         UserRepository.getUser(email).then((response) => {
             const result = response[0][0];
             const userExist = result != null;
             if (userExist) {
                 if (password === result.password) {
-                    const sid = sha1Encryption(email);
+                    const sid = sha1Encryption(email + Date.now().toString());
+                    session.set(sid, result.id);
                     res.setCookie("sid", sid, { HttpOnly: true });
-                    //TODO: 세션에 sid 등록
-                    //
                     res
                         .setStatus(302)
                         .send();
