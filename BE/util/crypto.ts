@@ -1,7 +1,13 @@
 import crypto from "crypto"
 
+//For password encryption
 function md5Encryption(data) {
     return crypto.createHash("md5").update(data + process.env.SECRET).digest("hex");
 }
 
-export { md5Encryption }
+//For sid generate
+function sha1Encryption(data) {
+    return crypto.createHash("sha1").update(data + process.env.SECRET).digest("hex");
+}
+
+export { md5Encryption, sha1Encryption }
