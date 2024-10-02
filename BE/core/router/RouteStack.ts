@@ -1,5 +1,5 @@
 import { Router } from "./Router";
-// singleton...으로
+
 class RouteStack {
     routes: Array<{ [key: string]: Router }> = [];
 

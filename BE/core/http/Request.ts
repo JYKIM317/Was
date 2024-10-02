@@ -1,11 +1,14 @@
+import { cookieParser } from "./Cookie";
+
 export class Request {
-    headers: { [key: string]: string } = {};
+    headers: { [key: string]: string | object } = {};
     body: string | { [key: string]: any };
     method: string;
     path: string;
     version: string;
     params: { [key: string]: string } = {};
     query: { [key: string]: string } = {};
+    error?: string;
 
     constructor(msg) {
         this.parseMsg(msg);
@@ -26,16 +29,24 @@ export class Request {
     private parseHeader(headerMsg) {
         headerMsg.forEach((line) => {
             const [key, value] = line.split(":");
-            this.headers[key] = value.trim();
+            this.headers[key.toLowerCase()] = value.trim();
         });
+
+        if (this.headers.cookie != null) cookieParser(this.headers);
     }
 
     private parseBody(bodyMsg) {
+        const bodyMsgExist = bodyMsg !== "";
         const contentJSON = 'application/json';
-        if (this.headers["Content-Type"] === contentJSON) {
+        if (this.headers["content-type"] === contentJSON) {
             this.body = JSON.parse(bodyMsg);
         } else {
             this.body = bodyMsg;
+        }
+
+        if (bodyMsgExist) {
+            const checkContentLength = this.headers["content-length"] === Buffer.byteLength(bodyMsg).toString();
+            if (!checkContentLength) this.error = "Invalid Content-Length";
         }
     }
 }

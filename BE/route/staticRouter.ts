@@ -1,7 +1,6 @@
 import { Router } from '../core/router/Router';
 import { staticController } from '../controller/staticController';
 
-
 const staticRouter = new Router();
 
 staticRouter.get("/", staticController);

@@ -15,11 +15,12 @@ const server = net.createServer(socket => {
     socket.on("data", (data) => {
         const socketData = data.toString();
         const req = new Request(socketData);
-        const res = new Response(socket, req.headers.Connection);
+        const res = new Response(socket, req.headers.connection);
         const router = routeStack.find(req.path);
         logger.debug(socketData);
 
-        try {
+        if (req.error != null) res.setStatus(400).send(req.error);
+        else try {
             if (router) {
                 router.handler(req, res);
             } else {
@@ -32,7 +33,7 @@ const server = net.createServer(socket => {
                 .setStatus(500)
                 .send();
         } finally {
-            if (res.connection != "Keep-Alive") socket.end();
+            if (res.connection.toLowerCase() != "keep-alive") socket.end();
         }
     });
 });

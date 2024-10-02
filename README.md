@@ -3,11 +3,16 @@
 
 ## ✅ 나만의 체크포인트 ⭕❌
 
-❌ POST로 회원가입
+⭕ POST로 회원가입
+
 	⭕ HTTP Message Body Parser 구현
-	❌ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
+
+	⭕ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request)
+
 	⭕ 서버 측 회원가입 비즈니스 로직 구현
+
 	⭕ 성공 시, 실패 시 응답 구현 
+
 		- 성공 시 로그인 페이지로 Redirection (302)
 		- 실패 시 서버 에러 응답
 
@@ -16,26 +21,39 @@
 ⭕ VM 환경의 DB와 연동
 
 ❌ 쿠키를 이용한 로그인
-	❌ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
-	❌ HTTP Message 쿠키 검사 로직 추가
-	❌ HTTP Message 쿠키를 활용할 수 있도록 변경
-	❌ Redis를 이용해 Session 저장
-	❌ 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
+
+	⭕ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
+
+	⭕ HTTP Message 쿠키 검사 로직 추가
+
+	⭕ HTTP Message 쿠키를 활용할 수 있도록 변경
+
+	⭕ Session 저장
+
+	❌ 쿠키의 SID와 세션을 이용해 로그인 유지 기능 추가
+
 	❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
 
 ⭕ 라우트 방식 개선
 
 ❌ 리액트에서 바닐라로 FE 사양 변경 
+
 	❌ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+
 	❌ 전체 페이지를 리액트에서 바닐라로 변환
+
 	❌ 웹 프론트 이벤트 및 기능 Script로 변환
 
 ❌ 웹 프론트 구현
+
 	❌ 메인 페이지 구현
 
 ❌ 테스트 코드 작성
+
 	❌ Jest 세부 기능 학습
+
 	❌ HTTP Message에 대한 테스트 코드 작성
+  
 	❌ 비즈니스 로직에 대한 테스트 코드 작성
 
 
@@ -209,6 +227,9 @@ FLUSH PRIVILEGES;
 </div>
 </details>
 
+<details>
+<summary>화요일</summary>
+<div markdown="1">
 
 ### 라우트 방식 개선
 
@@ -480,7 +501,7 @@ class Router extends Url {
  ┃ ┗ 📜Url.ts
 ```
 
-# Response 객체 생성 위치 변경
+### Response 객체 생성 위치 변경
 
 기존에는 라우터에 Request만 전달해 만들어지는 결과에 따라 Response 객체를 생성해 반환하도록 구현했는데 Response 객체를 처음에 생성하고 넘기는 방식으로 변경하려고 합니다.
 
@@ -622,6 +643,242 @@ socket.write(response.responseMsg);
 res
   .setStatus(400)
   .send();
+```
+
+</div>
+</details>
+
+### 쿠키 설정
+
+우선 쿠키를 설정해주기 위해서 쿠키에 설정할 수 있는 옵션들에 대한 정의를 해줬습니다.
+
+```ts
+//Cookie.ts
+type cookieSameSiteOption = "Strict" | "Lax" | "None";
+
+type cookieOption = {
+    Domain?: string;
+    Expires?: Date;
+    HttpOnly?: boolean;
+    "Max-Age"?: number;
+    Path?: string;
+    Secure?: boolean;
+    SameSite?: cookieSameSiteOption;
+    Partitioned?: boolean;
+}
+```
+
+이후에 Response의 setCookie 메서드를 통해 쿠키를 설정한 경우 HTTP Response header를 생성할 때 Set-Cookie 속성도 함께 보내질 수 있도록 만들었습니다.
+
+```ts
+//Response.ts
+    setCookie(key: string, value, option?: cookieOption) {
+        this.cookie = `${key}=${value}`;
+        if (option) Object.keys(option).forEach((opt) => {
+            if (typeof option[opt] !== 'boolean') {
+                this.cookie += `; ${opt}=${option[opt]}`;
+            } else if (option[opt]) {
+                this.cookie += `; ${opt}`;
+            }
+        });
+        return this;
+    }
+```
+
+
+### 잘못된 HTTP Response Message
+
+HTTP Response Message를 완성해서 보내는 것에서 개별적으로 보내는 것으로 방식을 바꾼 이후부터 
+
+Failed to load resource: net::ERR_INVALID_HTTP_RESPONSE
+
+에러를 받을 수 있었습니다. HTTP Response Message가 잘못되었다는 뜻이었는데,
+
+이전에는 발생하지 않다가 Response 를 리팩토링 하는 과정에서 발생한 문제라고 판단할 수 있었습니다.
+
+```ts
+	this.socket.write(startLine);
+	this.socket.write(header);
+	this.socket.write(emptyLine);
+	this.socket.write(body);
+```
+
+현재는 위 처럼 HTTP Response Message를 보내고 있었는데, 
+
+문제의 원인은 emptyLine에 있었습니다.
+
+HTTP에서 header와 body의 구분은 빈 문자열인 empty line으로 판단하는데, 제가 이 empty line을 정의하는 부분에서 `\r\n`으로 처리했기 때문에 발생한 문제였고, 해당 부분을 `\r\n\r\n` 으로 바꿔 해결할 수 있었습니다.
+
+```ts
+//해결 전
+const emptyLine = "\r\n";
+
+//해결 후
+const emptyLine = "\r\n\r\n";
+```
+
+
+### DB 접근 및 비즈니스 로직 처리 계층 분리
+
+기존에는 빠르게 기능 구현을 확인하기 위해서 라우팅 과정에서 호출하는 controller 함수에 DB로 접근해 데이터를 가져오는 기능을 포함시켰습니다.
+
+이제는 확장성과 계층 별 책임과 역할 분리를 목적으로 Repository라는 데이터 접근 계층을 만들고, Controller 계층에선 비즈니스 로직만 처리하도록 분리하려고 합니다.
+
+```ts
+//UserRepository.ts
+class UserRepository {
+    static tableName = "users";
+
+    static async getUser(email) {
+        return await db1004.select({
+            table: this.tableName,
+            column: "*",
+            condition: `email="${email}"`
+        });
+    }
+
+    static async createUser(email, password, name) {
+        return await db1004.insert({
+            table: this.tableName,
+            columns: ["email", "password", "name"],
+            values: [email, password, name]
+        });
+    }
+}
+```
+
+```ts
+//signUpController.ts
+function signUpController(req, res) {
+    const userData: signUpInfo = req.body as signUpInfo;
+    const [email, password, name] = [userData.email, md5Encryption(userData.password), userData.name];
+
+    try {
+        UserRepository.getUser(email).then((response) => {
+            const result = response[0][0];
+            const emailAvailable = result == null;
+            if (emailAvailable) {
+                UserRepository.createUser(email, password, name);
+
+                res
+                    .setStatus(302)
+                    .send();
+            }
+        });
+    } catch (e) {
+        res
+            .setStatus(400)
+            .send();
+    }
+}
+```
+
+### HTTP Request Cookie Parsing
+
+쿠키를 설정하고 이후에 쿠키가 Request로 오기 시작하면서 Cookie가 있는 경우 이용하기 쉽도록 object로 파싱하는 과정이 필요하다고 느꼈습니다.
+
+```ts
+//Request.ts
+    private parseHeader(headerMsg) {
+	...중략
+        if (this.headers.Cookie != null) cookieParser(this.headers);
+    }
+
+//Cookie.ts
+function cookieParser(header) {
+    const cookieString = header.Cookie;
+    const cookies = cookieString.split(";");
+    const cookieObject = cookies.reduce((obj, thisCookie) => {
+        const [key, value] = thisCookie.trim().split("=");
+        obj[key] = value;
+        return obj;
+    }, {});
+    header.Cookie = cookieObject;
+}
+```
+
+
+### HTTP Request Content 검사
+
+서버에서 HTTP Request Message의 위변조를 검사하기 위해서 body가 존재할 경우에 Content-length와 body의 크기를 비교하는 로직을 작성했습니다.
+
+```ts
+//Request.ts
+    private parseBody(bodyMsg) {
+        const bodyMsgExist = bodyMsg !== "";
+		
+		...중략
+		
+        if (bodyMsgExist) {
+            const checkContentLength = this.headers["Content-Length"] === Buffer.byteLength(bodyMsg).toString();
+            if (!checkContentLength) this.error = "Invalid Content-Length";
+        }
+    }
+```
+
+
+로직은 body를 parsing해서 저장할 때 검사하도록 했고,
+만약 일치하지 않는다면 this.error을 해당 에러로 설정해 app.ts에서 로직을 수행하기 전 검사하도록 작성했습니다.
+
+```ts
+//app.ts
+const server = net.createServer(socket => {
+    socket.on("data", (data) => {
+        const socketData = data.toString();
+        const req = new Request(socketData);
+        const res = new Response(socket, req.headers.Connection);
+
+        if (req.error != null) res.setStatus(400).send(req.error);
+        else try {
+        ...중략
+```
+
+### 회원가입 정보 유효성 검사
+
+만약 회원가입 시 비정상적인 규격 혹은 공백의 문자열이 들어왔을 경우 이를 검사하는 로직을 추가했습니다.
+
+```ts
+//signUpController.ts
+    const emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$"
+    const isEmailStandard = email.match(emailRegexp) != null;
+    const isPasswordStandard = password.trim() !== "";
+    const isNameStandard = name.trim() !== "";
+
+    if (!isEmailStandard || !isPasswordStandard || !isNameStandard) res.setStatus(400).send();
+```
+
+
+### 세션 구현
+
+세션을 어떻게 구현할지 고민을 했는데 당장은 굳이 어렵게 혹은 복잡하게 구현할 필요가 없다고 생각해 간단히 Session 클래스를 만들어 외부에서 사용할 수 있도록 만들었습니다.
+
+```ts
+//Session.ts
+class Session {
+    private storage = {};
+
+    set(sid, data) {
+        this.storage[sid] = data;
+    }
+
+    get(sid) {
+        return this.storage[sid];
+    }
+
+    isExist(sid) {
+        return this.storage[sid] != null;
+    }
+}
+```
+
+그리고, 구현된 Session을 활용해 로그인에 성공 시 Session에 user id를 저장하도록 구현했습니다.
+
+```ts
+//signInController.ts
+if (password === result.password) {
+	const sid = sha1Encryption(email + Date.now().toString());
+	session.set(sid, result.id);
+	...중략
 ```
 
 
