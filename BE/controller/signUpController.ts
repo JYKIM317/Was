@@ -10,10 +10,13 @@ type signUpInfo = {
 function signUpController(req, res) {
     const userData: signUpInfo = req.body as signUpInfo;
     const [email, password, name] = [userData.email, md5Encryption(userData.password), userData.name];
+    const emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$"
+    const isEmailStandard = email.match(emailRegexp) != null;
+    const isPasswordStandard = password.trim() !== "";
+    const isNameStandard = name.trim() !== "";
 
-    //TODO: email 정규표현식 검사 추가
-    //
-    try {
+    if (!isEmailStandard || !isPasswordStandard || !isNameStandard) res.setStatus(400).send();
+    else try {
         UserRepository.getUser(email).then((response) => {
             const result = response[0][0];
             const emailAvailable = result == null;
