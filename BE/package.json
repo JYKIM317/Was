@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "dev": "nodemon npm run dev"
+    "dev": "nodemon npm run dev",
+    "test": "jest"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
