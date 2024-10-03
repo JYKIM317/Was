@@ -10,7 +10,8 @@ type signInInfo = {
 
 function signInController(req, res) {
     const userData: signInInfo = req.body as signInInfo;
-    const [email, password] = [userData.email, md5Encryption(userData.password)];
+    const { email, password } = userData;
+    const encryptionPW = md5Encryption(password);
     const sid = req.headers.cookie.sid;
 
     if (session.isExist(sid)) res.setStatus(200).send(session.get(sid));
@@ -19,7 +20,7 @@ function signInController(req, res) {
             const result = response[0][0];
             const userExist = result != null;
             if (userExist) {
-                if (password === result.password) {
+                if (encryptionPW === result.password) {
                     const sid = sha1Encryption(email + Date.now().toString());
                     session.set(sid, result.id);
                     res.setCookie("sid", sid, { HttpOnly: true });

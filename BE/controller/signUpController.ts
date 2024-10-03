@@ -9,7 +9,8 @@ type signUpInfo = {
 
 function signUpController(req, res) {
     const userData: signUpInfo = req.body as signUpInfo;
-    const [email, password, name] = [userData.email, md5Encryption(userData.password), userData.name];
+    const { email, password, name } = userData;
+    const encryptionPW = md5Encryption(password);
     const emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$"
     const isEmailStandard = email.match(emailRegexp) != null;
     const isPasswordStandard = password.trim() !== "";
@@ -21,7 +22,7 @@ function signUpController(req, res) {
             const result = response[0][0];
             const emailAvailable = result == null;
             if (emailAvailable) {
-                UserRepository.createUser(email, password, name);
+                UserRepository.createUser(email, encryptionPW, name);
 
                 res
                     .setStatus(302)

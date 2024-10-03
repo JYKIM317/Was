@@ -32,7 +32,10 @@ export class Request {
             this.headers[key.toLowerCase()] = value.trim();
         });
 
-        if (this.headers.cookie != null) cookieParser(this.headers);
+        if (this.headers.cookie != null) {
+            const cookieObject = cookieParser(this.headers.cookie);
+            this.headers.cookie = cookieObject;
+        }
     }
 
     private parseBody(bodyMsg) {
