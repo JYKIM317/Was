@@ -12,7 +12,7 @@ function signInController(req, res) {
     const userData: signInInfo = req.body as signInInfo;
     const { email, password } = userData;
     const encryptionPW = md5Encryption(password);
-    const sid = req.headers.cookie.sid;
+    const sid = req.headers.cookie != null ? req.headers.cookie.sid : "none";
 
     if (session.isExist(sid)) res.setStatus(200).send(session.get(sid));
     else try {
@@ -23,7 +23,7 @@ function signInController(req, res) {
                 if (encryptionPW === result.password) {
                     const sid = sha1Encryption(email + Date.now().toString());
                     session.set(sid, result.id);
-                    res.setCookie("sid", sid, { HttpOnly: true });
+                    res.setCookie("sid", sid, { HttpOnly: true, Path: "/", "Max-Age": 60 * 60 * 24 * 30 });
                     res
                         .setStatus(302)
                         .send();
@@ -40,6 +40,7 @@ function signInController(req, res) {
             }
         });
     } catch (e) {
+        console.log(e);
         res
             .setStatus(500)
             .send();
