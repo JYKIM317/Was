@@ -16,11 +16,9 @@
 		- 성공 시 로그인 페이지로 Redirection (302)
 		- 실패 시 서버 에러 응답
 
-❌ Custom Error 구현
-
 ⭕ VM 환경의 DB와 연동
 
-❌ 쿠키를 이용한 로그인
+⭕ 쿠키를 이용한 로그인
 
 	⭕ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
 
@@ -49,6 +47,8 @@
 	❌ 메인 페이지 구현
 
 ❌ 테스트 코드 작성
+
+  ⭕ Jest와 TS에 관한 테스트 환경 구성
 
 	❌ Jest 세부 기능 학습
 
@@ -648,6 +648,11 @@ res
 </div>
 </details>
 
+
+<details>
+<summary>수요일</summary>
+<div markdown="1">
+
 ### 쿠키 설정
 
 우선 쿠키를 설정해주기 위해서 쿠키에 설정할 수 있는 옵션들에 대한 정의를 해줬습니다.
@@ -880,6 +885,219 @@ if (password === result.password) {
 	session.set(sid, result.id);
 	...중략
 ```
+
+</div>
+</details>
+
+
+### 멘토님 리뷰 사항 개선
+
+우선 리뷰 요청에 대한 개선을 수행하고자 했고,
+단 저만의 규칙으로 멘토님이 제안해주셨다고 다 변경하는 것이 아닌, 하나의 의견으로 받아들이고 제가 생각할 때도 합당하고 바꾸면 좋겠다 싶은 내용들만 개선하기로 했습니다.
+
+#### DB 관련
+
+```ts
+//#query 메서드가 수행하려는 메시지가 무엇인지 궁금해요.
+//executeQuery라는 메서드명은 어떨까요? 기존 connectionPool에서 사용하는 메서드와 헷갈릴 수 있을 거 같아요.
+
+    async #query(query, values = null) {
+        const connection = await this.connectionPool.getConnection();
+        const result = connection.query(query, values);
+        connection.release();
+        return result;
+    }
+```
+
+mysql connection의 기존 메서드인 .query와 헷갈릴 수 있을 것 같다는 의견은 생각해보지 못한 접근이었습니다.
+
+확실히 그렇게 생각해보니 connection의 query 메서드와는 다르게 connection을 연결하고 해제하는 로직이 추가돼 구분이 되면 좋겠다고 생각하게 되었고,
+
+제안해주신 대로 executeQuery가 의미있는 것 같아 해당 내용처럼 변경했습니다.
+
+```ts
+//개선 후
+private async executeQuery(query, values?) {
+	...
+}
+```
+
+
+#### 쿠키 관련
+
+```ts
+//작성한 함수명이 cookieParser기 때문에 cookie 객체만 반환하고, header에 추가하는 함수를 별도로 작성해도 좋을 거 같아요.
+function cookieParser(header) {
+    const cookieString = header.cookie;
+    const cookies = cookieString.split(";");
+    const cookieObject = cookies.reduce((obj, thisCookie) => {
+        const [key, value] = thisCookie.trim().split("=");
+        obj[key] = value;
+        return obj;
+    }, {});
+    header.cookie = cookieObject;
+}
+```
+
+의견을 주신 것에 적극 동감했습니다.
+
+이름이 cookieParser인데 현재는 헤더를 인자로 받아 쿠키를 파싱한 형태로 저장하는 역할을 수행하고 있기 때문에
+
+의견을 주신대로 역할을 분리하는 것이 맞다고 생각했고 아래처럼 개선했습니다.
+
+```ts
+//개선 후
+function cookieParser(cookieString) {
+    const cookies = cookieString.split(";");
+    const cookieObject = cookies.reduce((obj, thisCookie) => {
+        const [key, value] = thisCookie.trim().split("=");
+        obj[key] = value;
+        return obj;
+    }, {});
+
+    return cookieObject;
+}
+
+//Request.ts
+if (this.headers.cookie != null) {
+	const cookieObject = cookieParser(this.headers.cookie);
+	this.headers.cookie = cookieObject;
+}
+```
+
+
+#### 이외 로직 관련
+
+```ts
+//파이썬스러운(?) 문법처럼 보여요. 객체 디스트력쳐링을 활용하는건 어떨까요~?
+
+function signUpController(req, res) {
+	const [email, password, name] = [userData.email, md5(Encryption(userData.password), userData.name)];
+...
+```
+
+파이썬을 사용해본 적이 없어서 어떤 느낌으로 받아들이시는지는 잘 모르겠지만,  말씀하신 것 처럼 객체 디스트럭처링을 쓰면 조금 더 깔끔해지는 것 같다고 느껴 변경하게 되었습니다.
+
+```ts
+//개선 후
+function signUpController(req, res) {
+    const { email, password, name } = userData;
+    const encryptionPW = md5Encryption(password);
+...
+```
+
+
+추가로 고민과 해결 과정에서 라우팅에 관한 개선 내용이 있었고, 개선한 부분에 대해 어떻게 생각하시는 여쭤봤을 때 인상적인 방법에 대해 추가로 알 수 있어서 이후에 더 개선하면 좋겠다고 생각했습니다.
+
+```
+HTTP Request 라우팅 관련 로직
+
+정규식을 사용하여 동적 경로를 처리하고 있는데요. `findIndex`로 모든 경로에 대해 정규식 매칭을 반복하고 있어 경우의 수가 많아지면 성능 저하에 영향을 미칠 수 있습니다. 이 때는 트리구조를 고민해보셔도 좋을 거 같습니다. 성능에 문제가 없는 수준이라면 우선 다른 요구사항 구현에 리소스를 쏟는 게 좋을 거 같긴 합니다.
+```
+
+### 로그인 과정 sid 검증
+
+```ts
+    if (session.isExist(sid)) res.setStatus(200).send(session.get(sid));
+
+    else try {
+    ...중략
+```
+
+### 유효하지 않은 SID일 시 쿠키초기화
+
+매 요청이 들어오면 유효한 sid인지 검사합니다.
+만약 유효하지 않은 sid일 경우에 sid를 초기화해주는 로직을 작성했습니다.
+
+```ts
+//app.ts
+function ifSidNotValidCookieInit(req, res) {
+    const sid = req.headers.cookie != null ? req.headers.cookie.sid : "none";
+    const ifSidNotValid = sid !== "none" && !session.isExist(sid);
+    if (ifSidNotValid) {
+        res.setCookie("sid", "Remove cookie", { HttpOnly: true, Path: "/", "Max-Age": 0 });
+    }
+}
+```
+
+### Jest 및 관련 패키지 설치, 설정
+
+https://kulshekhar.github.io/ts-jest/docs/getting-started/installation/#jest-config-file
+
+typescript와 jest를 함께 사용하기 위해 패키지 설치와 함께 설정해야 할 것들이 있었습니다.
+
+```console
+//jest 설치
+npm install --save-dev jest typescript ts-jest @types/jest
+```
+
+패키지를 설치한 이후 기본 설정 파일을 만들어줬습니다.
+
+```console
+npx ts-jest config:init
+```
+
+이후 생긴 jest.config.js 파일에 `preset: "ts-jest`를 추가해줍니다.
+
+```js
+//jest.config.js
+/** @type {import('ts-jest').JestConfigWithTsJest} **/
+module.exports = {
+  preset: "ts-jest",
+  testEnvironment: "node",
+  transform: {
+    "^.+.ts?$": ["ts-jest", {}],
+  },
+  moduleFileExtensions: ["ts", "js"],
+  testMatch: ["**/**/*.test.ts"],
+};
+```
+
+ 빠르게 테스트를 시작할 수 있도록 package.json의 script에도 test를 추가해줍니다.
+
+```json
+//package.json
+  "scripts": {
+  //..중략
+    "test": "jest"
+  },
+```
+
+이후 정상적으로 jest가 실행되는지 확인하기 위해 임시 테스트를 실행했는데
+테스트는 실행되었지만, 아래와 같이 경고 문구를 받게 되었습니다.
+
+```console
+ts-jest[config] (WARN) message TS151001: 
+If you have issues related to imports, you should consider setting `esModuleInterop` to `true` in your TypeScript configuration file (usually `tsconfig.json`). See 
+https://blogs.msdn.microsoft.com/typescript/2018/01/31/announcing-typescript-2-7/#easier-ecmascript-module-interoperability for more information.
+```
+
+ts를 사용할 때 import 관련 에러를 겪을 수 있으니 연관 돼 있다면 tsconfig 파일에 `esModuleInterop` 옵션을 true로 설정하라는 의미였습니다.
+
+아직 정상 동작 확인 단계였지만 이후에는 import를 사용할 예정이기 때문에 미리 tsconfig 파일을 생성해서 설정해주도록 하겠습니다.
+
+https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-tsconfigjson-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0-%EC%B4%9D%EC%A0%95%EB%A6%AC
+
+
+```json
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    },
+    "include": [
+        "**/*.test.ts"
+    ]
+}
+```
+
+### 테스트 코드 작성하기
+
+..어떻게 해야 하지? ㅠㅠ 어떻게 작성하면 좋을지 감이 안잡힙니다.
 
 
 <details>

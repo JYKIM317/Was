@@ -9,6 +9,10 @@ class Session {
         return this.storage[sid];
     }
 
+    remove(sid) {
+        delete this.storage[sid];
+    }
+
     isExist(sid) {
         return this.storage[sid] != null;
     }

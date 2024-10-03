@@ -12,15 +12,15 @@ type cookieOption = {
     Partitioned?: boolean;
 }
 
-function cookieParser(header) {
-    const cookieString = header.cookie;
+function cookieParser(cookieString) {
     const cookies = cookieString.split(";");
     const cookieObject = cookies.reduce((obj, thisCookie) => {
         const [key, value] = thisCookie.trim().split("=");
         obj[key] = value;
         return obj;
     }, {});
-    header.cookie = cookieObject;
+
+    return cookieObject;
 }
 
 export { cookieOption, cookieParser }
