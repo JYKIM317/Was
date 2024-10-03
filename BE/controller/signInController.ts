@@ -11,8 +11,10 @@ type signInInfo = {
 function signInController(req, res) {
     const userData: signInInfo = req.body as signInInfo;
     const [email, password] = [userData.email, md5Encryption(userData.password)];
+    const sid = req.headers.cookie.sid;
 
-    try {
+    if (session.isExist(sid)) res.setStatus(200).send(session.get(sid));
+    else try {
         UserRepository.getUser(email).then((response) => {
             const result = response[0][0];
             const userExist = result != null;
