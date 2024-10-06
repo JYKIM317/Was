@@ -4,11 +4,6 @@ import net from 'net';
 import { statusMsg, contentType } from "../../util/const";
 import { cookieOption } from "./Cookie";
 
-const emptyLine = "\r\n\r\n";
-
-// 중복 코드 줄이기
-// 에러 메시지 상수화
-
 export class Response {
     private socket: net.Socket;
     private statusCode: number = 0;
@@ -21,60 +16,41 @@ export class Response {
     }
 
     send(data?: string) {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        const body = data ?? "";
         let header = this.setInitialHeaderOption();
-        if (body !== "") {
+        if (data) {
             header += `Content-Type: text/plain; charset=UTF-8\r\n`;
-            header += `Content-Length: ${Buffer.byteLength(body, "utf8")}\r\n`;
+            header += `Content-Length: ${Buffer.byteLength(data, "utf8")}\r\n`;
         }
 
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-        this.socket.write(body);
+        this.socketWrite(header, data);
     }
 
     sendFile(filePath) {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
         if (!fs.existsSync(filePath)) throw new Error("File does not exist");
         const ext = path.extname(filePath);
         const file = fs.readFileSync(filePath);
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
         let header = this.setInitialHeaderOption();
         header += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
         header += `Content-Length: ${Buffer.byteLength(file)}\r\n`;
 
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-        this.socket.write(file);
+        this.socketWrite(header, file);
     }
 
     json(data: object) {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
         const body = JSON.stringify(data);
         let header = this.setInitialHeaderOption();
         header += `Content-Type: application/json; charset=UTF-8\r\n`;
         header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
 
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-        this.socket.write(body);
+        this.socketWrite(header, body);
     }
 
     redirect(url, statusCode = 302) {
         this.statusCode = statusCode;
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
         let header = this.setInitialHeaderOption();
         header += `Location: ${url}\r\n`;
 
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
+        this.socketWrite(header);
     }
 
     setStatus(statusCode) {
@@ -112,6 +88,17 @@ export class Response {
             header += `Set-Cookie: ${this.cookie}\r\n`;
         }
         return header;
+    }
+
+    private socketWrite(header, body?) {
+        if (!this.statusCode) throw new Error("Status code has not been set yet.");
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
+        const emptyLine = "\r\n\r\n";
+
+        this.socket.write(startLine);
+        this.socket.write(header);
+        this.socket.write(emptyLine);
+        if (body) this.socket.write(body);
     }
 }
 
