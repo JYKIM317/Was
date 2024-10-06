@@ -25,18 +25,16 @@ const server = net.createServer(socket => {
             if (router) {
                 router.handler(req, res);
             } else {
-                res
-                    .setStatus(404)
-                    .send();
+                res.setStatus(404).send();
             }
         } catch (_) {
-            res
-                .setStatus(500)
-                .send();
+            res.setStatus(500).send();
         } finally {
             if (res.connection.toLowerCase() != "keep-alive") socket.end();
-        } //TODO: socket.on(”error”)
+        }
     });
+
+    socket.on("error", (_) => socket.end());
 });
 
 const PORT = 8080;
