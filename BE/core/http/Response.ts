@@ -6,6 +6,9 @@ import { cookieOption } from "./Cookie";
 
 const emptyLine = "\r\n\r\n";
 
+// 중복 코드 줄이기
+// 에러 메시지 상수화
+
 export class Response {
     private socket: net.Socket;
     private statusCode: number = 0;

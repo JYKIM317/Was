@@ -35,7 +35,7 @@ const server = net.createServer(socket => {
                 .send();
         } finally {
             if (res.connection.toLowerCase() != "keep-alive") socket.end();
-        }
+        } //TODO: socket.on(”error”)
     });
 });
 

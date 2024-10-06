@@ -19,6 +19,7 @@ function signInController(req, res) {
         UserRepository.getUser(email).then((response) => {
             const result = response[0][0];
             const userExist = result != null;
+            //60 * 60 * 24 * 30
             if (userExist) {
                 if (encryptionPW === result.password) {
                     const sid = sha1Encryption(email + Date.now().toString());
