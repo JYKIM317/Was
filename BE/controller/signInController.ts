@@ -19,32 +19,18 @@ function signInController(req, res) {
         UserRepository.getUser(email).then((response) => {
             const result = response[0][0];
             const userExist = result != null;
-            //60 * 60 * 24 * 30
-            if (userExist) {
-                if (encryptionPW === result.password) {
-                    const sid = sha1Encryption(email + Date.now().toString());
-                    session.set(sid, result.id);
-                    res.setCookie("sid", sid, { HttpOnly: true, Path: "/", "Max-Age": 60 * 60 * 24 * 30 });
-                    res
-                        .setStatus(302)
-                        .send();
-                } else {
-                    res
-                        .setStatus(400)
-                        .send();
-                }
+            const DAY = 60 * 60 * 24;
 
-            } else {
-                res
-                    .setStatus(400)
-                    .send();
-            }
+            if (!userExist) return res.setStatus(400).send();
+            if (encryptionPW !== result.password) return res.setStatus(400).send();
+
+            const sid = sha1Encryption(email + Date.now().toString());
+            session.set(sid, result.id);
+            res.setCookie("sid", sid, { HttpOnly: true, Path: "/", "Max-Age": 30 * DAY });
+            res.setStatus(302).send();
         });
     } catch (e) {
-        console.log(e);
-        res
-            .setStatus(500)
-            .send();
+        res.setStatus(500).send();
     }
 }
 
