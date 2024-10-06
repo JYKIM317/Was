@@ -1,10 +1,6 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
-/*
-SQL Injection 관련해서 문제 발생할 수 있음
-*/
-
 class DB1004 {
     connectionPool: mysql.Pool;
     constructor() {
