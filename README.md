@@ -1,92 +1,46 @@
 
-# 🔥 나만의 주간 계획서 (2)
+# 🔥 나만의 주간 계획서 (3)
 
 ## ✅ 나만의 체크포인트 ⭕❌
 
-⭕ POST로 회원가입
-
-	⭕ HTTP Message Body Parser 구현
-
-	⭕ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request)
-
-	⭕ 서버 측 회원가입 비즈니스 로직 구현
-
-	⭕ 성공 시, 실패 시 응답 구현 
-
-		- 성공 시 로그인 페이지로 Redirection (302)
-		- 실패 시 서버 에러 응답
-
-⭕ VM 환경의 DB와 연동
-
-⭕ 쿠키를 이용한 로그인
-
-	⭕ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
-
-	⭕ HTTP Message 쿠키 검사 로직 추가
-
-	⭕ HTTP Message 쿠키를 활용할 수 있도록 변경
-
-	⭕ Session 저장
-
-	❌ 쿠키의 SID와 세션을 이용해 로그인 유지 기능 추가
-
-	❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
-
-⭕ 라우트 방식 개선
-
 ❌ 리액트에서 바닐라로 FE 사양 변경 
-
 	❌ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
-
 	❌ 전체 페이지를 리액트에서 바닐라로 변환
-
 	❌ 웹 프론트 이벤트 및 기능 Script로 변환
 
 ❌ 웹 프론트 구현
-
 	❌ 메인 페이지 구현
+	❌ 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
+	❌ 로그인 상태가 아닐 경우 로그인 버튼 표시
+
+❌ 로그아웃 구현
+	❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
 
 ❌ 테스트 코드 작성
-
-  ⭕ Jest와 TS에 관한 테스트 환경 구성
-
 	❌ Jest 세부 기능 학습
-
 	❌ HTTP Message에 대한 테스트 코드 작성
-  
 	❌ 비즈니스 로직에 대한 테스트 코드 작성
 
+❌ 동적인 HTML 응답 구현
+	❌ 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
+	❌ 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
+		- 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
+
+❌ 게시판 기능을 포함한 ERD 다시 그리기
+
+❌ 게시판 기능 완성
+	❌ 메인 하단에 글쓰기 버튼 추가
+		- 글쓰기 버튼 시 write.html로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	❌ write.html에서는 글을 입력할 수 있도록
+	❌ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	❌ 404 및 기타 에러 처리 페이지 구현
 
 ## 📝 학습 및 구현 계획
 
 ### 월요일
 
-- VM 환경의 DB와 연동
-
-- POST로 회원가입
-	- HTTP Message Body Parser 구현
-	- Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
-	- 서버 측 회원가입 비즈니스 로직 구현
-	- 성공 시, 실패 시 응답 구현 
-		- 성공 시 로그인 페이지로 Redirection (302)
-		- 실패 시 서버 에러 응답
-
-- 라우트 방식 개선
-
-### 화요일
-
-- 쿠키를 이용한 로그인
-	- 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
-	- HTTP Message 쿠키 검사 로직 추가
-	- HTTP Message 쿠키를 활용할 수 있도록 변경
-	- Redis를 이용해 Session 저장
-	- 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
-	- 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
- 
-### 수요일
-
-- Custom Error 구현
-  
 - 리액트에서 바닐라로 FE 사양 변경 
 	- 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
 	- 전체 페이지를 리액트에서 바닐라로 변환
@@ -94,1010 +48,41 @@
 
 - 웹 프론트 구현
 	- 메인 페이지 구현
+	- 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
+	- 로그인 상태가 아닐 경우 로그인 버튼 표시
+
+
+- 로그아웃 구현
+	- 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
+
+
+### 화요일
+
+- 동적인 HTML 응답 구현
+	- 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
+	- 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
+		- 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
+
+### 수요일
+
+- 게시판 기능을 포함한 ERD 다시 그리기
+
+- 게시판 기능 완성
+	- 메인 하단에 글쓰기 버튼 추가
+		- 글쓰기 버튼 시 write.html로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	- write.html에서는 글을 입력할 수 있도록
+	- 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	- 404 및 기타 에러 처리 페이지 구현
 
 ### 목요일
 
-- 테스트 코드 작성
-	- Jest 세부 기능 학습
-	- HTTP Message에 대한 테스트 코드 작성
-	- 비즈니스 로직에 대한 테스트 코드 작성
+- 이전 날까지 못한 기능 구현 마무리
 
 ## ✏️ 고민과 해결 과정 쌓아가기
 
-<details>
-<summary>월요일</summary>
-<div markdown="1">
 
-### VM 환경의 DB와 연동
-
-기존에 Docker로 로컬에 DB환경을 구성했지만 원격 환경을 이용하기 위해 VM에 설치한 MySQL로 마이그레이션을 진행하기로 했습니다.
-
-환경만 VM으로 옮기는 것이었기 때문에 크게 달라진 사항은 없었고, DB연결만 VM으로 옮기기 위해 포트포워딩함으로 마이그레이션 할 수 있었습니다.
-
-```console
->mysql
-CREATE DATABASE IF NOT EXISTS db1004;
-
-USE db1004;
-
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  email varchar(50),
-  name varchar(50),
-  password varchar(200)
-);
-```
-
-새롭게 만들어준 DB에 접근할 수 있는 유저 계정이 필요해서 권한 부여와 함께 생성해줄 수 있었습니다.
-
-```sql
--- 유저 생성
-CREATE USER 'atach_express'@'%' IDENTIFIED BY 'mypassword';
-
--- 권한 부여
-GRANT ALL ON db1004.* TO 'atach_express'@'%';
--- 변경된 설정 반영
-FLUSH PRIVILEGES;
-```
-
-### POST로 회원가입
-
-우선 기존 GET 메소드를 이용해 URI에 회원가입 정보를 포함하던 것과 다르게 POST를 이용해 데이터를 전달해야 했습니다.
-
-```tsx
-//기존 FE/src/layouts/Register.tsx
-  const fetchRegister  = async () => {
-    await fetch(`${baseURL}/user/register?email=${email}&password=${password}&name=${name}`, {
-        method: "GET"
-    });
-  }
-```
-
-```tsx
-//변경 FE/src/layouts/Register.tsx
-  const fetchRegister = async () => {
-    await fetch(`${baseURL}/user/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name })
-    });
-  }
-```
-
-결과도 정상적으로 잘 들어오는 것을 확인했습니다.
-
-```JSON
-{
-  headers: {
-    Host: 'localhost',
-    Connection: 'keep-alive',
-    'Content-Length': '65',
-    'sec-ch-ua-platform': '"Windows"',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
-    'sec-ch-ua': '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
-    'Content-Type': 'application/json',
-    'sec-ch-ua-mobile': '?0',
-    Accept: '*/*',
-    Origin: 'http',
-    'Sec-Fetch-Site': 'same-origin',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Dest': 'empty',
-    Referer: 'http',
-    'Accept-Encoding': 'gzip, deflate, br, zstd',
-    'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
-  },
-  body: '{"email":"augu202@naver.com","password":"000","name":"김진영"}',
-  method: 'POST',
-  path: '/user/register',
-  version: 'HTTP/1.1',
-  params: [],
-  query: {}
-}
-```
-
-이후 Request의 Content-Type이 application/json일 경우에 Body를 object 타입으로 전환해주는 로직을 작성했습니다.
-
-```ts
-// BE/dto/Request.ts
-//Request { 
-    private parseBody(bodyMsg) {
-        const contentJSON = 'application/json';
-        if (this.headers["Content-Type"] === contentJSON) {
-            this.body = JSON.parse(bodyMsg);
-        } else {
-            this.body = bodyMsg;
-        }
-    }
-```
-
-기존에 GET 메소드에 관한 경로 지정만 구현되어 있던 Router에 post를 추가해줬습니다.
-
-```ts
-// BE/route/Router.ts
-//Router {
-    post(path: string, func: Function) {
-        const pathList = this.separatePath(path);
-        const dynamicPath = this.convertToDynamicPath(pathList);
-        this.route.POST[dynamicPath] = func;
-    }
-```
-
-이후 정상적으로 POST 요청이 발생했을 때 DB에 저장됨을 확인했습니다.
-
-</div>
-</details>
-
-<details>
-<summary>화요일</summary>
-<div markdown="1">
-
-### 라우트 방식 개선
-
-기존의 Route에서 동적 경로임을 확인하는 방법은 HTTP Request가 왔을 때 해당 경로로 만들 수 있는 모든 동적 경로 경우의 수를 만들어 등록된 Route가 있는지 확인하는 방법으로 구현했습니다.
-
-```ts
-console.time("test");
-const caseOfRoute: Array<Route> = this.createCaseOfRoute(pathList);
-console.timeEnd("test");
-
-    private createCaseOfRoute(pathList: Array<string>): Route[] {
-        const caseResult: Route[] = [];
-
-        pathList.forEach((_, index) => {
-            const tempPathList = [...pathList];
-            let tempParameters: Array<string> = [];
-            for (let idx = index; idx >= 0; idx--) {
-                tempPathList[idx] = ":";
-                tempParameters.push(pathList[idx]);
-
-                const parameters = [...tempParameters];
-                const path = "/" + tempPathList.join("/");
-                caseResult.push({ path, parameters });
-            }
-            tempParameters = [];
-        });
-        caseResult.push({ path: "/" + pathList.join("/"), parameters: [] });
-
-        const sortedCaseResult = this.sortCaseOfRoutes(caseResult);
-        return sortedCaseResult;
-    }
-```
-
-테스트를 위해 경로를 많이 생성해 HTTP 요청을 발생시켜봤고,
-
-```bash
-curl localhost:3000/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z
-```
-
-무려 한 번의 요청에 5.104ms 소요되는 결과를 받을 수 있었습니다.
-
-```console
-test: 5.104ms
-```
-
-해당 로직에 대한 문제점이 2가지가 있었는데
-
-1. 다른 개발자가 봤을 때 다소 복잡한 로직으로 인해 어떤 기능을 수행하는 함수인지 빠르게 파악하는게 어려움
-2. 모든 경우의 수를 만들다 보니 경로가 많아질 때 시간이 많이 소요됨
-
-이 문제점을 가지고, 개선을 하기 위해 정규식으로 동적 경로를 매칭하고자 했습니다.
-
-우선 라우터에 등록하는 함수를 수정해야 나머지 로직을 구상하기 쉬울 것 같아 등록 함수를 먼저 수정해줬습니다.
-
-```ts
-//Router.ts
-//기존 로직
-
-get(path: string, func: Function) {
-	const pathList = this.separatePath(path);
-	const convertedPath = this.convertToDynamicPath(pathList);
-	this.route.GET[convertedPath] = func;
-}
-
-private convertToDynamicPath(pathList) {
-	const transPathList = pathList.map((path) => path[0] === ":" ? path[0] : path);
-	const dynamicPath = "/" + transPathList.join("/");
-	return dynamicPath;
-}
-```
-
-기존 로직은 Path를 등록했을 때 path를 각각의 경로로 분해해서 만약 동적 경로 표시인 `:`가 포함된 경우 해당 경로를 `:`만 남긴채 등록했고,
-
-실제로 요청이 들어올 때는 Path를 다시 분리해서 각각의 경로를 `:`로 바꿔서 등록한 Path가 있는지 찾는 방식이었습니다.
-
-새롭게 바뀐 로직은 동적 경로가 포함된 경우 해당 동적 경로의 변수를 정규 표현식 `([^/]+)` 로 바꾸고, 해당 변수 이름을 배열 `dynamicPathName`에 저장해 함께 저장하는 방식으로 구현했습니다.
-
-```ts
-//Router.ts
-//변경 로직
-
-get(path: string, func: Function) {
-	const pathList = this.separatePath(path);
-	const [convertedPath, dynamicPathName] = this.convertToDynamicPathIfExist(pathList);
-	this.route.GET[convertedPath] = {
-		pathName: dynamicPathName,
-		callback: func
-	};
-}
-
-private convertToDynamicPathIfExist(pathList): [string, Array<string>] {
-	const dynamicPathDelimiter = ":";
-	const dynamicPathName: Array<string> = [];
-	const transPathList = pathList.map((path) => {
-		if (path.startsWith(dynamicPathDelimiter)) {
-			const thisPathName = path.replace(dynamicPathDelimiter, "");
-			dynamicPathName.push(thisPathName);
-			 return "([^/]+)";
-		} else {
-			return path;
-		}
-	});
-	const dynamicPath = "/" + transPathList.join("/");
-	return [dynamicPath, dynamicPathName];
-}
-```
-
-등록 방식이 새롭게 바뀌어 경우의 수를 생성하던 기존 함수는 제거했고,
-
-Request로 Route를 판단하던 `requestHandler` 함수도 함께 변경되었습니다.
-
-```ts
-//Router.ts
-
-//기존
-    requestHandler(req): Response {
-        const separatedURL = this.separateURL(req.path);
-        const [routePath, queryString] = [separatedURL.path, separatedURL.queryString];
-        const pathList = this.separatePath(routePath);
-        const caseOfRoute: Array<Route> = this.createCaseOfRoute(pathList);
-
-        for (let idx = 0; idx < caseOfRoute.length; idx++) {
-            const exist = this.checkRouteExist(req.method, caseOfRoute[idx].path);
-            if (exist) {
-                req.params = caseOfRoute[idx].parameters;
-                req.query = this.parseQueryString(queryString);
-                return this.route[req.method][caseOfRoute[idx].path](req);
-            }
-        }
-
-        return new Response(404, req.headers.Connection);
-    }
-
-////////////////////////////////////////////////////////////////
-
-//변경
-    requestHandler(req): Response {
-        const separatedURL = this.separateURL(req.path);
-        const [routePath, queryString] = [separatedURL.path, separatedURL.queryString];
-        const isStaticRouteExist = this.checkRouteExist(req.method, routePath)
-        req.query = this.parseQueryString(queryString);
-
-        if (isStaticRouteExist) {
-            return this.route[req.method][routePath].callback(req);
-        } else {
-            return this.routeDynamicPath(req, routePath);
-        }
-    }
-```
-
-개선한 코드에선 Request가 발생했을 때 우선 요청이 발생한 Path로 등록된 Route에 존재하는지 한 번 검사하고,
-
-만약 존재하지 않는다면 등록된 Route를 불러와 매칭할 수 있는 동적 경로가 등록되어 있는지 검사하는 로직을 수행합니다.
-
-동적 경로가 등록되어 있는지 검사하는 로직에서 만약 존재하지 않는다면 404 Response를 반환하도록 구현했습니다.
-
-```ts
-//Router.ts
-    private routeDynamicPath(req, path) {
-        const notExist = -1;
-        const allRoutes = Object.keys(this.route[req.method]);
-        const matchRouteIdx = allRoutes.findIndex((thisRoute) => {
-            const checkMatch = path.match(thisRoute) ?? [];
-            if (checkMatch[0] === path) {
-                const dynamicPathNames = this.route[req.method][thisRoute].pathName;
-                const dynamicPathValues = checkMatch.slice(1);
-                dynamicPathNames.forEach((key, idx) => {
-                    req.params[key] = dynamicPathValues[idx];
-                });
-                return true;
-            }
-        });
-
-        if (matchRouteIdx === notExist) {
-            return new Response(404, req.headers.Connection);
-        } else {
-            const matchedRoute = allRoutes[matchRouteIdx]
-            return this.route[req.method][matchedRoute].callback(req);
-        }
-    }
-```
-
-### 동적 경로 처리 개선 결과
-
-개선한 코드에선 모든 경우의 수를 만들 필요가 없었기 때문에 요청으로 들어온 경로의 수가 많았을 때 특히 더욱 체감된 결과를 얻을 수 있었습니다.
-
-기존 동일한 요청에 대해 5.104ms의 소요시간이 걸렸던 것에 비해 결과는 아래와 같습니다.
-
-```bash
-curl localhost:3000/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z
-```
-
-```console
-test: 0.166ms
-```
-
-
-### 기존 Router 내 함수 분리
-
-기존에 Router에서 함께 관리하던 url 관련 파싱 함수들을 Router 클래스의 복잡도를 낮추기 위해 분리해서 상속했습니다.
-
-```ts
-// Url.ts
-class Url {
-    separateURL(url) {
-        const [prePath, anchor] = url.split("#");
-        const [path, queryString] = prePath.split("?");
-        return {
-            path: path,
-            queryString: queryString || null,
-            anchor: anchor || null
-        };
-    }
-
-    separatePath(path): Array<string> {
-        const [empty, ...pathList] = path.split("/");
-        return pathList;
-    }
-
-    parseQueryString(queryString) {
-        if (!queryString)
-            return null;
-        const result = {};
-        const queries = queryString.split("&");
-        queries.forEach((query) => {
-            const [key, value] = query.split("=");
-            result[key] = value;
-        });
-        
-        return result;
-    }
-}
-
-//Router.ts
-class Router extends Url {
-    constructor() { super() }
-	...
-```
-
-
-### 디렉토리 일부 구조 변경
-
-```
-📦dto  
- ┣ 📜Request.ts  
- ┗ 📜Response.ts
-
-📦route  
- ┣ 📜Router.ts  
- ┣ 📜RouteStack.ts  
- ┣ 📜staticRouter.ts  
- ┣ 📜Url.ts  
- ┗ 📜userRouter.ts
-```
-
-현재는 전 범위에서 사용되는 Router, Request, Response 등이 각 디렉토리에 일부로 편입되어있는 상태입니다.
-
-이에 대한 책임을 옮기고자 core 디렉토리를 만들어 다양한 범위에서 사용되는 기능 및 모델을 분리하도록 하겠습니다.
-
-```
-📦core  
- ┣ 📂http  
- ┃ ┣ 📜Request.ts  
- ┃ ┗ 📜Response.ts  
- ┣ 📂router  
- ┃ ┣ 📜Router.ts  
- ┃ ┗ 📜RouteStack.ts  
- ┗ 📂url  
- ┃ ┗ 📜Url.ts
-```
-
-### Response 객체 생성 위치 변경
-
-기존에는 라우터에 Request만 전달해 만들어지는 결과에 따라 Response 객체를 생성해 반환하도록 구현했는데 Response 객체를 처음에 생성하고 넘기는 방식으로 변경하려고 합니다.
-
-기존에 Response 객체를 만들고 반환하도록 구현했던 이유는 socket을 여는 계층과, write하는 계층, end하는 계층이 모두 동일해야 한다고 생각했기 때문인데,
-
-```ts
-//Response.ts 기존
-class Response {
-    responseMsg: string;
-
-    constructor(statusCode, connection, ext: string | null = null, body: string | null = null) {
-        this.setStatusLine(statusCode);
-        this.setHeaders(connection, ext, body);
-        this.setBody(body);
-    }
-
-    private setStatusLine(statusCode) {
-        const startLine = `HTTP/1.1 ${statusCode} ${statusMsg[statusCode]}\r\n`;
-        this.responseMsg = startLine;
-    }
-
-    private setHeaders(connection, ext, body) {
-        this.responseMsg += `Server: Jinyoung\r\n`;
-        this.responseMsg += `Date: ${new Date().toString()}\r\n`;
-        if (body) {
-            this.responseMsg += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
-            this.responseMsg += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
-        }
-        this.responseMsg += `Connection: ${connection}\r\n`;
-        if (connection === 'Keep-Alive') {
-            this.responseMsg += `Keep-Alive: timeout=5, max=1000\r\n`;
-        }
-        this.responseMsg += '\r\n';
-    }
-
-    private setBody(body) {
-        this.responseMsg += body ?? "";
-    }
-}
-```
-
-변경하려는 이유는 이미지 등 바이너리 파일을 전달할 때 파일을 읽는 위치와 Response Message를 작성하는 위치가 다르기 때문에 현재처럼 Message를 완성해서 전달할 때 구현하기 힘들다는 점,
-
-지금 모습에선 header와 body를 구분해서 Message를 작성하기 힘들다는 점이 문제라고 생각해 변경하려고 계획 했습니다.
-
-```ts
-//Response.ts 변경 후
-class Response {
-    private socket: net.Socket;
-    private statusCode: number = 0;
-    private cookie: string;
-    connection: string;
-
-    constructor(socket, connection) {
-        this.socket = socket;
-        this.connection = connection ?? "close";
-    }
-
-    send() {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        let header = this.setInitialHeaderOption();
-
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-    }
-
-    sendFile(filePath) {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        if (!fs.existsSync(filePath)) throw new Error("File does not exist");
-        const ext = path.extname(filePath);
-        const file = fs.readFileSync(filePath);
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        let header = this.setInitialHeaderOption();
-        header += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
-        header += `Content-Length: ${Buffer.byteLength(file)}\r\n`;
-
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-        this.socket.write(file);
-    }
-
-    json(data: object) {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        const body = JSON.stringify(data);
-        let header = this.setInitialHeaderOption();
-        header += `Content-Type: application/json; charset=UTF-8\r\n`;
-        header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
-
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-        this.socket.write(body);
-    }
-
-    setStatus(statusCode) {
-        const message = statusMsg[statusCode];
-        if (message) {
-            this.statusCode = statusCode;
-        } else {
-            throw new Error("This status code does not exist")
-        }
-
-        return this;
-    }
-
-    setCookie(key: string, value, option: cookieOption | null) {
-        this.cookie = `${key}=${value};` + ` ${JSON.stringify(option)}`;
-        return this;
-    }
-
-    private setInitialHeaderOption() {
-        let header = "";
-        header += `Server: Jinyoung\r\n`;
-        header += `Date: ${new Date().toString()}\r\n`;
-        header += `Connection: ${this.connection}\r\n`;
-        if (this.connection === 'Keep-Alive') {
-            header += `Keep-Alive: timeout=5, max=1000\r\n`;
-        }
-        return header;
-    }
-}
-```
-
-
-```ts
-//기존 Response를 사용하던 모습
-const response = new Response(400, req.headers.Connection ?? "close");
-return response;
-
-socket.write(response.responseMsg);
-
-//////////////////////////
-
-//변경 후
-res
-  .setStatus(400)
-  .send();
-```
-
-</div>
-</details>
-
-
-<details>
-<summary>수요일</summary>
-<div markdown="1">
-
-### 쿠키 설정
-
-우선 쿠키를 설정해주기 위해서 쿠키에 설정할 수 있는 옵션들에 대한 정의를 해줬습니다.
-
-```ts
-//Cookie.ts
-type cookieSameSiteOption = "Strict" | "Lax" | "None";
-
-type cookieOption = {
-    Domain?: string;
-    Expires?: Date;
-    HttpOnly?: boolean;
-    "Max-Age"?: number;
-    Path?: string;
-    Secure?: boolean;
-    SameSite?: cookieSameSiteOption;
-    Partitioned?: boolean;
-}
-```
-
-이후에 Response의 setCookie 메서드를 통해 쿠키를 설정한 경우 HTTP Response header를 생성할 때 Set-Cookie 속성도 함께 보내질 수 있도록 만들었습니다.
-
-```ts
-//Response.ts
-    setCookie(key: string, value, option?: cookieOption) {
-        this.cookie = `${key}=${value}`;
-        if (option) Object.keys(option).forEach((opt) => {
-            if (typeof option[opt] !== 'boolean') {
-                this.cookie += `; ${opt}=${option[opt]}`;
-            } else if (option[opt]) {
-                this.cookie += `; ${opt}`;
-            }
-        });
-        return this;
-    }
-```
-
-
-### 잘못된 HTTP Response Message
-
-HTTP Response Message를 완성해서 보내는 것에서 개별적으로 보내는 것으로 방식을 바꾼 이후부터 
-
-Failed to load resource: net::ERR_INVALID_HTTP_RESPONSE
-
-에러를 받을 수 있었습니다. HTTP Response Message가 잘못되었다는 뜻이었는데,
-
-이전에는 발생하지 않다가 Response 를 리팩토링 하는 과정에서 발생한 문제라고 판단할 수 있었습니다.
-
-```ts
-	this.socket.write(startLine);
-	this.socket.write(header);
-	this.socket.write(emptyLine);
-	this.socket.write(body);
-```
-
-현재는 위 처럼 HTTP Response Message를 보내고 있었는데, 
-
-문제의 원인은 emptyLine에 있었습니다.
-
-HTTP에서 header와 body의 구분은 빈 문자열인 empty line으로 판단하는데, 제가 이 empty line을 정의하는 부분에서 `\r\n`으로 처리했기 때문에 발생한 문제였고, 해당 부분을 `\r\n\r\n` 으로 바꿔 해결할 수 있었습니다.
-
-```ts
-//해결 전
-const emptyLine = "\r\n";
-
-//해결 후
-const emptyLine = "\r\n\r\n";
-```
-
-
-### DB 접근 및 비즈니스 로직 처리 계층 분리
-
-기존에는 빠르게 기능 구현을 확인하기 위해서 라우팅 과정에서 호출하는 controller 함수에 DB로 접근해 데이터를 가져오는 기능을 포함시켰습니다.
-
-이제는 확장성과 계층 별 책임과 역할 분리를 목적으로 Repository라는 데이터 접근 계층을 만들고, Controller 계층에선 비즈니스 로직만 처리하도록 분리하려고 합니다.
-
-```ts
-//UserRepository.ts
-class UserRepository {
-    static tableName = "users";
-
-    static async getUser(email) {
-        return await db1004.select({
-            table: this.tableName,
-            column: "*",
-            condition: `email="${email}"`
-        });
-    }
-
-    static async createUser(email, password, name) {
-        return await db1004.insert({
-            table: this.tableName,
-            columns: ["email", "password", "name"],
-            values: [email, password, name]
-        });
-    }
-}
-```
-
-```ts
-//signUpController.ts
-function signUpController(req, res) {
-    const userData: signUpInfo = req.body as signUpInfo;
-    const [email, password, name] = [userData.email, md5Encryption(userData.password), userData.name];
-
-    try {
-        UserRepository.getUser(email).then((response) => {
-            const result = response[0][0];
-            const emailAvailable = result == null;
-            if (emailAvailable) {
-                UserRepository.createUser(email, password, name);
-
-                res
-                    .setStatus(302)
-                    .send();
-            }
-        });
-    } catch (e) {
-        res
-            .setStatus(400)
-            .send();
-    }
-}
-```
-
-### HTTP Request Cookie Parsing
-
-쿠키를 설정하고 이후에 쿠키가 Request로 오기 시작하면서 Cookie가 있는 경우 이용하기 쉽도록 object로 파싱하는 과정이 필요하다고 느꼈습니다.
-
-```ts
-//Request.ts
-    private parseHeader(headerMsg) {
-	...중략
-        if (this.headers.Cookie != null) cookieParser(this.headers);
-    }
-
-//Cookie.ts
-function cookieParser(header) {
-    const cookieString = header.Cookie;
-    const cookies = cookieString.split(";");
-    const cookieObject = cookies.reduce((obj, thisCookie) => {
-        const [key, value] = thisCookie.trim().split("=");
-        obj[key] = value;
-        return obj;
-    }, {});
-    header.Cookie = cookieObject;
-}
-```
-
-
-### HTTP Request Content 검사
-
-서버에서 HTTP Request Message의 위변조를 검사하기 위해서 body가 존재할 경우에 Content-length와 body의 크기를 비교하는 로직을 작성했습니다.
-
-```ts
-//Request.ts
-    private parseBody(bodyMsg) {
-        const bodyMsgExist = bodyMsg !== "";
-		
-		...중략
-		
-        if (bodyMsgExist) {
-            const checkContentLength = this.headers["Content-Length"] === Buffer.byteLength(bodyMsg).toString();
-            if (!checkContentLength) this.error = "Invalid Content-Length";
-        }
-    }
-```
-
-
-로직은 body를 parsing해서 저장할 때 검사하도록 했고,
-만약 일치하지 않는다면 this.error을 해당 에러로 설정해 app.ts에서 로직을 수행하기 전 검사하도록 작성했습니다.
-
-```ts
-//app.ts
-const server = net.createServer(socket => {
-    socket.on("data", (data) => {
-        const socketData = data.toString();
-        const req = new Request(socketData);
-        const res = new Response(socket, req.headers.Connection);
-
-        if (req.error != null) res.setStatus(400).send(req.error);
-        else try {
-        ...중략
-```
-
-### 회원가입 정보 유효성 검사
-
-만약 회원가입 시 비정상적인 규격 혹은 공백의 문자열이 들어왔을 경우 이를 검사하는 로직을 추가했습니다.
-
-```ts
-//signUpController.ts
-    const emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$"
-    const isEmailStandard = email.match(emailRegexp) != null;
-    const isPasswordStandard = password.trim() !== "";
-    const isNameStandard = name.trim() !== "";
-
-    if (!isEmailStandard || !isPasswordStandard || !isNameStandard) res.setStatus(400).send();
-```
-
-
-### 세션 구현
-
-세션을 어떻게 구현할지 고민을 했는데 당장은 굳이 어렵게 혹은 복잡하게 구현할 필요가 없다고 생각해 간단히 Session 클래스를 만들어 외부에서 사용할 수 있도록 만들었습니다.
-
-```ts
-//Session.ts
-class Session {
-    private storage = {};
-
-    set(sid, data) {
-        this.storage[sid] = data;
-    }
-
-    get(sid) {
-        return this.storage[sid];
-    }
-
-    isExist(sid) {
-        return this.storage[sid] != null;
-    }
-}
-```
-
-그리고, 구현된 Session을 활용해 로그인에 성공 시 Session에 user id를 저장하도록 구현했습니다.
-
-```ts
-//signInController.ts
-if (password === result.password) {
-	const sid = sha1Encryption(email + Date.now().toString());
-	session.set(sid, result.id);
-	...중략
-```
-
-</div>
-</details>
-
-
-### 멘토님 리뷰 사항 개선
-
-우선 리뷰 요청에 대한 개선을 수행하고자 했고,
-단 저만의 규칙으로 멘토님이 제안해주셨다고 다 변경하는 것이 아닌, 하나의 의견으로 받아들이고 제가 생각할 때도 합당하고 바꾸면 좋겠다 싶은 내용들만 개선하기로 했습니다.
-
-#### DB 관련
-
-```ts
-//#query 메서드가 수행하려는 메시지가 무엇인지 궁금해요.
-//executeQuery라는 메서드명은 어떨까요? 기존 connectionPool에서 사용하는 메서드와 헷갈릴 수 있을 거 같아요.
-
-    async #query(query, values = null) {
-        const connection = await this.connectionPool.getConnection();
-        const result = connection.query(query, values);
-        connection.release();
-        return result;
-    }
-```
-
-mysql connection의 기존 메서드인 .query와 헷갈릴 수 있을 것 같다는 의견은 생각해보지 못한 접근이었습니다.
-
-확실히 그렇게 생각해보니 connection의 query 메서드와는 다르게 connection을 연결하고 해제하는 로직이 추가돼 구분이 되면 좋겠다고 생각하게 되었고,
-
-제안해주신 대로 executeQuery가 의미있는 것 같아 해당 내용처럼 변경했습니다.
-
-```ts
-//개선 후
-private async executeQuery(query, values?) {
-	...
-}
-```
-
-
-#### 쿠키 관련
-
-```ts
-//작성한 함수명이 cookieParser기 때문에 cookie 객체만 반환하고, header에 추가하는 함수를 별도로 작성해도 좋을 거 같아요.
-function cookieParser(header) {
-    const cookieString = header.cookie;
-    const cookies = cookieString.split(";");
-    const cookieObject = cookies.reduce((obj, thisCookie) => {
-        const [key, value] = thisCookie.trim().split("=");
-        obj[key] = value;
-        return obj;
-    }, {});
-    header.cookie = cookieObject;
-}
-```
-
-의견을 주신 것에 적극 동감했습니다.
-
-이름이 cookieParser인데 현재는 헤더를 인자로 받아 쿠키를 파싱한 형태로 저장하는 역할을 수행하고 있기 때문에
-
-의견을 주신대로 역할을 분리하는 것이 맞다고 생각했고 아래처럼 개선했습니다.
-
-```ts
-//개선 후
-function cookieParser(cookieString) {
-    const cookies = cookieString.split(";");
-    const cookieObject = cookies.reduce((obj, thisCookie) => {
-        const [key, value] = thisCookie.trim().split("=");
-        obj[key] = value;
-        return obj;
-    }, {});
-
-    return cookieObject;
-}
-
-//Request.ts
-if (this.headers.cookie != null) {
-	const cookieObject = cookieParser(this.headers.cookie);
-	this.headers.cookie = cookieObject;
-}
-```
-
-
-#### 이외 로직 관련
-
-```ts
-//파이썬스러운(?) 문법처럼 보여요. 객체 디스트력쳐링을 활용하는건 어떨까요~?
-
-function signUpController(req, res) {
-	const [email, password, name] = [userData.email, md5(Encryption(userData.password), userData.name)];
-...
-```
-
-파이썬을 사용해본 적이 없어서 어떤 느낌으로 받아들이시는지는 잘 모르겠지만,  말씀하신 것 처럼 객체 디스트럭처링을 쓰면 조금 더 깔끔해지는 것 같다고 느껴 변경하게 되었습니다.
-
-```ts
-//개선 후
-function signUpController(req, res) {
-    const { email, password, name } = userData;
-    const encryptionPW = md5Encryption(password);
-...
-```
-
-
-추가로 고민과 해결 과정에서 라우팅에 관한 개선 내용이 있었고, 개선한 부분에 대해 어떻게 생각하시는 여쭤봤을 때 인상적인 방법에 대해 추가로 알 수 있어서 이후에 더 개선하면 좋겠다고 생각했습니다.
-
-```
-HTTP Request 라우팅 관련 로직
-
-정규식을 사용하여 동적 경로를 처리하고 있는데요. `findIndex`로 모든 경로에 대해 정규식 매칭을 반복하고 있어 경우의 수가 많아지면 성능 저하에 영향을 미칠 수 있습니다. 이 때는 트리구조를 고민해보셔도 좋을 거 같습니다. 성능에 문제가 없는 수준이라면 우선 다른 요구사항 구현에 리소스를 쏟는 게 좋을 거 같긴 합니다.
-```
-
-### 로그인 과정 sid 검증
-
-```ts
-    if (session.isExist(sid)) res.setStatus(200).send(session.get(sid));
-
-    else try {
-    ...중략
-```
-
-### 유효하지 않은 SID일 시 쿠키초기화
-
-매 요청이 들어오면 유효한 sid인지 검사합니다.
-만약 유효하지 않은 sid일 경우에 sid를 초기화해주는 로직을 작성했습니다.
-
-```ts
-//app.ts
-function ifSidNotValidCookieInit(req, res) {
-    const sid = req.headers.cookie != null ? req.headers.cookie.sid : "none";
-    const ifSidNotValid = sid !== "none" && !session.isExist(sid);
-    if (ifSidNotValid) {
-        res.setCookie("sid", "Remove cookie", { HttpOnly: true, Path: "/", "Max-Age": 0 });
-    }
-}
-```
-
-### Jest 및 관련 패키지 설치, 설정
-
-https://kulshekhar.github.io/ts-jest/docs/getting-started/installation/#jest-config-file
-
-typescript와 jest를 함께 사용하기 위해 패키지 설치와 함께 설정해야 할 것들이 있었습니다.
-
-```console
-//jest 설치
-npm install --save-dev jest typescript ts-jest @types/jest
-```
-
-패키지를 설치한 이후 기본 설정 파일을 만들어줬습니다.
-
-```console
-npx ts-jest config:init
-```
-
-이후 생긴 jest.config.js 파일에 `preset: "ts-jest`를 추가해줍니다.
-
-```js
-//jest.config.js
-/** @type {import('ts-jest').JestConfigWithTsJest} **/
-module.exports = {
-  preset: "ts-jest",
-  testEnvironment: "node",
-  transform: {
-    "^.+.ts?$": ["ts-jest", {}],
-  },
-  moduleFileExtensions: ["ts", "js"],
-  testMatch: ["**/**/*.test.ts"],
-};
-```
-
- 빠르게 테스트를 시작할 수 있도록 package.json의 script에도 test를 추가해줍니다.
-
-```json
-//package.json
-  "scripts": {
-  //..중략
-    "test": "jest"
-  },
-```
-
-이후 정상적으로 jest가 실행되는지 확인하기 위해 임시 테스트를 실행했는데
-테스트는 실행되었지만, 아래와 같이 경고 문구를 받게 되었습니다.
-
-```console
-ts-jest[config] (WARN) message TS151001: 
-If you have issues related to imports, you should consider setting `esModuleInterop` to `true` in your TypeScript configuration file (usually `tsconfig.json`). See 
-https://blogs.msdn.microsoft.com/typescript/2018/01/31/announcing-typescript-2-7/#easier-ecmascript-module-interoperability for more information.
-```
-
-ts를 사용할 때 import 관련 에러를 겪을 수 있으니 연관 돼 있다면 tsconfig 파일에 `esModuleInterop` 옵션을 true로 설정하라는 의미였습니다.
-
-아직 정상 동작 확인 단계였지만 이후에는 import를 사용할 예정이기 때문에 미리 tsconfig 파일을 생성해서 설정해주도록 하겠습니다.
-
-https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-tsconfigjson-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0-%EC%B4%9D%EC%A0%95%EB%A6%AC
-
-
-```json
-{
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
-    },
-    "include": [
-        "**/*.test.ts"
-    ]
-}
-```
-
-### 테스트 코드 작성하기
-
-..어떻게 해야 하지? ㅠㅠ 어떻게 작성하면 좋을지 감이 안잡힙니다.
 
 
 <details>
@@ -2036,6 +1021,1124 @@ class DB1004 {
 `/user/register/{query}` 엔드포인트로 접속하게되면, `userRouter` 객체의 `parseQueryString` 메소드를 이용하여 쿼리를 파싱합니다.
 이를 `request` 객체에 담아 `userController`로 넘기게 되고, 컨트롤러에서는 `dao`를 이용하여 DB의 `users` 테이블에 레코드를 추가합니다.
 현재는 컨트롤러 단에서 `dao`에 직접 접근하고 있지만, 추후 `repository` 계층을 추가할 예정입니다.
+
+
+</div>
+</details>
+
+
+</div>
+</details>
+
+
+
+<details>
+<summary>2주차</summary>
+<div markdown="1">
+
+# 🔥 나만의 주간 계획서 (2)
+
+## ✅ 나만의 체크포인트 ⭕❌
+
+⭕ POST로 회원가입
+
+	⭕ HTTP Message Body Parser 구현
+
+	⭕ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request)
+
+	⭕ 서버 측 회원가입 비즈니스 로직 구현
+
+	⭕ 성공 시, 실패 시 응답 구현 
+
+		- 성공 시 로그인 페이지로 Redirection (302)
+		- 실패 시 서버 에러 응답
+
+⭕ VM 환경의 DB와 연동
+
+⭕ 쿠키를 이용한 로그인
+
+	⭕ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
+
+	⭕ HTTP Message 쿠키 검사 로직 추가
+
+	⭕ HTTP Message 쿠키를 활용할 수 있도록 변경
+
+	⭕ Session 저장
+
+	❌ 쿠키의 SID와 세션을 이용해 로그인 유지 기능 추가
+
+	❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
+
+⭕ 라우트 방식 개선
+
+❌ 리액트에서 바닐라로 FE 사양 변경 
+
+	❌ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+
+	❌ 전체 페이지를 리액트에서 바닐라로 변환
+
+	❌ 웹 프론트 이벤트 및 기능 Script로 변환
+
+❌ 웹 프론트 구현
+
+	❌ 메인 페이지 구현
+
+❌ 테스트 코드 작성
+
+  ⭕ Jest와 TS에 관한 테스트 환경 구성
+
+	❌ Jest 세부 기능 학습
+
+	❌ HTTP Message에 대한 테스트 코드 작성
+  
+	❌ 비즈니스 로직에 대한 테스트 코드 작성
+
+
+## 📝 학습 및 구현 계획
+
+### 월요일
+
+- VM 환경의 DB와 연동
+
+- POST로 회원가입
+	- HTTP Message Body Parser 구현
+	- Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
+	- 서버 측 회원가입 비즈니스 로직 구현
+	- 성공 시, 실패 시 응답 구현 
+		- 성공 시 로그인 페이지로 Redirection (302)
+		- 실패 시 서버 에러 응답
+
+- 라우트 방식 개선
+
+### 화요일
+
+- 쿠키를 이용한 로그인
+	- 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
+	- HTTP Message 쿠키 검사 로직 추가
+	- HTTP Message 쿠키를 활용할 수 있도록 변경
+	- Redis를 이용해 Session 저장
+	- 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
+	- 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
+ 
+### 수요일
+
+- Custom Error 구현
+  
+- 리액트에서 바닐라로 FE 사양 변경 
+	- 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+	- 전체 페이지를 리액트에서 바닐라로 변환
+	- 웹 프론트 이벤트 및 기능 Script로 변환
+
+- 웹 프론트 구현
+	- 메인 페이지 구현
+
+### 목요일
+
+- 테스트 코드 작성
+	- Jest 세부 기능 학습
+	- HTTP Message에 대한 테스트 코드 작성
+	- 비즈니스 로직에 대한 테스트 코드 작성
+
+## ✏️ 고민과 해결 과정 쌓아가기
+
+<details>
+<summary>월요일</summary>
+<div markdown="1">
+
+### VM 환경의 DB와 연동
+
+기존에 Docker로 로컬에 DB환경을 구성했지만 원격 환경을 이용하기 위해 VM에 설치한 MySQL로 마이그레이션을 진행하기로 했습니다.
+
+환경만 VM으로 옮기는 것이었기 때문에 크게 달라진 사항은 없었고, DB연결만 VM으로 옮기기 위해 포트포워딩함으로 마이그레이션 할 수 있었습니다.
+
+```console
+>mysql
+CREATE DATABASE IF NOT EXISTS db1004;
+
+USE db1004;
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email varchar(50),
+  name varchar(50),
+  password varchar(200)
+);
+```
+
+새롭게 만들어준 DB에 접근할 수 있는 유저 계정이 필요해서 권한 부여와 함께 생성해줄 수 있었습니다.
+
+```sql
+-- 유저 생성
+CREATE USER 'atach_express'@'%' IDENTIFIED BY 'mypassword';
+
+-- 권한 부여
+GRANT ALL ON db1004.* TO 'atach_express'@'%';
+-- 변경된 설정 반영
+FLUSH PRIVILEGES;
+```
+
+### POST로 회원가입
+
+우선 기존 GET 메소드를 이용해 URI에 회원가입 정보를 포함하던 것과 다르게 POST를 이용해 데이터를 전달해야 했습니다.
+
+```tsx
+//기존 FE/src/layouts/Register.tsx
+  const fetchRegister  = async () => {
+    await fetch(`${baseURL}/user/register?email=${email}&password=${password}&name=${name}`, {
+        method: "GET"
+    });
+  }
+```
+
+```tsx
+//변경 FE/src/layouts/Register.tsx
+  const fetchRegister = async () => {
+    await fetch(`${baseURL}/user/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password, name })
+    });
+  }
+```
+
+결과도 정상적으로 잘 들어오는 것을 확인했습니다.
+
+```JSON
+{
+  headers: {
+    Host: 'localhost',
+    Connection: 'keep-alive',
+    'Content-Length': '65',
+    'sec-ch-ua-platform': '"Windows"',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36',
+    'sec-ch-ua': '"Google Chrome";v="129", "Not=A?Brand";v="8", "Chromium";v="129"',
+    'Content-Type': 'application/json',
+    'sec-ch-ua-mobile': '?0',
+    Accept: '*/*',
+    Origin: 'http',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Dest': 'empty',
+    Referer: 'http',
+    'Accept-Encoding': 'gzip, deflate, br, zstd',
+    'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
+  },
+  body: '{"email":"augu202@naver.com","password":"000","name":"김진영"}',
+  method: 'POST',
+  path: '/user/register',
+  version: 'HTTP/1.1',
+  params: [],
+  query: {}
+}
+```
+
+이후 Request의 Content-Type이 application/json일 경우에 Body를 object 타입으로 전환해주는 로직을 작성했습니다.
+
+```ts
+// BE/dto/Request.ts
+//Request { 
+    private parseBody(bodyMsg) {
+        const contentJSON = 'application/json';
+        if (this.headers["Content-Type"] === contentJSON) {
+            this.body = JSON.parse(bodyMsg);
+        } else {
+            this.body = bodyMsg;
+        }
+    }
+```
+
+기존에 GET 메소드에 관한 경로 지정만 구현되어 있던 Router에 post를 추가해줬습니다.
+
+```ts
+// BE/route/Router.ts
+//Router {
+    post(path: string, func: Function) {
+        const pathList = this.separatePath(path);
+        const dynamicPath = this.convertToDynamicPath(pathList);
+        this.route.POST[dynamicPath] = func;
+    }
+```
+
+이후 정상적으로 POST 요청이 발생했을 때 DB에 저장됨을 확인했습니다.
+
+</div>
+</details>
+
+<details>
+<summary>화요일</summary>
+<div markdown="1">
+
+### 라우트 방식 개선
+
+기존의 Route에서 동적 경로임을 확인하는 방법은 HTTP Request가 왔을 때 해당 경로로 만들 수 있는 모든 동적 경로 경우의 수를 만들어 등록된 Route가 있는지 확인하는 방법으로 구현했습니다.
+
+```ts
+console.time("test");
+const caseOfRoute: Array<Route> = this.createCaseOfRoute(pathList);
+console.timeEnd("test");
+
+    private createCaseOfRoute(pathList: Array<string>): Route[] {
+        const caseResult: Route[] = [];
+
+        pathList.forEach((_, index) => {
+            const tempPathList = [...pathList];
+            let tempParameters: Array<string> = [];
+            for (let idx = index; idx >= 0; idx--) {
+                tempPathList[idx] = ":";
+                tempParameters.push(pathList[idx]);
+
+                const parameters = [...tempParameters];
+                const path = "/" + tempPathList.join("/");
+                caseResult.push({ path, parameters });
+            }
+            tempParameters = [];
+        });
+        caseResult.push({ path: "/" + pathList.join("/"), parameters: [] });
+
+        const sortedCaseResult = this.sortCaseOfRoutes(caseResult);
+        return sortedCaseResult;
+    }
+```
+
+테스트를 위해 경로를 많이 생성해 HTTP 요청을 발생시켜봤고,
+
+```bash
+curl localhost:3000/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z
+```
+
+무려 한 번의 요청에 5.104ms 소요되는 결과를 받을 수 있었습니다.
+
+```console
+test: 5.104ms
+```
+
+해당 로직에 대한 문제점이 2가지가 있었는데
+
+1. 다른 개발자가 봤을 때 다소 복잡한 로직으로 인해 어떤 기능을 수행하는 함수인지 빠르게 파악하는게 어려움
+2. 모든 경우의 수를 만들다 보니 경로가 많아질 때 시간이 많이 소요됨
+
+이 문제점을 가지고, 개선을 하기 위해 정규식으로 동적 경로를 매칭하고자 했습니다.
+
+우선 라우터에 등록하는 함수를 수정해야 나머지 로직을 구상하기 쉬울 것 같아 등록 함수를 먼저 수정해줬습니다.
+
+```ts
+//Router.ts
+//기존 로직
+
+get(path: string, func: Function) {
+	const pathList = this.separatePath(path);
+	const convertedPath = this.convertToDynamicPath(pathList);
+	this.route.GET[convertedPath] = func;
+}
+
+private convertToDynamicPath(pathList) {
+	const transPathList = pathList.map((path) => path[0] === ":" ? path[0] : path);
+	const dynamicPath = "/" + transPathList.join("/");
+	return dynamicPath;
+}
+```
+
+기존 로직은 Path를 등록했을 때 path를 각각의 경로로 분해해서 만약 동적 경로 표시인 `:`가 포함된 경우 해당 경로를 `:`만 남긴채 등록했고,
+
+실제로 요청이 들어올 때는 Path를 다시 분리해서 각각의 경로를 `:`로 바꿔서 등록한 Path가 있는지 찾는 방식이었습니다.
+
+새롭게 바뀐 로직은 동적 경로가 포함된 경우 해당 동적 경로의 변수를 정규 표현식 `([^/]+)` 로 바꾸고, 해당 변수 이름을 배열 `dynamicPathName`에 저장해 함께 저장하는 방식으로 구현했습니다.
+
+```ts
+//Router.ts
+//변경 로직
+
+get(path: string, func: Function) {
+	const pathList = this.separatePath(path);
+	const [convertedPath, dynamicPathName] = this.convertToDynamicPathIfExist(pathList);
+	this.route.GET[convertedPath] = {
+		pathName: dynamicPathName,
+		callback: func
+	};
+}
+
+private convertToDynamicPathIfExist(pathList): [string, Array<string>] {
+	const dynamicPathDelimiter = ":";
+	const dynamicPathName: Array<string> = [];
+	const transPathList = pathList.map((path) => {
+		if (path.startsWith(dynamicPathDelimiter)) {
+			const thisPathName = path.replace(dynamicPathDelimiter, "");
+			dynamicPathName.push(thisPathName);
+			 return "([^/]+)";
+		} else {
+			return path;
+		}
+	});
+	const dynamicPath = "/" + transPathList.join("/");
+	return [dynamicPath, dynamicPathName];
+}
+```
+
+등록 방식이 새롭게 바뀌어 경우의 수를 생성하던 기존 함수는 제거했고,
+
+Request로 Route를 판단하던 `requestHandler` 함수도 함께 변경되었습니다.
+
+```ts
+//Router.ts
+
+//기존
+    requestHandler(req): Response {
+        const separatedURL = this.separateURL(req.path);
+        const [routePath, queryString] = [separatedURL.path, separatedURL.queryString];
+        const pathList = this.separatePath(routePath);
+        const caseOfRoute: Array<Route> = this.createCaseOfRoute(pathList);
+
+        for (let idx = 0; idx < caseOfRoute.length; idx++) {
+            const exist = this.checkRouteExist(req.method, caseOfRoute[idx].path);
+            if (exist) {
+                req.params = caseOfRoute[idx].parameters;
+                req.query = this.parseQueryString(queryString);
+                return this.route[req.method][caseOfRoute[idx].path](req);
+            }
+        }
+
+        return new Response(404, req.headers.Connection);
+    }
+
+////////////////////////////////////////////////////////////////
+
+//변경
+    requestHandler(req): Response {
+        const separatedURL = this.separateURL(req.path);
+        const [routePath, queryString] = [separatedURL.path, separatedURL.queryString];
+        const isStaticRouteExist = this.checkRouteExist(req.method, routePath)
+        req.query = this.parseQueryString(queryString);
+
+        if (isStaticRouteExist) {
+            return this.route[req.method][routePath].callback(req);
+        } else {
+            return this.routeDynamicPath(req, routePath);
+        }
+    }
+```
+
+개선한 코드에선 Request가 발생했을 때 우선 요청이 발생한 Path로 등록된 Route에 존재하는지 한 번 검사하고,
+
+만약 존재하지 않는다면 등록된 Route를 불러와 매칭할 수 있는 동적 경로가 등록되어 있는지 검사하는 로직을 수행합니다.
+
+동적 경로가 등록되어 있는지 검사하는 로직에서 만약 존재하지 않는다면 404 Response를 반환하도록 구현했습니다.
+
+```ts
+//Router.ts
+    private routeDynamicPath(req, path) {
+        const notExist = -1;
+        const allRoutes = Object.keys(this.route[req.method]);
+        const matchRouteIdx = allRoutes.findIndex((thisRoute) => {
+            const checkMatch = path.match(thisRoute) ?? [];
+            if (checkMatch[0] === path) {
+                const dynamicPathNames = this.route[req.method][thisRoute].pathName;
+                const dynamicPathValues = checkMatch.slice(1);
+                dynamicPathNames.forEach((key, idx) => {
+                    req.params[key] = dynamicPathValues[idx];
+                });
+                return true;
+            }
+        });
+
+        if (matchRouteIdx === notExist) {
+            return new Response(404, req.headers.Connection);
+        } else {
+            const matchedRoute = allRoutes[matchRouteIdx]
+            return this.route[req.method][matchedRoute].callback(req);
+        }
+    }
+```
+
+### 동적 경로 처리 개선 결과
+
+개선한 코드에선 모든 경우의 수를 만들 필요가 없었기 때문에 요청으로 들어온 경로의 수가 많았을 때 특히 더욱 체감된 결과를 얻을 수 있었습니다.
+
+기존 동일한 요청에 대해 5.104ms의 소요시간이 걸렸던 것에 비해 결과는 아래와 같습니다.
+
+```bash
+curl localhost:3000/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z
+```
+
+```console
+test: 0.166ms
+```
+
+
+### 기존 Router 내 함수 분리
+
+기존에 Router에서 함께 관리하던 url 관련 파싱 함수들을 Router 클래스의 복잡도를 낮추기 위해 분리해서 상속했습니다.
+
+```ts
+// Url.ts
+class Url {
+    separateURL(url) {
+        const [prePath, anchor] = url.split("#");
+        const [path, queryString] = prePath.split("?");
+        return {
+            path: path,
+            queryString: queryString || null,
+            anchor: anchor || null
+        };
+    }
+
+    separatePath(path): Array<string> {
+        const [empty, ...pathList] = path.split("/");
+        return pathList;
+    }
+
+    parseQueryString(queryString) {
+        if (!queryString)
+            return null;
+        const result = {};
+        const queries = queryString.split("&");
+        queries.forEach((query) => {
+            const [key, value] = query.split("=");
+            result[key] = value;
+        });
+        
+        return result;
+    }
+}
+
+//Router.ts
+class Router extends Url {
+    constructor() { super() }
+	...
+```
+
+
+### 디렉토리 일부 구조 변경
+
+```
+📦dto  
+ ┣ 📜Request.ts  
+ ┗ 📜Response.ts
+
+📦route  
+ ┣ 📜Router.ts  
+ ┣ 📜RouteStack.ts  
+ ┣ 📜staticRouter.ts  
+ ┣ 📜Url.ts  
+ ┗ 📜userRouter.ts
+```
+
+현재는 전 범위에서 사용되는 Router, Request, Response 등이 각 디렉토리에 일부로 편입되어있는 상태입니다.
+
+이에 대한 책임을 옮기고자 core 디렉토리를 만들어 다양한 범위에서 사용되는 기능 및 모델을 분리하도록 하겠습니다.
+
+```
+📦core  
+ ┣ 📂http  
+ ┃ ┣ 📜Request.ts  
+ ┃ ┗ 📜Response.ts  
+ ┣ 📂router  
+ ┃ ┣ 📜Router.ts  
+ ┃ ┗ 📜RouteStack.ts  
+ ┗ 📂url  
+ ┃ ┗ 📜Url.ts
+```
+
+### Response 객체 생성 위치 변경
+
+기존에는 라우터에 Request만 전달해 만들어지는 결과에 따라 Response 객체를 생성해 반환하도록 구현했는데 Response 객체를 처음에 생성하고 넘기는 방식으로 변경하려고 합니다.
+
+기존에 Response 객체를 만들고 반환하도록 구현했던 이유는 socket을 여는 계층과, write하는 계층, end하는 계층이 모두 동일해야 한다고 생각했기 때문인데,
+
+```ts
+//Response.ts 기존
+class Response {
+    responseMsg: string;
+
+    constructor(statusCode, connection, ext: string | null = null, body: string | null = null) {
+        this.setStatusLine(statusCode);
+        this.setHeaders(connection, ext, body);
+        this.setBody(body);
+    }
+
+    private setStatusLine(statusCode) {
+        const startLine = `HTTP/1.1 ${statusCode} ${statusMsg[statusCode]}\r\n`;
+        this.responseMsg = startLine;
+    }
+
+    private setHeaders(connection, ext, body) {
+        this.responseMsg += `Server: Jinyoung\r\n`;
+        this.responseMsg += `Date: ${new Date().toString()}\r\n`;
+        if (body) {
+            this.responseMsg += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
+            this.responseMsg += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
+        }
+        this.responseMsg += `Connection: ${connection}\r\n`;
+        if (connection === 'Keep-Alive') {
+            this.responseMsg += `Keep-Alive: timeout=5, max=1000\r\n`;
+        }
+        this.responseMsg += '\r\n';
+    }
+
+    private setBody(body) {
+        this.responseMsg += body ?? "";
+    }
+}
+```
+
+변경하려는 이유는 이미지 등 바이너리 파일을 전달할 때 파일을 읽는 위치와 Response Message를 작성하는 위치가 다르기 때문에 현재처럼 Message를 완성해서 전달할 때 구현하기 힘들다는 점,
+
+지금 모습에선 header와 body를 구분해서 Message를 작성하기 힘들다는 점이 문제라고 생각해 변경하려고 계획 했습니다.
+
+```ts
+//Response.ts 변경 후
+class Response {
+    private socket: net.Socket;
+    private statusCode: number = 0;
+    private cookie: string;
+    connection: string;
+
+    constructor(socket, connection) {
+        this.socket = socket;
+        this.connection = connection ?? "close";
+    }
+
+    send() {
+        if (!this.statusCode) throw new Error("Status code has not been set yet.");
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
+        let header = this.setInitialHeaderOption();
+
+        this.socket.write(startLine);
+        this.socket.write(header);
+        this.socket.write(emptyLine);
+    }
+
+    sendFile(filePath) {
+        if (!this.statusCode) throw new Error("Status code has not been set yet.");
+        if (!fs.existsSync(filePath)) throw new Error("File does not exist");
+        const ext = path.extname(filePath);
+        const file = fs.readFileSync(filePath);
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
+        let header = this.setInitialHeaderOption();
+        header += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
+        header += `Content-Length: ${Buffer.byteLength(file)}\r\n`;
+
+        this.socket.write(startLine);
+        this.socket.write(header);
+        this.socket.write(emptyLine);
+        this.socket.write(file);
+    }
+
+    json(data: object) {
+        if (!this.statusCode) throw new Error("Status code has not been set yet.");
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
+        const body = JSON.stringify(data);
+        let header = this.setInitialHeaderOption();
+        header += `Content-Type: application/json; charset=UTF-8\r\n`;
+        header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
+
+        this.socket.write(startLine);
+        this.socket.write(header);
+        this.socket.write(emptyLine);
+        this.socket.write(body);
+    }
+
+    setStatus(statusCode) {
+        const message = statusMsg[statusCode];
+        if (message) {
+            this.statusCode = statusCode;
+        } else {
+            throw new Error("This status code does not exist")
+        }
+
+        return this;
+    }
+
+    setCookie(key: string, value, option: cookieOption | null) {
+        this.cookie = `${key}=${value};` + ` ${JSON.stringify(option)}`;
+        return this;
+    }
+
+    private setInitialHeaderOption() {
+        let header = "";
+        header += `Server: Jinyoung\r\n`;
+        header += `Date: ${new Date().toString()}\r\n`;
+        header += `Connection: ${this.connection}\r\n`;
+        if (this.connection === 'Keep-Alive') {
+            header += `Keep-Alive: timeout=5, max=1000\r\n`;
+        }
+        return header;
+    }
+}
+```
+
+
+```ts
+//기존 Response를 사용하던 모습
+const response = new Response(400, req.headers.Connection ?? "close");
+return response;
+
+socket.write(response.responseMsg);
+
+//////////////////////////
+
+//변경 후
+res
+  .setStatus(400)
+  .send();
+```
+
+</div>
+</details>
+
+
+<details>
+<summary>수요일</summary>
+<div markdown="1">
+
+### 쿠키 설정
+
+우선 쿠키를 설정해주기 위해서 쿠키에 설정할 수 있는 옵션들에 대한 정의를 해줬습니다.
+
+```ts
+//Cookie.ts
+type cookieSameSiteOption = "Strict" | "Lax" | "None";
+
+type cookieOption = {
+    Domain?: string;
+    Expires?: Date;
+    HttpOnly?: boolean;
+    "Max-Age"?: number;
+    Path?: string;
+    Secure?: boolean;
+    SameSite?: cookieSameSiteOption;
+    Partitioned?: boolean;
+}
+```
+
+이후에 Response의 setCookie 메서드를 통해 쿠키를 설정한 경우 HTTP Response header를 생성할 때 Set-Cookie 속성도 함께 보내질 수 있도록 만들었습니다.
+
+```ts
+//Response.ts
+    setCookie(key: string, value, option?: cookieOption) {
+        this.cookie = `${key}=${value}`;
+        if (option) Object.keys(option).forEach((opt) => {
+            if (typeof option[opt] !== 'boolean') {
+                this.cookie += `; ${opt}=${option[opt]}`;
+            } else if (option[opt]) {
+                this.cookie += `; ${opt}`;
+            }
+        });
+        return this;
+    }
+```
+
+
+### 잘못된 HTTP Response Message
+
+HTTP Response Message를 완성해서 보내는 것에서 개별적으로 보내는 것으로 방식을 바꾼 이후부터 
+
+Failed to load resource: net::ERR_INVALID_HTTP_RESPONSE
+
+에러를 받을 수 있었습니다. HTTP Response Message가 잘못되었다는 뜻이었는데,
+
+이전에는 발생하지 않다가 Response 를 리팩토링 하는 과정에서 발생한 문제라고 판단할 수 있었습니다.
+
+```ts
+	this.socket.write(startLine);
+	this.socket.write(header);
+	this.socket.write(emptyLine);
+	this.socket.write(body);
+```
+
+현재는 위 처럼 HTTP Response Message를 보내고 있었는데, 
+
+문제의 원인은 emptyLine에 있었습니다.
+
+HTTP에서 header와 body의 구분은 빈 문자열인 empty line으로 판단하는데, 제가 이 empty line을 정의하는 부분에서 `\r\n`으로 처리했기 때문에 발생한 문제였고, 해당 부분을 `\r\n\r\n` 으로 바꿔 해결할 수 있었습니다.
+
+```ts
+//해결 전
+const emptyLine = "\r\n";
+
+//해결 후
+const emptyLine = "\r\n\r\n";
+```
+
+
+### DB 접근 및 비즈니스 로직 처리 계층 분리
+
+기존에는 빠르게 기능 구현을 확인하기 위해서 라우팅 과정에서 호출하는 controller 함수에 DB로 접근해 데이터를 가져오는 기능을 포함시켰습니다.
+
+이제는 확장성과 계층 별 책임과 역할 분리를 목적으로 Repository라는 데이터 접근 계층을 만들고, Controller 계층에선 비즈니스 로직만 처리하도록 분리하려고 합니다.
+
+```ts
+//UserRepository.ts
+class UserRepository {
+    static tableName = "users";
+
+    static async getUser(email) {
+        return await db1004.select({
+            table: this.tableName,
+            column: "*",
+            condition: `email="${email}"`
+        });
+    }
+
+    static async createUser(email, password, name) {
+        return await db1004.insert({
+            table: this.tableName,
+            columns: ["email", "password", "name"],
+            values: [email, password, name]
+        });
+    }
+}
+```
+
+```ts
+//signUpController.ts
+function signUpController(req, res) {
+    const userData: signUpInfo = req.body as signUpInfo;
+    const [email, password, name] = [userData.email, md5Encryption(userData.password), userData.name];
+
+    try {
+        UserRepository.getUser(email).then((response) => {
+            const result = response[0][0];
+            const emailAvailable = result == null;
+            if (emailAvailable) {
+                UserRepository.createUser(email, password, name);
+
+                res
+                    .setStatus(302)
+                    .send();
+            }
+        });
+    } catch (e) {
+        res
+            .setStatus(400)
+            .send();
+    }
+}
+```
+
+### HTTP Request Cookie Parsing
+
+쿠키를 설정하고 이후에 쿠키가 Request로 오기 시작하면서 Cookie가 있는 경우 이용하기 쉽도록 object로 파싱하는 과정이 필요하다고 느꼈습니다.
+
+```ts
+//Request.ts
+    private parseHeader(headerMsg) {
+	...중략
+        if (this.headers.Cookie != null) cookieParser(this.headers);
+    }
+
+//Cookie.ts
+function cookieParser(header) {
+    const cookieString = header.Cookie;
+    const cookies = cookieString.split(";");
+    const cookieObject = cookies.reduce((obj, thisCookie) => {
+        const [key, value] = thisCookie.trim().split("=");
+        obj[key] = value;
+        return obj;
+    }, {});
+    header.Cookie = cookieObject;
+}
+```
+
+
+### HTTP Request Content 검사
+
+서버에서 HTTP Request Message의 위변조를 검사하기 위해서 body가 존재할 경우에 Content-length와 body의 크기를 비교하는 로직을 작성했습니다.
+
+```ts
+//Request.ts
+    private parseBody(bodyMsg) {
+        const bodyMsgExist = bodyMsg !== "";
+		
+		...중략
+		
+        if (bodyMsgExist) {
+            const checkContentLength = this.headers["Content-Length"] === Buffer.byteLength(bodyMsg).toString();
+            if (!checkContentLength) this.error = "Invalid Content-Length";
+        }
+    }
+```
+
+
+로직은 body를 parsing해서 저장할 때 검사하도록 했고,
+만약 일치하지 않는다면 this.error을 해당 에러로 설정해 app.ts에서 로직을 수행하기 전 검사하도록 작성했습니다.
+
+```ts
+//app.ts
+const server = net.createServer(socket => {
+    socket.on("data", (data) => {
+        const socketData = data.toString();
+        const req = new Request(socketData);
+        const res = new Response(socket, req.headers.Connection);
+
+        if (req.error != null) res.setStatus(400).send(req.error);
+        else try {
+        ...중략
+```
+
+### 회원가입 정보 유효성 검사
+
+만약 회원가입 시 비정상적인 규격 혹은 공백의 문자열이 들어왔을 경우 이를 검사하는 로직을 추가했습니다.
+
+```ts
+//signUpController.ts
+    const emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$"
+    const isEmailStandard = email.match(emailRegexp) != null;
+    const isPasswordStandard = password.trim() !== "";
+    const isNameStandard = name.trim() !== "";
+
+    if (!isEmailStandard || !isPasswordStandard || !isNameStandard) res.setStatus(400).send();
+```
+
+
+### 세션 구현
+
+세션을 어떻게 구현할지 고민을 했는데 당장은 굳이 어렵게 혹은 복잡하게 구현할 필요가 없다고 생각해 간단히 Session 클래스를 만들어 외부에서 사용할 수 있도록 만들었습니다.
+
+```ts
+//Session.ts
+class Session {
+    private storage = {};
+
+    set(sid, data) {
+        this.storage[sid] = data;
+    }
+
+    get(sid) {
+        return this.storage[sid];
+    }
+
+    isExist(sid) {
+        return this.storage[sid] != null;
+    }
+}
+```
+
+그리고, 구현된 Session을 활용해 로그인에 성공 시 Session에 user id를 저장하도록 구현했습니다.
+
+```ts
+//signInController.ts
+if (password === result.password) {
+	const sid = sha1Encryption(email + Date.now().toString());
+	session.set(sid, result.id);
+	...중략
+```
+
+</div>
+</details>
+
+
+<details>
+<summary>목요일</summary>
+<div markdown="1">
+
+### 멘토님 리뷰 사항 개선
+
+우선 리뷰 요청에 대한 개선을 수행하고자 했고,
+단 저만의 규칙으로 멘토님이 제안해주셨다고 다 변경하는 것이 아닌, 하나의 의견으로 받아들이고 제가 생각할 때도 합당하고 바꾸면 좋겠다 싶은 내용들만 개선하기로 했습니다.
+
+#### DB 관련
+
+```ts
+//#query 메서드가 수행하려는 메시지가 무엇인지 궁금해요.
+//executeQuery라는 메서드명은 어떨까요? 기존 connectionPool에서 사용하는 메서드와 헷갈릴 수 있을 거 같아요.
+
+    async #query(query, values = null) {
+        const connection = await this.connectionPool.getConnection();
+        const result = connection.query(query, values);
+        connection.release();
+        return result;
+    }
+```
+
+mysql connection의 기존 메서드인 .query와 헷갈릴 수 있을 것 같다는 의견은 생각해보지 못한 접근이었습니다.
+
+확실히 그렇게 생각해보니 connection의 query 메서드와는 다르게 connection을 연결하고 해제하는 로직이 추가돼 구분이 되면 좋겠다고 생각하게 되었고,
+
+제안해주신 대로 executeQuery가 의미있는 것 같아 해당 내용처럼 변경했습니다.
+
+```ts
+//개선 후
+private async executeQuery(query, values?) {
+	...
+}
+```
+
+
+#### 쿠키 관련
+
+```ts
+//작성한 함수명이 cookieParser기 때문에 cookie 객체만 반환하고, header에 추가하는 함수를 별도로 작성해도 좋을 거 같아요.
+function cookieParser(header) {
+    const cookieString = header.cookie;
+    const cookies = cookieString.split(";");
+    const cookieObject = cookies.reduce((obj, thisCookie) => {
+        const [key, value] = thisCookie.trim().split("=");
+        obj[key] = value;
+        return obj;
+    }, {});
+    header.cookie = cookieObject;
+}
+```
+
+의견을 주신 것에 적극 동감했습니다.
+
+이름이 cookieParser인데 현재는 헤더를 인자로 받아 쿠키를 파싱한 형태로 저장하는 역할을 수행하고 있기 때문에
+
+의견을 주신대로 역할을 분리하는 것이 맞다고 생각했고 아래처럼 개선했습니다.
+
+```ts
+//개선 후
+function cookieParser(cookieString) {
+    const cookies = cookieString.split(";");
+    const cookieObject = cookies.reduce((obj, thisCookie) => {
+        const [key, value] = thisCookie.trim().split("=");
+        obj[key] = value;
+        return obj;
+    }, {});
+
+    return cookieObject;
+}
+
+//Request.ts
+if (this.headers.cookie != null) {
+	const cookieObject = cookieParser(this.headers.cookie);
+	this.headers.cookie = cookieObject;
+}
+```
+
+
+#### 이외 로직 관련
+
+```ts
+//파이썬스러운(?) 문법처럼 보여요. 객체 디스트력쳐링을 활용하는건 어떨까요~?
+
+function signUpController(req, res) {
+	const [email, password, name] = [userData.email, md5(Encryption(userData.password), userData.name)];
+...
+```
+
+파이썬을 사용해본 적이 없어서 어떤 느낌으로 받아들이시는지는 잘 모르겠지만,  말씀하신 것 처럼 객체 디스트럭처링을 쓰면 조금 더 깔끔해지는 것 같다고 느껴 변경하게 되었습니다.
+
+```ts
+//개선 후
+function signUpController(req, res) {
+    const { email, password, name } = userData;
+    const encryptionPW = md5Encryption(password);
+...
+```
+
+
+추가로 고민과 해결 과정에서 라우팅에 관한 개선 내용이 있었고, 개선한 부분에 대해 어떻게 생각하시는 여쭤봤을 때 인상적인 방법에 대해 추가로 알 수 있어서 이후에 더 개선하면 좋겠다고 생각했습니다.
+
+```
+HTTP Request 라우팅 관련 로직
+
+정규식을 사용하여 동적 경로를 처리하고 있는데요. `findIndex`로 모든 경로에 대해 정규식 매칭을 반복하고 있어 경우의 수가 많아지면 성능 저하에 영향을 미칠 수 있습니다. 이 때는 트리구조를 고민해보셔도 좋을 거 같습니다. 성능에 문제가 없는 수준이라면 우선 다른 요구사항 구현에 리소스를 쏟는 게 좋을 거 같긴 합니다.
+```
+
+### 로그인 과정 sid 검증
+
+```ts
+    if (session.isExist(sid)) res.setStatus(200).send(session.get(sid));
+
+    else try {
+    ...중략
+```
+
+### 유효하지 않은 SID일 시 쿠키초기화
+
+매 요청이 들어오면 유효한 sid인지 검사합니다.
+만약 유효하지 않은 sid일 경우에 sid를 초기화해주는 로직을 작성했습니다.
+
+```ts
+//app.ts
+function ifSidNotValidCookieInit(req, res) {
+    const sid = req.headers.cookie != null ? req.headers.cookie.sid : "none";
+    const ifSidNotValid = sid !== "none" && !session.isExist(sid);
+    if (ifSidNotValid) {
+        res.setCookie("sid", "Remove cookie", { HttpOnly: true, Path: "/", "Max-Age": 0 });
+    }
+}
+```
+
+### Jest 및 관련 패키지 설치, 설정
+
+https://kulshekhar.github.io/ts-jest/docs/getting-started/installation/#jest-config-file
+
+typescript와 jest를 함께 사용하기 위해 패키지 설치와 함께 설정해야 할 것들이 있었습니다.
+
+```console
+//jest 설치
+npm install --save-dev jest typescript ts-jest @types/jest
+```
+
+패키지를 설치한 이후 기본 설정 파일을 만들어줬습니다.
+
+```console
+npx ts-jest config:init
+```
+
+이후 생긴 jest.config.js 파일에 `preset: "ts-jest`를 추가해줍니다.
+
+```js
+//jest.config.js
+/** @type {import('ts-jest').JestConfigWithTsJest} **/
+module.exports = {
+  preset: "ts-jest",
+  testEnvironment: "node",
+  transform: {
+    "^.+.ts?$": ["ts-jest", {}],
+  },
+  moduleFileExtensions: ["ts", "js"],
+  testMatch: ["**/**/*.test.ts"],
+};
+```
+
+ 빠르게 테스트를 시작할 수 있도록 package.json의 script에도 test를 추가해줍니다.
+
+```json
+//package.json
+  "scripts": {
+  //..중략
+    "test": "jest"
+  },
+```
+
+이후 정상적으로 jest가 실행되는지 확인하기 위해 임시 테스트를 실행했는데
+테스트는 실행되었지만, 아래와 같이 경고 문구를 받게 되었습니다.
+
+```console
+ts-jest[config] (WARN) message TS151001: 
+If you have issues related to imports, you should consider setting `esModuleInterop` to `true` in your TypeScript configuration file (usually `tsconfig.json`). See 
+https://blogs.msdn.microsoft.com/typescript/2018/01/31/announcing-typescript-2-7/#easier-ecmascript-module-interoperability for more information.
+```
+
+ts를 사용할 때 import 관련 에러를 겪을 수 있으니 연관 돼 있다면 tsconfig 파일에 `esModuleInterop` 옵션을 true로 설정하라는 의미였습니다.
+
+아직 정상 동작 확인 단계였지만 이후에는 import를 사용할 예정이기 때문에 미리 tsconfig 파일을 생성해서 설정해주도록 하겠습니다.
+
+https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-tsconfigjson-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0-%EC%B4%9D%EC%A0%95%EB%A6%AC
+
+
+```json
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    },
+    "include": [
+        "**/*.test.ts"
+    ]
+}
+```
+
+### 테스트 코드 작성하기
+
+..어떻게 해야 하지? ㅠㅠ 어떻게 작성하면 좋을지 감이 안잡힙니다.
 
 
 </div>
