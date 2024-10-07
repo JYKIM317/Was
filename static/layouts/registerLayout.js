@@ -36,7 +36,7 @@ function addEvent() {
         const password = document.getElementById("input-password").querySelector("input").value.trim();
 
         if (name !== "" && email !== "" && password !== "") {
-            await fetch(`${baseURL}/user/register`, {
+            await fetch(`${url}/user/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password, name })
