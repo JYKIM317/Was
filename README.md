@@ -3,10 +3,10 @@
 
 ## ✅ 나만의 체크포인트 ⭕❌
 
-❌ 리액트에서 바닐라로 FE 사양 변경 
-	❌ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
-	❌ 전체 페이지를 리액트에서 바닐라로 변환
-	❌ 웹 프론트 이벤트 및 기능 Script로 변환
+⭕ 리액트에서 바닐라로 FE 사양 변경 
+	⭕ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+	⭕ 전체 페이지를 리액트에서 바닐라로 변환
+	⭕ 웹 프론트 이벤트 및 기능 Script로 변환
 
 ❌ 웹 프론트 구현
 	❌ 메인 페이지 구현
@@ -80,6 +80,133 @@
 ## ✏️ 고민과 해결 과정 쌓아가기
 
 
+### 리액트에서 바닐라로 마이그레이션 하기
+
+첫 주차에 웹 프론트를 리액트로 개발했었는데, 리액트 사용은 권장하지 않는다고 해서 새로운 웹 페이지 구현에 앞서 웹 프론트를 바닐라로 마이그레이션 하는 작업이 필요했습니다.
+
+```
+//마이그레이션 이전
+📦FE  
+ ┣ 📂src  
+ ┃ ┣ 📂components  
+ ┃ ┃ ┣ 📜Button.tsx  
+ ┃ ┃ ┣ 📜Frame.tsx  
+ ┃ ┃ ┗ 📜InputBox.tsx  
+ ┃ ┣ 📂layouts  
+ ┃ ┃ ┣ 📜Login.tsx  
+ ┃ ┃ ┗ 📜Register.tsx  
+ ┃ ┣ 📂stylesheets  
+ ┃ ┃ ┣ 📜Button.css  
+ ┃ ┃ ┣ 📜foundation.css  
+ ┃ ┃ ┣ 📜Frame.css  
+ ┃ ┃ ┣ 📜index.css  
+ ┃ ┃ ┗ 📜InputBox.css  
+ ┃ ┣ 📜main.tsx  
+ ┃ ┗ 📜vite-env.d.ts  
+ ┣ 📜.env  
+ ┣ 📜.gitignore  
+ ┣ 📜eslint.config.js  
+ ┣ 📜index.html  
+ ┣ 📜package-lock.json  
+ ┣ 📜package.json  
+ ┣ 📜tsconfig.app.json  
+ ┣ 📜tsconfig.json  
+ ┣ 📜tsconfig.node.json  
+ ┗ 📜vite.config.ts
+
+📦static  
+ ┣ 📂assets  
+ ┃ ┣ 📜index-5axTRczP.css  
+ ┃ ┗ 📜index-BYA0q6UV.js  
+ ┣ 📜favicon.ico  
+ ┗ 📜index.html
+```
+
+tsx 파일을 마이그레이션함과 함께 FE 디렉토리에서 정적 파일들을 분리해 `static` 디렉토리에 포함시켜줬습니다.
+
+```
+//마이그레이션 이후
+📦static  
+ ┣ 📂components  
+ ┃ ┣ 📜Button.ts  
+ ┃ ┣ 📜Frame.ts  
+ ┃ ┗ 📜InputBox.ts  
+ ┣ 📂layouts  
+ ┃ ┣ 📜loginLayout.ts  
+ ┃ ┣ 📜mainLayout.ts  
+ ┃ ┗ 📜registerLayout.ts  
+ ┣ 📂stylesheets  
+ ┃ ┣ 📜Button.css  
+ ┃ ┣ 📜foundation.css  
+ ┃ ┣ 📜Frame.css  
+ ┃ ┣ 📜index.css  
+ ┃ ┗ 📜InputBox.css  
+ ┣ 📜favicon.ico  
+ ┗ 📜index.html
+```
+
+
+### .ts 확장자 MIME 타입 에러
+
+리액트로 개발했던 .tsx 파일을 .ts 파일로 바꾸고 서버에서 파일을 송신했는데
+
+```
+Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "undefined". Strict MIME type checking is enforced for module scripts per HTML spec.
+```
+
+.ts 확장자에 대한 Contnet-Type 처리를 안해줘서 발생했던 문제였기 때문에 .ts 확장자에 대한 Content-Type 응답을 추가해줬습니다.
+
+다만 이후에 .ts 파일을 그대로 보내니 웹 브라우저에서 ts를 인식하지 못하는 문제를 마주했습니다.
+
+저에겐 두 가지 선택지가 있었는데
+
+1. .ts 파일을 .js 파일로 바꾼다.
+2. .ts 파일을 .js 파일로 컴파일 해서 보내주기
+
+굳이 ts가 필요한 상황은 아니었기 때문에 .js 파일로 바꾸기로 결정 했습니다.
+
+
+### Response Content-Length에 관한 문제
+
+
+```
+//서버에서 보내는 경우
+export { SmallButton, LargeButton }
+
+//브라우저에서 받는 경우
+export { SmallButton, LargeButton
+```
+
+파일이 정해진 만큼 수신 되지 않는다는 것에 대해 원인을 파악하기 위해 Content-Length를 파일 크기에 임의의 수를 더해 읽히는지 확인해봤는데
+
+Content-Length를 올리면 정상적으로 읽히는 것을 확인할 수 있었습니다.
+
+파일의 크기는 정상적인데 왜 Content-Length를 올려야 정상적으로 파일을 끝까지 읽을까?에 대해 생각해봤습니다.
+
+합리적인 추론으로 HTTP Message의 Body로 보내는 메시지에 무언가 데이터가 추가되어 들어간다고 판단할 수 있었고, file은 Buffer의 형태로 전달하기 때문에 header와 body를 구분하는 empty line이 문제일 수 있겠다고 생각했습니다.
+
+```ts
+//문제가 된 부분
+const emptyLine = "\r\n\r\n";
+```
+
+근데 이 부분은 사실 지난 주 HTTP Response Message 문제와 반대되는 문제인데 오히려 지난 주에는 `\r\n`으로 보냈을 때 `Failed to load resource: net::ERR_INVALID_HTTP_RESPONSE` 에러를 만났기 때문입니다.
+
+즉 `send()` 를 보낼 땐 emptyLine이 추가가 되어야 된다는 의미였고, send 함수 외에는 body가 항상 포함되는 함수기 때문에 body가 비어있을 때 `\r\n`을 포함하도록 바꾸어 해결했습니다.
+
+```ts
+private socketWrite(header, body = "\r\n") {
+        if (!this.statusCode) throw new Error("Status code has not been set yet.");
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
+        const emptyLine = "\r\n";
+
+        this.socket.write(startLine);
+        this.socket.write(header);
+        this.socket.write(emptyLine);
+        if (body) this.socket.write(body);
+    }
+}
+```
 
 
 <details>
