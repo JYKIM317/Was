@@ -1,10 +1,10 @@
-import { db1004 } from "../dao/DB1004";
+import { DBManager } from "../database/DBManager";
 
 class UserRepository {
     static tableName = "users";
 
     static async getUser(email) {
-        return await db1004.select({
+        return await DBManager.select({
             table: this.tableName,
             column: "*",
             condition: `email="${email}"`
@@ -12,7 +12,7 @@ class UserRepository {
     }
 
     static async createUser(email, password, name) {
-        return await db1004.insert({
+        return await DBManager.insert({
             table: this.tableName,
             columns: ["email", "password", "name"],
             values: [email, password, name]

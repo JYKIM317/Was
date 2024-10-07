@@ -7,9 +7,11 @@
   font: var(--font-bold-s);
   transition: background-color 0.3s ease;
 }
+
 .small {
   padding: 0.5rem 1rem;
 }
+
 .large {
   width: 20rem;
   padding: 0.625rem 0;

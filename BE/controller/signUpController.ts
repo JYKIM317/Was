@@ -23,20 +23,13 @@ function signUpController(req, res) {
             const emailAvailable = result == null;
             if (emailAvailable) {
                 UserRepository.createUser(email, encryptionPW, name);
-
-                res
-                    .setStatus(302)
-                    .send();
+                res.setStatus(302).send();
             } else {
-                res
-                    .setStatus(409)
-                    .send();
+                res.setStatus(409).send();
             }
         });
     } catch (e) {
-        res
-            .setStatus(400)
-            .send();
+        res.setStatus(400).send();
     }
 }
 

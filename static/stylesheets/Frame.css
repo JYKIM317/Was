@@ -1,4 +1,3 @@
-
 .navigation {
     width: 65rem;
     height: 4rem;
@@ -14,6 +13,7 @@
     align-content: center;
     text-align: center;
     font: var(--font-display-l);
+    border-radius: 0.5rem;
 }
 
 .hug-frame {
@@ -24,4 +24,5 @@
     justify-content: space-between;
     gap: 1rem;
     margin: auto;
+    align-items: center;
 }

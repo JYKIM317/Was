@@ -1,7 +1,7 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
-class DB1004 {
+class DatabaseManager {
     connectionPool: mysql.Pool;
     constructor() {
         dotenv.config();
@@ -50,6 +50,6 @@ class DB1004 {
 }
 
 
-const db1004 = new DB1004();
+const DBManager = new DatabaseManager();
 
-export { db1004 }
+export { DBManager }
