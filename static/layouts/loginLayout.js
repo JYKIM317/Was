@@ -30,7 +30,7 @@ fragment.appendChild(loginInputFrameNode);
 
 const registerRouteText = `<span className='signup-info'>
                     아직 회원가입을 안하셨나요?
-                    <a href="http://localhost:8080/register" className="text-link"> 회원가입하기</a>
+                    <a href="http://localhost:8080/register.html" className="text-link"> 회원가입하기</a>
                 </span>`;
 const loginButtonFrameNode = document.createRange().createContextualFragment(HugFrame("login-frame", [
     LargeButton("로그인", "login-button"),
