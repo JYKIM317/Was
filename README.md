@@ -8,6 +8,8 @@
 	⭕ 전체 페이지를 리액트에서 바닐라로 변환
 	⭕ 웹 프론트 이벤트 및 기능 Script로 변환
 
+⭕ 토큰 발급 설계 및 구현
+
 ❌ 웹 프론트 구현
 	❌ 메인 페이지 구현
 	❌ 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
@@ -79,6 +81,9 @@
 
 ## ✏️ 고민과 해결 과정 쌓아가기
 
+<details>
+<summary>월요일</summary>
+<div markdown="1">
 
 ### 리액트에서 바닐라로 마이그레이션 하기
 
@@ -207,6 +212,250 @@ private socketWrite(header, body = "\r\n") {
     }
 }
 ```
+
+</div>
+</details>
+
+
+### 로그인 시 redirect에 대한 고민
+
+```ts
+res.redirect("/");
+
+res.setStatus(200).send("/");
+```
+
+클라이언트에서 로그인을 시도하고, 서버에서는 로그인에 성공 시 클라이언트를 메인 페이지로 보내주도록 구현해야 했었는데,
+
+제가 선택 가능한, 서버에서 보내줄 수 있는 응답이 2종류가 있었습니다.
+
+1. status code를 302로 설정하고, HTTP Response Message Header에 Location으로 url을 설정해서 전달하는 방식,
+
+2. status code를 200으로 설정하고 plain/text로 redirect될 url을 내용으로 전달하는 방식
+
+만약 1번 방식을 사용하여 응답을 할 경우 브라우저에서 응답을 받았을 때 즉시 리다이렉트를 해  메인페이지에 대한 html을 받아오지만
+
+현재 Ajax 방식으로 요청을 보내기 때문에 DOM 파싱을 수동으로 해줘야 한다는 문제가 있었고,
+
+2번 방식을 사용할 경우 window.location.href를 이용해 수동 리다이렉트를 해줄 수 있고 DOM 파싱이 알아서 되지만,
+
+리다이렉션을 유도하지만 응답 코드가 200이라서 개인적으로 찜찜한 기분이 든다는 것이 문제였습니다.
+
+```ts
+//signinController.ts
+res.setStatus(200).json({ redirect: "/" });
+
+//loginLayout.js
+await fetch(`${url}/user/login`, {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({ email, password })
+}).then((response) => {
+	const isOK = 200;
+	if (response.status === isOK) return response.json();
+}).then((json) => {
+	if (json != null) window.location.href = json.redirect;
+});
+```
+
+결과적으로 서버는 로그인 성공 시 status code를 200으로 설정하고 body로 리다이렉트할 url을 보내면,
+
+클라이언트는 응답받은 status code에 따라 리다이렉트를 할지, 로그인 에러 처리를 응답할지 결정하도록 했습니다.
+
+
+### 토큰 설계 및 구현
+
+이번 주 요구사항에 맞게 기존 쿠키-세션을 이용하던 방식에서 토큰을 사용하는 방식으로 변경을 하고,
+필요하다면 세션을 함께 이용하도록 하려고 합니다.
+
+우선 토큰을 자체적으로 제작해야 하기 때문에 어떻게 구현하더라도 상관 없어서 정말 쉽게 구현하려면 쉽게 구현할 수 있겠지만, 
+
+제대로 발급 과정을 설계하고, 응답할 수 있도록 만들려고 합니다.
+
+#### 토큰 구조 설계
+
+우선 토큰을 발급하는 과정을 개발하기 앞서 토큰이 어떤 구조로 이루어지는지 설계해야 했습니다.
+
+토큰의 발급을 Access Token과 Refresh Token 으로 나누어 발급할 예정이긴 하지만, 토큰의 구조는 동일하게 만들 예정입니다.
+
+```
+SECRET.BODY.INTEGRITY_TAG
+```
+
+우선 토큰 인증 과정에서 해당 토큰에 대한 무결성 검사를 구현하고 싶었습니다.
+
+그렇기 때문에 토큰을 마침표로 구분하는 `시크릿.바디.무결성태그` 구조로 만들고, 시크릿과 바디를 복호화 한 이후 합쳤쳐서 해싱했을 때 무결성 태그가 완성되는지 확인하는 방식으로 구현할 예정입니다.
+
+```
+토큰의 구성
+
+1. 시크릿 (서버에서 관리하는 시크릿 키)
+2. 바디
+	- iat (발행 시간)
+	- exp (만료 시간)
+	- grd (등급)
+	- typ (토큰 타입)
+1. 무결성 태그 (시크릿과 바디를 합친 것을 해싱한 값)
+```
+
+#### 어떻게 암호화 할 것인가?
+
+토큰의 내용을 암호화 하기 위해서 각 내용을 AES 대칭 암호화 방식을 이용할 예정입니다.
+
+AES 암호화 방식에서도 다양한 방법으로 암호화 할 수 있었는데
+
+```
+사용 가능한 알고리즘 (AES-비트-모드)
+- AES-128-CBC
+- AES-192-CBC
+- AES-256-CBC
+- AES-128-GCM
+- AES-192-GCM
+- AES-256-GCM
+```
+
+- CBC (Cipher Block Chaining) 모드와 GCM (Galois/Counter Mode) 모드의 차이
+
+```
+CBC 모드는 데이터를 블록 단위로 나눠 첫 블록을 IV와 함께 암호화 한 이후 이후 블록을 암호화된 이전 블록과 함께 암호화를 수행
+
+데이터를 블록 단위로 나누기 때문에 데이터의 길이를 블록 크기로 맞추기 위해서 필요한 경우 패딩이 추가될 수 있음
+```
+
+```
+GCM 모드도 데이터를 블록 단위로 나누지만, IV를 활용해 카운터를 생성하고 블록마다 카운터를 증가시켜 함께 암호화 하는 방식
+
+GCM 모드는 Galois 필드를 사용하여 인증 태그를 생성하고, 계산하여 데이터 무결성을 검증할 수 있음
+```
+
+무결성 검사는 토큰 자체로 할 예정이고, 그리 복잡하게 구현할 필요까지는 없다고 생각해 CBC 모드, 그리고 그 중에서도 256bit를 이용한 방식으로 암호화를 하겠습니다.
+
+#### 토큰 발급과 인증 흐름 설계
+
+<img src="https://i.ibb.co/9wG2dYN/Pasted-image-20241008203513.png" alt="token_architecture">
+
+#### 구현
+
+설계를 끝냈으니, 이제 설계한 내용에 맞도록 구현을 할 예정입니다.
+
+우선 토큰의 각 부분을 암호화 하고 복호화 할 수 있는 함수를 만들어야 했습니다.
+
+```ts
+//AES 암호화에서 사용할 방식
+const alg = 'aes-256-cbc';
+//256비트의 랜덤 키
+const encryptedKey = crypto.randomBytes(32);
+//초기화용 벡터 값
+const initializeVector = crypto.randomBytes(16);
+
+//암호화 함수
+function encrypt(text) {
+    const cipher = crypto.createCipheriv(alg, encryptedKey, initializeVector);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+}
+
+//복호화 함수
+function decrypt(encryptedText) {
+    const decipher = crypto.createDecipheriv(alg, encryptedKey, initializeVector);
+    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+}
+
+//무결성 검사용 태그 생성 함수
+function createIntegrityTag(secret, body) {
+    return crypto.createHash("sha256").update(body + secret).digest("hex");
+}
+```
+
+
+암호화 및 복호화에 관한 함수를 만들었으니, 이제 암호화 함수를 이용해 토큰을 발급하는 함수를 작성했습니다.
+
+- 토큰 생성 함수
+
+```ts
+//Authorization.ts
+class Authorization {
+    static generateToken(tokenType: TokenType) {
+        const iat = new Date();
+        const exp = new Date();
+        tokenType === "Access"
+            ? exp.setMinutes(exp.getMinutes() + 15)
+            : exp.setDate(exp.getDate() + 61);
+        const grd = gradeType.USER;
+        const typ = tokenType;
+        const body: TokenBody = { iat, exp, grd, typ };
+
+        const secretOfToken = encrypt(process.env.SECRET);
+        const bodyOfToken = encrypt(JSON.stringify(body));
+        const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
+
+        const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
+        return token;
+    }
+}
+```
+
+Access Token은 15분의 기한을 가지도록 했고, Refresh Token은 61일의 기한을 가지도록 했는데 
+
+Refresh Token을 61일로 설정한 이유는 특별한 이유는 아니었고,
+카카오에서 2달로 설정했다는 것을 참고해 설정했습니다.
+
+https://devtalk.kakao.com/t/refresh-token/128850
+
+
+- 토큰 검증 함수
+
+```ts
+//Authorization.ts
+class Authorization {
+    static verifyToken(token, tokenType: TokenType) {
+        const now = new Date();
+        const [secretOfToken, bodyOfToken, integrityTag] = accessToken.split(".");
+        const secret = decrypt(secretOfToken);
+        const bodyJSON = decrypt(bodyOfToken);
+        const thisContentIntegrityTag = createIntegrityTag(secret, bodyJSON);
+        const body = JSON.parse(bodyJSON) as TokenBody;
+        const exp = new Date(body.exp);
+  
+        if (secret !== process.env.SECRET) return false;
+        if (thisContentIntegrityTag !== integrityTag) return false;
+        if (body.typ !== tokenType) return false;
+        if (exp.getTime() < now.getTime()) throw new Error(`Invalid {tokenType} Token`);
+        return true;
+    }
+}
+```
+
+토큰 검증 함수에선 인자로 전달받은 Token을 분해해 유효성을 검증하도록 작성했습니다.
+
+검증 함수에서 수행하는 일은 아래와 같습니다.
+
+1. 토큰 분해
+2. secret 검증
+3. 토큰의 내용이 무결한지 무결성 태그를 통한 검증
+4. typ 검증
+5. exp (만료일) 검증
+
+검증 과정에서 실패하면 false를 반환하지만 만약 토큰이 무결함을 확인했는데 만료일이 지난 경우에만 Access Token 혹은 Refresh Token 재발급을 수행할 수 있도록 처리하기 위해 에러 처리를 해줬습니다.
+
+- 토큰 재발급 함수
+
+```ts
+class Authorization {
+    static tokenRefresh(refreshToken) {
+        const tokenVerifyResult = this.verifyToken(refreshToken, "Refresh");
+        if (tokenVerifyResult) return this.generateToken("Access");
+        else return false;
+    }
+}
+```
+
+토큰 재발급 함수는 우선 Refresh Token에 대한 검증을 시도하고 만약 문제가 없다면 새로운 Access Token을, 문제가 있다면 fasle를 반환하도록 작성했습니다.
+
+
 
 
 <details>
