@@ -27,7 +27,8 @@ const server = net.createServer(socket => {
             } else {
                 res.setStatus(404).send();
             }
-        } catch (_) {
+        } catch (e) {
+            logger.error(e);
             res.setStatus(500).send();
         } finally {
             if (res.connection.toLowerCase() != "keep-alive") socket.end();
