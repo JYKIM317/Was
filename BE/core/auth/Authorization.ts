@@ -39,7 +39,18 @@ class Authorization {
     }
 
     static verifyAccessToken(accessToken) {
-        //TODO: 토큰 검증
+        const now = new Date();
+        const [secretOfToken, bodyOfToken, integrityTag] = accessToken.split(".");
+        const secret = decrypt(secretOfToken);
+        const bodyJSON = decrypt(bodyOfToken);
+        const thisContentIntegrityTag = createIntegrityTag(secret, bodyJSON);
+        const body = JSON.parse(bodyJSON) as TokenBody;
+        const exp = new Date(body.exp);
+
+        if (secret !== process.env.SECRET) return false;
+        if (thisContentIntegrityTag !== integrityTag) return false;
+        if (body.typ !== "Access") return false;
+        if (exp.getTime() < now.getTime()) throw new Error("Invalid Access Token");
         return true;
     }
 }
