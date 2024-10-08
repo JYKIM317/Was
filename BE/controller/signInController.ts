@@ -1,4 +1,5 @@
 import { session } from "../core/session/Session";
+import { logger } from "../logger";
 import { UserRepository } from "../repository/UserRepository";
 import { md5Encryption } from "../util/crypto";
 import { sha1Encryption } from "../util/crypto";
@@ -27,9 +28,10 @@ function signInController(req, res) {
             const sid = sha1Encryption(email + Date.now().toString());
             session.set(sid, result.id);
             res.setCookie("sid", sid, { HttpOnly: true, Path: "/", "Max-Age": 30 * DAY });
-            res.setStatus(302).send();
+            res.setStatus(200).json({ redirect: "/" });
         });
     } catch (e) {
+        logger.error(e);
         res.setStatus(500).send();
     }
 }
