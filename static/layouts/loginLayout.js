@@ -43,6 +43,11 @@ function addEvent() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
+            }).then((response) => {
+                const isOK = 200;
+                if (response.status === isOK) return response.json();
+            }).then((json) => {
+                if (json != null) window.location.href = json.redirect;
             });
         }
     });
