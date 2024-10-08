@@ -34,13 +34,14 @@ class Authorization {
     }
 
     static tokenRefresh(refreshToken) {
-        //TODO: RefreshToken exp 및 무결성 검증 후 generateAccessToken("ACCESS");
-        return "";
+        const tokenVerifyResult = this.verifyToken(refreshToken, "Refresh");
+        if (tokenVerifyResult) return this.generateToken("Access");
+        else return false;
     }
 
-    static verifyAccessToken(accessToken) {
+    static verifyToken(token, tokenType: TokenType) {
         const now = new Date();
-        const [secretOfToken, bodyOfToken, integrityTag] = accessToken.split(".");
+        const [secretOfToken, bodyOfToken, integrityTag] = token.split(".");
         const secret = decrypt(secretOfToken);
         const bodyJSON = decrypt(bodyOfToken);
         const thisContentIntegrityTag = createIntegrityTag(secret, bodyJSON);
@@ -49,8 +50,8 @@ class Authorization {
 
         if (secret !== process.env.SECRET) return false;
         if (thisContentIntegrityTag !== integrityTag) return false;
-        if (body.typ !== "Access") return false;
-        if (exp.getTime() < now.getTime()) throw new Error("Invalid Access Token");
+        if (body.typ !== tokenType) return false;
+        if (exp.getTime() < now.getTime()) throw new Error(`Invalid ${tokenType} Token`);
         return true;
     }
 }
