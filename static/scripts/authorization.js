@@ -21,9 +21,17 @@ async function verifyAccessTokenValid() {
 }
 
 async function requestTokenRefresh() {
-    //`${url}/autorization/refresh`
     const refreshToken = window.localStorage.getItem("refreshToken");
+    if (refreshToken == null) return false;
 
+    return await fetchPOST(`${url}/authorization/refresh`, { refreshToken }).then(async (response) => {
+        const isOK = 200;
+        if (response.status === isOK) {
+            return true;
+        } else {
+            return false;
+        }
+    });
 }
 
 export { verifyAccessTokenValid }
