@@ -48,10 +48,10 @@ class Authorization {
         const body = JSON.parse(bodyJSON) as TokenBody;
         const exp = new Date(body.exp);
 
-        if (secret !== process.env.SECRET) return false;
-        if (thisContentIntegrityTag !== integrityTag) return false;
-        if (body.typ !== tokenType) return false;
-        if (exp.getTime() < now.getTime()) throw new Error(`Invalid ${tokenType} Token`);
+        if (secret !== process.env.SECRET) throw new Error(`Invalid ${tokenType} Token`);
+        if (thisContentIntegrityTag !== integrityTag) throw new Error(`Invalid ${tokenType} Token`);
+        if (body.typ !== tokenType) throw new Error(`Invalid ${tokenType} Token`);
+        if (exp.getTime() < now.getTime()) return false;
         return true;
     }
 }
