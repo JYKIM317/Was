@@ -35,7 +35,7 @@ function addEvent(isLogin) {
         document.getElementById("user-logout-button").addEventListener("click", (event) => {
             window.localStorage.removeItem("accessToken");
             window.localStorage.removeItem("refreshToken");
-            window.location.href = `${url}/`;
+            window.location.reload();
         });
         //memberlist
         //TODO: 멤버 리스트 페이지로 이동
