@@ -23,19 +23,28 @@ async function render() {
     fragment.appendChild(informationNode);
 
     document.body.querySelector("#root").appendChild(fragment);
-    addEvent();
+    addEvent(tokenValid);
 }
 
 
-function addEvent() {
+function addEvent(isLogin) {
     const url = "http://localhost:8080";
 
-    //navigate to login page
-    document.getElementById("user-navigator-button").addEventListener("click", (event) => {
-        window.location.href = `${url}/login.html`;
-    });
-
-    //TODO: 로그인 상태 네비게이터 버튼 이벤트 등록
+    if (isLogin) {
+        //logout
+        document.getElementById("user-logout-button").addEventListener("click", (event) => {
+            window.localStorage.removeItem("accessToken");
+            window.localStorage.removeItem("refreshToken");
+            window.location.href = `${url}/`;
+        });
+        //memberlist
+        //TODO: 멤버 리스트 페이지로 이동
+    } else {
+        //navigate to login page
+        document.getElementById("user-navigator-button").addEventListener("click", (event) => {
+            window.location.href = `${url}/login.html`;
+        });
+    }
 }
 
 render();
