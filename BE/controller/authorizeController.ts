@@ -18,7 +18,18 @@ function verifyController(req, res) {
 }
 
 function tokenRefreshController(req, res) {
-
+    try {
+        const refreshToken = req.body.refreshToken;
+        const accessToken = Authorization.tokenRefresh(refreshToken);
+        if (accessToken) {
+            res.setStatus(200).json({ accessToken });
+        } else {
+            res.setStatus(401).send();
+        }
+    } catch (e) {
+        logger.warn(e);
+        res.setStatus(403).send();
+    }
 }
 
 export { verifyController, tokenRefreshController }
