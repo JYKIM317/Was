@@ -9,7 +9,7 @@ async function fetchPOST(uri, data = {}) {
     }).then(async (response) => {
         const contentType = response.headers.get("Content-Type");
         const isJSON = contentType === "application/json";
-        return [response, isJSON ? await response.json() : {}];
+        return [response, isJSON ? await response.clone().json() : {}];
     }).then(([response, body]) => {
         if (body.accessToken != null) {
             window.localStorage.setItem("accessToken", body.accessToken);
