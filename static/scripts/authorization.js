@@ -6,7 +6,7 @@ async function verifyAccessTokenValid() {
     const accessToken = window.localStorage.getItem("accessToken");
     if (accessToken == null) return false;
 
-    return await fetchPOST(`${url}/autorization/verify`, { email, password }).then(async (response) => {
+    return await fetchPOST(`${url}/authorization/verify`).then(async (response) => {
         const isOK = 200;
         const UNATHORIZED = 401;
         if (response.status === isOK) {
@@ -21,6 +21,7 @@ async function verifyAccessTokenValid() {
 }
 
 async function requestTokenRefresh() {
+    //`${url}/autorization/refresh`
     const refreshToken = window.localStorage.getItem("refreshToken");
 
 }

@@ -1,4 +1,4 @@
-async function fetchPOST(uri, data) {
+async function fetchPOST(uri, data = {}) {
     const accessToken = window.localStorage.getItem("accessToken");
     if (accessToken != null) data.accessToken = accessToken;
 
