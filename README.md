@@ -10,22 +10,17 @@
 
 ⭕ 토큰 발급 설계 및 구현
 
-❌ 웹 프론트 구현
-	❌ 메인 페이지 구현
-	❌ 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
-	❌ 로그인 상태가 아닐 경우 로그인 버튼 표시
+⭕ 웹 프론트 구현
+	⭕ 메인 페이지 구현
+	⭕ 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
+	⭕ 로그인 상태가 아닐 경우 로그인 버튼 표시
 
-❌ 로그아웃 구현
-	❌ 로그아웃 요청 시 세션 및 토큰 삭제 로직 추가
-
-❌ 테스트 코드 작성
-	❌ Jest 세부 기능 학습
-	❌ HTTP Message에 대한 테스트 코드 작성
-	❌ 비즈니스 로직에 대한 테스트 코드 작성
+⭕ 로그아웃 구현
+	⭕ 로그아웃 요청 시 토큰 삭제 로직 추가
 
 ❌ 동적인 HTML 응답 구현
 	❌ 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
-	❌ 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
+	⭕ 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
 		- 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
 
 ❌ 게시판 기능을 포함한 ERD 다시 그리기
@@ -38,6 +33,11 @@
 	❌ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
 		- 만약 비로그인 유저라면 로그인 페이지로 이동
 	❌ 404 및 기타 에러 처리 페이지 구현
+
+❌ 테스트 코드 작성
+	❌ Jest 세부 기능 학습
+	❌ HTTP Message에 대한 테스트 코드 작성
+	❌ 비즈니스 로직에 대한 테스트 코드 작성
 
 ## 📝 학습 및 구현 계획
 
@@ -215,6 +215,11 @@ private socketWrite(header, body = "\r\n") {
 
 </div>
 </details>
+
+
+<details>
+<summary>화요일</summary>
+<div markdown="1">
 
 
 ### 로그인 시 redirect에 대한 고민
@@ -456,6 +461,285 @@ class Authorization {
 토큰 재발급 함수는 우선 Refresh Token에 대한 검증을 시도하고 만약 문제가 없다면 새로운 Access Token을, 문제가 있다면 fasle를 반환하도록 작성했습니다.
 
 
+</div>
+</details>
+
+
+### 로그인 시 토큰 전달
+
+기존 쿠키와 세션을 함께 사용하던 방식에서 토큰을 이용하도록 변경하기 위해 
+
+기존 쿠키 및 세션 설정 로직을 제거하고 토큰을 발급해서 전달하는 로직으로 수정해야 했습니다.
+
+- 변경 전
+
+```ts
+//signInController.ts 기존 쿠키&세션 방식
+const sid = sha1Encryption(email + Date.now().toString());
+
+session.set(sid, result.id);
+
+res.setCookie("sid", sid, { HttpOnly: true, Path: "/", "Max-Age": 30 * DAY });
+
+res.setStatus(200).json({ redirect: "/" });
+```
+
+- 변경 후
+
+```ts
+//signInController.ts 토큰 방식
+const accessToken = Authorization.generateToken("Access");
+const refreshToken = Authorization.generateToken("Refresh");
+
+res.setStatus(200).json({ redirect: "/", accessToken, refreshToken });
+```
+
+### Fetch 정형화
+
+클라이언트가 로그인 이후 접근 권한이 필요한 모든 요청에 대해 토큰을 함께 보낼 수 있도록,
+
+언제 Access Token이 재발급될지 모르기 때문에 응답 결과에 따라 항상 로컬 스토리지를 갱신할 수 있도록 하기 위해
+
+Fetch를 정형화 할 필요가 있다고 생각했습니다.
+
+```js
+//loginLayout.js
+
+await fetch(`${url}/user/login`, {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({ email, password })
+}).then((response) => {
+	const isOK = 200;
+	if (response.status === isOK) return response.json();
+}).then((json) => {
+	if (json != null) window.location.href = json.redirect;
+});
+```
+
+기존에는 위처럼 각 페이지에서 fetch 모듈을 직접 호출하고 있었지만 
+
+Access Token의 존재 여부를 확인하고 함께 전송해서 응답을 받았을 때 Access / Refresh Token이 존재한다면 갱신해주는 공용 fetch 함수를 작성해줬습니다.
+
+저장 위치는 클라이언트의 Local Storage에 저장하기로 결정했고, 사용법은 MDN 문서를 참고했습니다.
+
+https://developer.mozilla.org/en-US/docs/Web/API/Storage
+
+
+```js
+//fetch.js
+async function fetchPOST(uri, data) {
+    const accessToken = window.localStorage.getItem("accessToken");
+    if (accessToken != null) data.accessToken = accessToken;
+
+    await fetch(uri, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    }).then(async (response) => {
+        const contentType = response.headers.get("Content-Type");
+        const isJSON = contentType === "application/json";
+        return [response, isJSON ? await response.json() : {}];
+    }).then(([response, body]) => {
+        if (body.accessToken != null) {
+            window.localStorage.setItem("accessToken", body.accessToken);
+        }
+        if (body.refreshToken != null) {
+            window.localStorage.setItem("refreshToken", body.refreshToken);
+        }
+        return response;
+    });
+}
+
+//loginLayout.js
+fetchPOST(`${url}/user/login`, { email, password }).then((response) => {
+	const isOK = 200;
+	if (response.status === isOK) return response.json();
+}).then((json) => {
+	 if (json != null) window.location.href = json.redirect;
+});
+```
+
+### Response 객체 중복 읽기 문제
+
+앞서 fetch 함수에서 Access Token과 Refresh Token을 처리하기 위해 정형화를 시도했는데
+
+그 과정에서 Response를 한 번 `.json()` 으로 읽고, 이후 Response 개체를 밖으로 반환해 추가 로직을 구현하려고 했었습니다.
+
+```ts
+// 첫번째 Response 사용 (토큰 처리)
+return [response, isJSON ? await response.json() : {}];
+
+// 두번째 외부에서 Response 사용
+const isOK = 200;
+if (response.status === isOK) return response.json();
+```
+
+그런데 Response 객체를 외부에서 사용을 시도 했을 때 아래의 에러를 만나게 되었습니다.
+
+```
+Uncaught (in promise) TypeError: Failed to execute 'json' on 'Response': body stream already read
+```
+
+해당 에러가 발생한 이유는 한 번 Response 객체를 읽으면 그 이후에는 같은 객체를 다시 읽을 수 없기 때문에 발생하는 문제였고,
+
+이를 해결하기 위해 처음 Response 객체를 읽을 때 해당 객체를 클론해서 읽도록 변경하여 해결할 수 있었습니다.
+
+```ts
+//개선된 첫번째 Response 사용 (토큰 처리)
+return [response, isJSON ? await response.clone().json() : {}];
+```
+
+
+### 토큰 유효성 확인하기
+
+처음에는 토큰을 이용해서 클라이언트가 어떻게 로그인 상태인 것을 알 수 있도록 구현할까? 를 고민했습니다.
+
+고민 과정에서 생각한 방법이 2가지 있었는데
+
+1. Access Token을 보내서 토큰이 유효한지 확인하는 검증 요청만 보낸다.
+2. Access Token을 보내서 토큰이 유효한지 확인하고 유저 정보를 가져오도록 한다.
+
+어쨌든 결국 토큰에는 서버에서 관리하는 Secret이 포함되어 있기 때문에 Access Token을 보내서 유효한지 검증을 수행해야 한다고 생각했고, 
+
+데이터를 제공하는 서버와 인증을 수행하는 서버가 현재는 동일하지만 인증을 수행하는 역할과 데이터를 전달하는 역할을 논리적으로 분리하고 싶다고 생각했습니다.
+
+그렇기 때문에 토큰의 유효성만을 확인하는 방식으로 진행하도록 하겠습니다.
+
+```js
+// scripts/authorization.js
+async function verifyAccessTokenValid() {
+    const accessToken = window.localStorage.getItem("accessToken");
+    if (accessToken == null) return false;
+
+    return await fetchPOST(`${url}/autorization/login`, { email, password }).then(async (response) => {
+        const isOK = 200;
+        const UNATHORIZED = 401;
+        if (response.status === isOK) {
+            return true;
+        }
+        else if (response.status === UNATHORIZED) {
+            return await requestTokenRefresh();
+        } else {
+            return false;
+        }
+    });
+}
+```
+
+클라이언트는 메인 페이지를 불러올 때 토큰이 유효한지 확인하는데, 만약 로컬 스토리지에서 Access Token을 찾지 못한다면 인증을 거치지 않고 바로 비로그인 상태로 간주하도록 했습니다.
+
+만약 토큰 검증 요청을 보냈을 때 유효하다면 상태코드 200을, 만료됐다면 401을, 
+서버 에러 혹은 토큰 변조 등으로 인한 검증이 불가능한 상황이라면 false를 반환해 비로그인 상태임을 알리도록 했습니다.
+
+### 서버 측 토큰 검증 결과 반환 로직 작성
+
+```ts
+//app.ts
+routeStack.use("/authorization", authorizeRouter);
+
+//authorizeRouter.ts
+authorizeRouter.post("/authorization/verify", verifyController);
+
+//authorizeController.ts
+function verifyController(req, res) {
+    try {
+        const accesstoken = req.body.accessToken;
+        const isVerified = Authorization.verifyToken(accesstoken, "Access");
+
+        if (isVerified) {
+            res.setStatus(200).send();
+        } else {
+            res.setStatus(401).send();
+        }
+    } catch (e) {
+        logger.warn("e");
+        res.setStatus(403).send();
+    }
+}
+```
+
+서버에선 미리 만들어둔 Authorization 클래스를 이용해 토큰을 검증하고, 결과에 따라 상태 코드를 다르게 응답합니다.
+
+### 클라이언트 토큰 리프레시 요청 작성
+
+만약 클라이언트에서 Access Token을 받았는데 401(Unauthorized) 응답을 받는 경우 Refresh Token을 이용해 Access Token을 재발급 받는 함수를 실행합니다.
+
+```js
+async function requestTokenRefresh() {
+    const refreshToken = window.localStorage.getItem("refreshToken");
+    if (refreshToken == null) return false;
+
+    return await fetchPOST(`${url}/authorization/refresh`, { refreshToken }).then(async (response) => {
+        const isOK = 200;
+        if (response.status === isOK) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+}
+```
+
+### 토큰 리프레시 응답 로직 작성
+
+```ts
+//authorizeRouter.ts
+authorizeRouter.post("/authorization/refresh", tokenRefreshController);
+
+//authorizeController.ts
+function tokenRefreshController(req, res) {
+    try {
+        const refreshToken = req.body.refreshToken;
+        const accessToken = Authorization.tokenRefresh(refreshToken);
+        if (accessToken) {
+            res.setStatus(200).json({ accessToken });
+        } else {
+            res.setStatus(401).send();
+        }
+    } catch (e) {
+        logger.warn(e);
+        res.setStatus(403).send();
+    }
+}
+```
+
+### 토큰 검증 여부에 따라 다른 상태 렌더링 하기
+
+```js
+//mainLayout.js
+async function render() {
+    const tokenValid = await verifyAccessTokenValid();
+  
+    const navigationNode = document
+        .createRange()
+        .createContextualFragment(Navigation("HELLO, WEB!",
+            tokenValid
+                ? [HorizontalHugFrame("user-naviator-button-list", [
+                    SmallButton("멤버리스트", "user-memberlist-button"),
+                    SmallButton("마이페이지", "user-mypage-button"),
+                    SmallButton("로그아웃", "user-logout-button")
+                ])]
+                : [SmallButton("로그인/회원가입", "user-navigator-button")]
+        ));
+        ...
+```
+
+### 로그아웃 처리
+
+```ts
+//mainLayout.js
+function addEvent(isLogin) {
+    if (isLogin) {
+        document.getElementById("user-logout-button").addEventListener("click", (event) => {
+            window.localStorage.removeItem("accessToken");
+            window.localStorage.removeItem("refreshToken");
+            window.location.reload();
+        });
+        ...
+```
+
+클라이언트에서 로그아웃 버튼을 누르면 클라이언트에서 보관하고 있던 토큰을 파기하고, 새로고침 하는 것으로 처리할 수 있었습니다.
 
 
 <details>
