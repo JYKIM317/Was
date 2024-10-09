@@ -44,7 +44,7 @@ function addEvent() {
                 const isOK = 200;
                 if (response.status === isOK) return response.json();
             }).then((json) => {
-                if (json != null) window.location.href = json.redirect;
+                if (json.redirect != null) window.location.href = json.redirect;
             });
         }
     });
