@@ -16,7 +16,7 @@
     border-radius: 0.5rem;
 }
 
-.hug-frame {
+.vertical-hug-frame {
     width: min-content;
     height: min-content;
     display: flex;
