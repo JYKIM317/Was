@@ -1,6 +1,7 @@
 import { LargeButton, SmallButton } from "../components/Button.js";
 import { InputBox } from "../components/InputBox.js";
 import { Navigation, Information, HugFrame } from "../components/Frame.js";
+import { fetchPOST } from "../scripts/fetch.js";
 
 function render() {
     const navigationNode = document
@@ -39,11 +40,7 @@ function addEvent() {
         const password = document.getElementById("input-password").querySelector("input").value.trim();
 
         if (email !== "" && password !== "") {
-            await fetch(`${url}/user/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            }).then((response) => {
+            fetchPOST(`${url}/user/login`, { email, password }).then((response) => {
                 const isOK = 200;
                 if (response.status === isOK) return response.json();
             }).then((json) => {

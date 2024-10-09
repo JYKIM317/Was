@@ -8,5 +8,6 @@ staticRouter.get("/:filename", staticController);
 staticRouter.get("/layouts/:filename", staticController);
 staticRouter.get("/stylesheets/:filename", staticController);
 staticRouter.get("/components/:filename", staticController);
+staticRouter.get("/scripts/:filename", staticController);
 
 export { staticRouter }
