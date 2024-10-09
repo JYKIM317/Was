@@ -90,7 +90,7 @@ export class Response {
         return header;
     }
 
-    private socketWrite(header, body = "\r\n") {
+    private socketWrite(header, body: Buffer | string = "\r\n") {
         if (!this.statusCode) throw new Error("Status code has not been set yet.");
         const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
         const emptyLine = "\r\n";
