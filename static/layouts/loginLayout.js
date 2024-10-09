@@ -42,7 +42,6 @@ function addEvent() {
         if (email !== "" && password !== "") {
             fetchPOST(`${url}/user/login`, { email, password }).then((response) => {
                 const isOK = 200;
-                console.log(response.body);
                 if (response.status === isOK) return response.json();
                 else return {};
             }).then((json) => {
