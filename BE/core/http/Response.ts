@@ -39,7 +39,7 @@ export class Response {
     json(data: object) {
         const body = JSON.stringify(data);
         let header = this.setInitialHeaderOption();
-        header += `Content-Type: application/json; charset=UTF-8\r\n`;
+        header += `Content-Type: application/json\r\n`;
         header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
 
         this.socketWrite(header, body);
