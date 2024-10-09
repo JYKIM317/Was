@@ -22,4 +22,11 @@ const VerticalHugFrame = (id, children = []) => {
     </div>`;
 }
 
-export { Navigation, Information, VerticalHugFrame }
+const HorizontalHugFrame = (id, children = []) => {
+    const childrenNode = children.join("\n");
+    return `<div class="horizontal-hug-frame" id="${id}">
+        ${childrenNode}
+    </div>`;
+}
+
+export { Navigation, Information, VerticalHugFrame, HorizontalHugFrame }

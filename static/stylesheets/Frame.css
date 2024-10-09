@@ -26,3 +26,13 @@
     margin: auto;
     align-items: center;
 }
+
+.horizontal-hug-frame {
+    width: min-content;
+    height: min-content;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin: auto;
+    align-items: center;
+}
