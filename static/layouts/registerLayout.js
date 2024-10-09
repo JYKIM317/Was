@@ -1,18 +1,18 @@
 import { LargeButton, SmallButton } from "../components/Button.js";
 import { InputBox } from "../components/InputBox.js";
-import { Navigation, Information, HugFrame } from "../components/Frame.js";
+import { Navigation, Information, VerticalHugFrame } from "../components/Frame.js";
 
 function render() {
     const navigationNode = document
         .createRange()
         .createContextualFragment(Navigation("HELLO, WEB!", [SmallButton("로그인/회원가입", "user-navigator-button")]));
     const informationNode = document.createRange().createContextualFragment(Information("회원가입"));
-    const loginInputFrameNode = document.createRange().createContextualFragment(HugFrame("login-frame", [
+    const loginInputFrameNode = document.createRange().createContextualFragment(VerticalHugFrame("login-frame", [
         InputBox("input-name", "닉네임", "text", "닉네임을 입력해주세요"),
         InputBox("input-email", "이메일", "email", "이메일을 입력해주세요"),
         InputBox("input-password", "비밀번호", "password", "비밀번호를 입력해주세요")
     ]));
-    const loginButtonFrameNode = document.createRange().createContextualFragment(HugFrame("login-frame", [
+    const loginButtonFrameNode = document.createRange().createContextualFragment(VerticalHugFrame("login-frame", [
         LargeButton("회원가입", "register-button"),
     ]));
 

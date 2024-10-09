@@ -16,7 +16,7 @@
     border-radius: 0.5rem;
 }
 
-.hug-frame {
+.vertical-hug-frame {
     width: min-content;
     height: min-content;
     display: flex;
@@ -25,4 +25,11 @@
     gap: 1rem;
     margin: auto;
     align-items: center;
+}
+
+.horizontal-hug-frame {
+    height: min-content;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
 }

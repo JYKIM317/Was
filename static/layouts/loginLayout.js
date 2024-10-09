@@ -1,6 +1,7 @@
 import { LargeButton, SmallButton } from "../components/Button.js";
 import { InputBox } from "../components/InputBox.js";
-import { Navigation, Information, HugFrame } from "../components/Frame.js";
+import { Navigation, Information, VerticalHugFrame } from "../components/Frame.js";
+import { fetchPOST } from "../scripts/fetch.js";
 
 function render() {
     const navigationNode = document
@@ -8,7 +9,7 @@ function render() {
         .createContextualFragment(Navigation("HELLO, WEB!", [SmallButton("로그인/회원가입", "user-navigator-button")]));
 
     const informationNode = document.createRange().createContextualFragment(Information("로그인"));
-    const loginInputFrameNode = document.createRange().createContextualFragment(HugFrame("login-frame", [
+    const loginInputFrameNode = document.createRange().createContextualFragment(VerticalHugFrame("login-frame", [
         InputBox("input-email", "이메일", "email", "이메일을 입력해주세요"),
         InputBox("input-password", "비밀번호", "password", "비밀번호를 입력해주세요")
     ]));
@@ -16,7 +17,7 @@ function render() {
                     아직 회원가입을 안하셨나요?
                     <a href="http://localhost:8080/register.html" className="text-link"> 회원가입하기</a>
                 </span>`;
-    const loginButtonFrameNode = document.createRange().createContextualFragment(HugFrame("login-frame", [
+    const loginButtonFrameNode = document.createRange().createContextualFragment(VerticalHugFrame("login-frame", [
         LargeButton("로그인", "login-button"),
         registerRouteText
     ]));
@@ -39,15 +40,12 @@ function addEvent() {
         const password = document.getElementById("input-password").querySelector("input").value.trim();
 
         if (email !== "" && password !== "") {
-            await fetch(`${url}/user/login`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password })
-            }).then((response) => {
+            fetchPOST(`${url}/user/login`, { email, password }).then((response) => {
                 const isOK = 200;
                 if (response.status === isOK) return response.json();
+                else return {};
             }).then((json) => {
-                if (json != null) window.location.href = json.redirect;
+                if (json.redirect != null) window.location.href = json.redirect;
             });
         }
     });
