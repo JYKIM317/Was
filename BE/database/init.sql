@@ -10,9 +10,9 @@ CREATE TABLE member (
 );
 
 CREATE TABLE post (
-	id INT NOT NULL,
+  id INT AUTO_INCREMENT,
 	member_email VARCHAR(30) NOT NULL,
-	title	VARCHAR(50)	NOT NULL,
+  title VARCHAR(50) NOT NULL,
 	author VARCHAR(20) NOT NULL,
 	createAt TIMESTAMP NOT NULL,
 	content VARCHAR(1000) NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE post (
 );
 
 CREATE TABLE comment (
-	id INT NOT NULL,
+	id INT AUTO_INCREMENT,
 	post_id INT NOT NULL,
 	author VARCHAR(20) NOT NULL,
 	createAt TIMESTAMP NOT NULL,
