@@ -11,6 +11,14 @@ class UserRepository {
         });
     }
 
+    static async getUserPublicData() {
+        return await DBManager.select({
+            table: this.tableName,
+            column: "email, name",
+            condition: null
+        });
+    }
+
     static async createUser(email, password, name) {
         return await DBManager.insert({
             table: this.tableName,
