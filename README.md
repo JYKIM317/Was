@@ -1,747 +1,4 @@
 
-# 🔥 나만의 주간 계획서 (3)
-
-## ✅ 나만의 체크포인트 ⭕❌
-
-⭕ 리액트에서 바닐라로 FE 사양 변경 
-	⭕ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
-	⭕ 전체 페이지를 리액트에서 바닐라로 변환
-	⭕ 웹 프론트 이벤트 및 기능 Script로 변환
-
-⭕ 토큰 발급 설계 및 구현
-
-⭕ 웹 프론트 구현
-	⭕ 메인 페이지 구현
-	⭕ 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
-	⭕ 로그인 상태가 아닐 경우 로그인 버튼 표시
-
-⭕ 로그아웃 구현
-	⭕ 로그아웃 요청 시 토큰 삭제 로직 추가
-
-❌ 동적인 HTML 응답 구현
-	❌ 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
-	⭕ 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
-		- 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
-
-❌ 게시판 기능을 포함한 ERD 다시 그리기
-
-❌ 게시판 기능 완성
-	❌ 메인 하단에 글쓰기 버튼 추가
-		- 글쓰기 버튼 시 write.html로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	❌ write.html에서는 글을 입력할 수 있도록
-	❌ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	❌ 404 및 기타 에러 처리 페이지 구현
-
-❌ 테스트 코드 작성
-	❌ Jest 세부 기능 학습
-	❌ HTTP Message에 대한 테스트 코드 작성
-	❌ 비즈니스 로직에 대한 테스트 코드 작성
-
-## 📝 학습 및 구현 계획
-
-### 월요일
-
-- 리액트에서 바닐라로 FE 사양 변경 
-	- 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
-	- 전체 페이지를 리액트에서 바닐라로 변환
-	- 웹 프론트 이벤트 및 기능 Script로 변환
-
-### 화요일
-
-- 웹 프론트 구현
-	- 메인 페이지 구현
-	- 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
-	- 로그인 상태가 아닐 경우 로그인 버튼 표시
-
-- 로그아웃 구현
-	- 로그아웃 요청 시 세션 및 토큰 삭제 로직 추가
-
-### 수요일
-
-- 동적인 HTML 응답 구현
-	- 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
-	- 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
-		- 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
-
-### 목요일
-
-- 게시판 기능을 포함한 ERD 다시 그리기
-
-- 게시판 기능 완성
-	- 메인 하단에 글쓰기 버튼 추가
-		- 글쓰기 버튼 시 write.html로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	- write.html에서는 글을 입력할 수 있도록
-	- 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	- 404 및 기타 에러 처리 페이지 구현
-
-
-## ✏️ 고민과 해결 과정 쌓아가기
-
-<details>
-<summary>월요일</summary>
-<div markdown="1">
-
-### 리액트에서 바닐라로 마이그레이션 하기
-
-첫 주차에 웹 프론트를 리액트로 개발했었는데, 리액트 사용은 권장하지 않는다고 해서 새로운 웹 페이지 구현에 앞서 웹 프론트를 바닐라로 마이그레이션 하는 작업이 필요했습니다.
-
-```
-//마이그레이션 이전
-📦FE  
- ┣ 📂src  
- ┃ ┣ 📂components  
- ┃ ┃ ┣ 📜Button.tsx  
- ┃ ┃ ┣ 📜Frame.tsx  
- ┃ ┃ ┗ 📜InputBox.tsx  
- ┃ ┣ 📂layouts  
- ┃ ┃ ┣ 📜Login.tsx  
- ┃ ┃ ┗ 📜Register.tsx  
- ┃ ┣ 📂stylesheets  
- ┃ ┃ ┣ 📜Button.css  
- ┃ ┃ ┣ 📜foundation.css  
- ┃ ┃ ┣ 📜Frame.css  
- ┃ ┃ ┣ 📜index.css  
- ┃ ┃ ┗ 📜InputBox.css  
- ┃ ┣ 📜main.tsx  
- ┃ ┗ 📜vite-env.d.ts  
- ┣ 📜.env  
- ┣ 📜.gitignore  
- ┣ 📜eslint.config.js  
- ┣ 📜index.html  
- ┣ 📜package-lock.json  
- ┣ 📜package.json  
- ┣ 📜tsconfig.app.json  
- ┣ 📜tsconfig.json  
- ┣ 📜tsconfig.node.json  
- ┗ 📜vite.config.ts
-
-📦static  
- ┣ 📂assets  
- ┃ ┣ 📜index-5axTRczP.css  
- ┃ ┗ 📜index-BYA0q6UV.js  
- ┣ 📜favicon.ico  
- ┗ 📜index.html
-```
-
-tsx 파일을 마이그레이션함과 함께 FE 디렉토리에서 정적 파일들을 분리해 `static` 디렉토리에 포함시켜줬습니다.
-
-```
-//마이그레이션 이후
-📦static  
- ┣ 📂components  
- ┃ ┣ 📜Button.ts  
- ┃ ┣ 📜Frame.ts  
- ┃ ┗ 📜InputBox.ts  
- ┣ 📂layouts  
- ┃ ┣ 📜loginLayout.ts  
- ┃ ┣ 📜mainLayout.ts  
- ┃ ┗ 📜registerLayout.ts  
- ┣ 📂stylesheets  
- ┃ ┣ 📜Button.css  
- ┃ ┣ 📜foundation.css  
- ┃ ┣ 📜Frame.css  
- ┃ ┣ 📜index.css  
- ┃ ┗ 📜InputBox.css  
- ┣ 📜favicon.ico  
- ┗ 📜index.html
-```
-
-
-### .ts 확장자 MIME 타입 에러
-
-리액트로 개발했던 .tsx 파일을 .ts 파일로 바꾸고 서버에서 파일을 송신했는데
-
-```
-Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "undefined". Strict MIME type checking is enforced for module scripts per HTML spec.
-```
-
-.ts 확장자에 대한 Contnet-Type 처리를 안해줘서 발생했던 문제였기 때문에 .ts 확장자에 대한 Content-Type 응답을 추가해줬습니다.
-
-다만 이후에 .ts 파일을 그대로 보내니 웹 브라우저에서 ts를 인식하지 못하는 문제를 마주했습니다.
-
-저에겐 두 가지 선택지가 있었는데
-
-1. .ts 파일을 .js 파일로 바꾼다.
-2. .ts 파일을 .js 파일로 컴파일 해서 보내주기
-
-굳이 ts가 필요한 상황은 아니었기 때문에 .js 파일로 바꾸기로 결정 했습니다.
-
-
-### Response Content-Length에 관한 문제
-
-
-```
-//서버에서 보내는 경우
-export { SmallButton, LargeButton }
-
-//브라우저에서 받는 경우
-export { SmallButton, LargeButton
-```
-
-파일이 정해진 만큼 수신 되지 않는다는 것에 대해 원인을 파악하기 위해 Content-Length를 파일 크기에 임의의 수를 더해 읽히는지 확인해봤는데
-
-Content-Length를 올리면 정상적으로 읽히는 것을 확인할 수 있었습니다.
-
-파일의 크기는 정상적인데 왜 Content-Length를 올려야 정상적으로 파일을 끝까지 읽을까?에 대해 생각해봤습니다.
-
-합리적인 추론으로 HTTP Message의 Body로 보내는 메시지에 무언가 데이터가 추가되어 들어간다고 판단할 수 있었고, file은 Buffer의 형태로 전달하기 때문에 header와 body를 구분하는 empty line이 문제일 수 있겠다고 생각했습니다.
-
-```ts
-//문제가 된 부분
-const emptyLine = "\r\n\r\n";
-```
-
-근데 이 부분은 사실 지난 주 HTTP Response Message 문제와 반대되는 문제인데 오히려 지난 주에는 `\r\n`으로 보냈을 때 `Failed to load resource: net::ERR_INVALID_HTTP_RESPONSE` 에러를 만났기 때문입니다.
-
-즉 `send()` 를 보낼 땐 emptyLine이 추가가 되어야 된다는 의미였고, send 함수 외에는 body가 항상 포함되는 함수기 때문에 body가 비어있을 때 `\r\n`을 포함하도록 바꾸어 해결했습니다.
-
-```ts
-private socketWrite(header, body = "\r\n") {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        const emptyLine = "\r\n";
-
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-        if (body) this.socket.write(body);
-    }
-}
-```
-
-</div>
-</details>
-
-
-<details>
-<summary>화요일</summary>
-<div markdown="1">
-
-
-### 로그인 시 redirect에 대한 고민
-
-```ts
-res.redirect("/");
-
-res.setStatus(200).send("/");
-```
-
-클라이언트에서 로그인을 시도하고, 서버에서는 로그인에 성공 시 클라이언트를 메인 페이지로 보내주도록 구현해야 했었는데,
-
-제가 선택 가능한, 서버에서 보내줄 수 있는 응답이 2종류가 있었습니다.
-
-1. status code를 302로 설정하고, HTTP Response Message Header에 Location으로 url을 설정해서 전달하는 방식,
-
-2. status code를 200으로 설정하고 plain/text로 redirect될 url을 내용으로 전달하는 방식
-
-만약 1번 방식을 사용하여 응답을 할 경우 브라우저에서 응답을 받았을 때 즉시 리다이렉트를 해  메인페이지에 대한 html을 받아오지만
-
-현재 Ajax 방식으로 요청을 보내기 때문에 DOM 파싱을 수동으로 해줘야 한다는 문제가 있었고,
-
-2번 방식을 사용할 경우 window.location.href를 이용해 수동 리다이렉트를 해줄 수 있고 DOM 파싱이 알아서 되지만,
-
-리다이렉션을 유도하지만 응답 코드가 200이라서 개인적으로 찜찜한 기분이 든다는 것이 문제였습니다.
-
-```ts
-//signinController.ts
-res.setStatus(200).json({ redirect: "/" });
-
-//loginLayout.js
-await fetch(`${url}/user/login`, {
-	method: "POST",
-	headers: { "Content-Type": "application/json" },
-	body: JSON.stringify({ email, password })
-}).then((response) => {
-	const isOK = 200;
-	if (response.status === isOK) return response.json();
-}).then((json) => {
-	if (json != null) window.location.href = json.redirect;
-});
-```
-
-결과적으로 서버는 로그인 성공 시 status code를 200으로 설정하고 body로 리다이렉트할 url을 보내면,
-
-클라이언트는 응답받은 status code에 따라 리다이렉트를 할지, 로그인 에러 처리를 응답할지 결정하도록 했습니다.
-
-
-### 토큰 설계 및 구현
-
-이번 주 요구사항에 맞게 기존 쿠키-세션을 이용하던 방식에서 토큰을 사용하는 방식으로 변경을 하고,
-필요하다면 세션을 함께 이용하도록 하려고 합니다.
-
-우선 토큰을 자체적으로 제작해야 하기 때문에 어떻게 구현하더라도 상관 없어서 정말 쉽게 구현하려면 쉽게 구현할 수 있겠지만, 
-
-제대로 발급 과정을 설계하고, 응답할 수 있도록 만들려고 합니다.
-
-#### 토큰 구조 설계
-
-우선 토큰을 발급하는 과정을 개발하기 앞서 토큰이 어떤 구조로 이루어지는지 설계해야 했습니다.
-
-토큰의 발급을 Access Token과 Refresh Token 으로 나누어 발급할 예정이긴 하지만, 토큰의 구조는 동일하게 만들 예정입니다.
-
-```
-SECRET.BODY.INTEGRITY_TAG
-```
-
-우선 토큰 인증 과정에서 해당 토큰에 대한 무결성 검사를 구현하고 싶었습니다.
-
-그렇기 때문에 토큰을 마침표로 구분하는 `시크릿.바디.무결성태그` 구조로 만들고, 시크릿과 바디를 복호화 한 이후 합쳐서 해싱했을 때 무결성 태그가 완성되는지 확인하는 방식으로 구현할 예정입니다.
-
-```
-토큰의 구성
-
-1. 시크릿 (서버에서 관리하는 시크릿 키)
-2. 바디
-	- iat (발행 시간)
-	- exp (만료 시간)
-	- grd (등급)
-	- typ (토큰 타입)
-1. 무결성 태그 (시크릿과 바디를 합친 것을 해싱한 값)
-```
-
-#### 어떻게 암호화 할 것인가?
-
-토큰의 내용을 암호화 하기 위해서 각 내용을 AES 대칭 암호화 방식을 이용할 예정입니다.
-
-AES 암호화 방식에서도 다양한 방법으로 암호화 할 수 있었는데
-
-```
-사용 가능한 알고리즘 (AES-비트-모드)
-- AES-128-CBC
-- AES-192-CBC
-- AES-256-CBC
-- AES-128-GCM
-- AES-192-GCM
-- AES-256-GCM
-```
-
-- CBC (Cipher Block Chaining) 모드와 GCM (Galois/Counter Mode) 모드의 차이
-
-```
-CBC 모드는 데이터를 블록 단위로 나눠 첫 블록을 IV와 함께 암호화 한 이후 이후 블록을 암호화된 이전 블록과 함께 암호화를 수행
-
-데이터를 블록 단위로 나누기 때문에 데이터의 길이를 블록 크기로 맞추기 위해서 필요한 경우 패딩이 추가될 수 있음
-```
-
-```
-GCM 모드도 데이터를 블록 단위로 나누지만, IV를 활용해 카운터를 생성하고 블록마다 카운터를 증가시켜 함께 암호화 하는 방식
-
-GCM 모드는 Galois 필드를 사용하여 인증 태그를 생성하고, 계산하여 데이터 무결성을 검증할 수 있음
-```
-
-무결성 검사는 토큰 자체로 할 예정이고, 그리 복잡하게 구현할 필요까지는 없다고 생각해 CBC 모드, 그리고 그 중에서도 256bit를 이용한 방식으로 암호화를 하겠습니다.
-
-#### 토큰 발급과 인증 흐름 설계
-
-<img src="https://i.ibb.co/9wG2dYN/Pasted-image-20241008203513.png" alt="token_architecture">
-
-#### 구현
-
-설계를 끝냈으니, 이제 설계한 내용에 맞도록 구현을 할 예정입니다.
-
-우선 토큰의 각 부분을 암호화 하고 복호화 할 수 있는 함수를 만들어야 했습니다.
-
-```ts
-//AES 암호화에서 사용할 방식
-const alg = 'aes-256-cbc';
-//256비트의 랜덤 키
-const encryptedKey = crypto.randomBytes(32);
-//초기화용 벡터 값
-const initializeVector = crypto.randomBytes(16);
-
-//암호화 함수
-function encrypt(text) {
-    const cipher = crypto.createCipheriv(alg, encryptedKey, initializeVector);
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return encrypted;
-}
-
-//복호화 함수
-function decrypt(encryptedText) {
-    const decipher = crypto.createDecipheriv(alg, encryptedKey, initializeVector);
-    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
-}
-
-//무결성 검사용 태그 생성 함수
-function createIntegrityTag(secret, body) {
-    return crypto.createHash("sha256").update(body + secret).digest("hex");
-}
-```
-
-
-암호화 및 복호화에 관한 함수를 만들었으니, 이제 암호화 함수를 이용해 토큰을 발급하는 함수를 작성했습니다.
-
-- 토큰 생성 함수
-
-```ts
-//Authorization.ts
-class Authorization {
-    static generateToken(tokenType: TokenType) {
-        const iat = new Date();
-        const exp = new Date();
-        tokenType === "Access"
-            ? exp.setMinutes(exp.getMinutes() + 15)
-            : exp.setDate(exp.getDate() + 61);
-        const grd = gradeType.USER;
-        const typ = tokenType;
-        const body: TokenBody = { iat, exp, grd, typ };
-
-        const secretOfToken = encrypt(process.env.SECRET);
-        const bodyOfToken = encrypt(JSON.stringify(body));
-        const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
-
-        const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
-        return token;
-    }
-}
-```
-
-Access Token은 15분의 기한을 가지도록 했고, Refresh Token은 61일의 기한을 가지도록 했는데 
-
-Refresh Token을 61일로 설정한 이유는 특별한 이유는 아니었고,
-카카오에서 2달로 설정했다는 것을 참고해 설정했습니다.
-
-https://devtalk.kakao.com/t/refresh-token/128850
-
-
-- 토큰 검증 함수
-
-```ts
-//Authorization.ts
-class Authorization {
-    static verifyToken(token, tokenType: TokenType) {
-        const now = new Date();
-        const [secretOfToken, bodyOfToken, integrityTag] = accessToken.split(".");
-        const secret = decrypt(secretOfToken);
-        const bodyJSON = decrypt(bodyOfToken);
-        const thisContentIntegrityTag = createIntegrityTag(secret, bodyJSON);
-        const body = JSON.parse(bodyJSON) as TokenBody;
-        const exp = new Date(body.exp);
-  
-        if (secret !== process.env.SECRET) return false;
-        if (thisContentIntegrityTag !== integrityTag) return false;
-        if (body.typ !== tokenType) return false;
-        if (exp.getTime() < now.getTime()) throw new Error(`Invalid {tokenType} Token`);
-        return true;
-    }
-}
-```
-
-토큰 검증 함수에선 인자로 전달받은 Token을 분해해 유효성을 검증하도록 작성했습니다.
-
-검증 함수에서 수행하는 일은 아래와 같습니다.
-
-1. 토큰 분해
-2. secret 검증
-3. 토큰의 내용이 무결한지 무결성 태그를 통한 검증
-4. typ 검증
-5. exp (만료일) 검증
-
-검증 과정에서 실패하면 false를 반환하지만 만약 토큰이 무결함을 확인했는데 만료일이 지난 경우에만 Access Token 혹은 Refresh Token 재발급을 수행할 수 있도록 처리하기 위해 에러 처리를 해줬습니다.
-
-- 토큰 재발급 함수
-
-```ts
-class Authorization {
-    static tokenRefresh(refreshToken) {
-        const tokenVerifyResult = this.verifyToken(refreshToken, "Refresh");
-        if (tokenVerifyResult) return this.generateToken("Access");
-        else return false;
-    }
-}
-```
-
-토큰 재발급 함수는 우선 Refresh Token에 대한 검증을 시도하고 만약 문제가 없다면 새로운 Access Token을, 문제가 있다면 fasle를 반환하도록 작성했습니다.
-
-
-</div>
-</details>
-
-
-### 로그인 시 토큰 전달
-
-기존 쿠키와 세션을 함께 사용하던 방식에서 토큰을 이용하도록 변경하기 위해 
-
-기존 쿠키 및 세션 설정 로직을 제거하고 토큰을 발급해서 전달하는 로직으로 수정해야 했습니다.
-
-- 변경 전
-
-```ts
-//signInController.ts 기존 쿠키&세션 방식
-const sid = sha1Encryption(email + Date.now().toString());
-
-session.set(sid, result.id);
-
-res.setCookie("sid", sid, { HttpOnly: true, Path: "/", "Max-Age": 30 * DAY });
-
-res.setStatus(200).json({ redirect: "/" });
-```
-
-- 변경 후
-
-```ts
-//signInController.ts 토큰 방식
-const accessToken = Authorization.generateToken("Access");
-const refreshToken = Authorization.generateToken("Refresh");
-
-res.setStatus(200).json({ redirect: "/", accessToken, refreshToken });
-```
-
-### Fetch 정형화
-
-클라이언트가 로그인 이후 접근 권한이 필요한 모든 요청에 대해 토큰을 함께 보낼 수 있도록,
-
-언제 Access Token이 재발급될지 모르기 때문에 응답 결과에 따라 항상 로컬 스토리지를 갱신할 수 있도록 하기 위해
-
-Fetch를 정형화 할 필요가 있다고 생각했습니다.
-
-```js
-//loginLayout.js
-
-await fetch(`${url}/user/login`, {
-	method: "POST",
-	headers: { "Content-Type": "application/json" },
-	body: JSON.stringify({ email, password })
-}).then((response) => {
-	const isOK = 200;
-	if (response.status === isOK) return response.json();
-}).then((json) => {
-	if (json != null) window.location.href = json.redirect;
-});
-```
-
-기존에는 위처럼 각 페이지에서 fetch 모듈을 직접 호출하고 있었지만 
-
-Access Token의 존재 여부를 확인하고 함께 전송해서 응답을 받았을 때 Access / Refresh Token이 존재한다면 갱신해주는 공용 fetch 함수를 작성해줬습니다.
-
-저장 위치는 클라이언트의 Local Storage에 저장하기로 결정했고, 사용법은 MDN 문서를 참고했습니다.
-
-https://developer.mozilla.org/en-US/docs/Web/API/Storage
-
-
-```js
-//fetch.js
-async function fetchPOST(uri, data) {
-    const accessToken = window.localStorage.getItem("accessToken");
-    if (accessToken != null) data.accessToken = accessToken;
-
-    await fetch(uri, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    }).then(async (response) => {
-        const contentType = response.headers.get("Content-Type");
-        const isJSON = contentType === "application/json";
-        return [response, isJSON ? await response.json() : {}];
-    }).then(([response, body]) => {
-        if (body.accessToken != null) {
-            window.localStorage.setItem("accessToken", body.accessToken);
-        }
-        if (body.refreshToken != null) {
-            window.localStorage.setItem("refreshToken", body.refreshToken);
-        }
-        return response;
-    });
-}
-
-//loginLayout.js
-fetchPOST(`${url}/user/login`, { email, password }).then((response) => {
-	const isOK = 200;
-	if (response.status === isOK) return response.json();
-}).then((json) => {
-	 if (json != null) window.location.href = json.redirect;
-});
-```
-
-### Response 객체 중복 읽기 문제
-
-앞서 fetch 함수에서 Access Token과 Refresh Token을 처리하기 위해 정형화를 시도했는데
-
-그 과정에서 Response를 한 번 `.json()` 으로 읽고, 이후 Response 개체를 밖으로 반환해 추가 로직을 구현하려고 했었습니다.
-
-```ts
-// 첫번째 Response 사용 (토큰 처리)
-return [response, isJSON ? await response.json() : {}];
-
-// 두번째 외부에서 Response 사용
-const isOK = 200;
-if (response.status === isOK) return response.json();
-```
-
-그런데 Response 객체를 외부에서 사용을 시도 했을 때 아래의 에러를 만나게 되었습니다.
-
-```
-Uncaught (in promise) TypeError: Failed to execute 'json' on 'Response': body stream already read
-```
-
-해당 에러가 발생한 이유는 한 번 Response 객체를 읽으면 그 이후에는 같은 객체를 다시 읽을 수 없기 때문에 발생하는 문제였고,
-
-이를 해결하기 위해 처음 Response 객체를 읽을 때 해당 객체를 클론해서 읽도록 변경하여 해결할 수 있었습니다.
-
-```ts
-//개선된 첫번째 Response 사용 (토큰 처리)
-return [response, isJSON ? await response.clone().json() : {}];
-```
-
-
-### 토큰 유효성 확인하기
-
-처음에는 토큰을 이용해서 클라이언트가 어떻게 로그인 상태인 것을 알 수 있도록 구현할까? 를 고민했습니다.
-
-고민 과정에서 생각한 방법이 2가지 있었는데
-
-1. Access Token을 보내서 토큰이 유효한지 확인하는 검증 요청만 보낸다.
-2. Access Token을 보내서 토큰이 유효한지 확인하고 유저 정보를 가져오도록 한다.
-
-어쨌든 결국 토큰에는 서버에서 관리하는 Secret이 포함되어 있기 때문에 Access Token을 보내서 유효한지 검증을 수행해야 한다고 생각했고, 
-
-데이터를 제공하는 서버와 인증을 수행하는 서버가 현재는 동일하지만 인증을 수행하는 역할과 데이터를 전달하는 역할을 논리적으로 분리하고 싶다고 생각했습니다.
-
-그렇기 때문에 토큰의 유효성만을 확인하는 방식으로 진행하도록 하겠습니다.
-
-```js
-// scripts/authorization.js
-async function verifyAccessTokenValid() {
-    const accessToken = window.localStorage.getItem("accessToken");
-    if (accessToken == null) return false;
-
-    return await fetchPOST(`${url}/autorization/login`, { email, password }).then(async (response) => {
-        const isOK = 200;
-        const UNATHORIZED = 401;
-        if (response.status === isOK) {
-            return true;
-        }
-        else if (response.status === UNATHORIZED) {
-            return await requestTokenRefresh();
-        } else {
-            return false;
-        }
-    });
-}
-```
-
-클라이언트는 메인 페이지를 불러올 때 토큰이 유효한지 확인하는데, 만약 로컬 스토리지에서 Access Token을 찾지 못한다면 인증을 거치지 않고 바로 비로그인 상태로 간주하도록 했습니다.
-
-만약 토큰 검증 요청을 보냈을 때 유효하다면 상태코드 200을, 만료됐다면 401을, 
-서버 에러 혹은 토큰 변조 등으로 인한 검증이 불가능한 상황이라면 false를 반환해 비로그인 상태임을 알리도록 했습니다.
-
-### 서버 측 토큰 검증 결과 반환 로직 작성
-
-```ts
-//app.ts
-routeStack.use("/authorization", authorizeRouter);
-
-//authorizeRouter.ts
-authorizeRouter.post("/authorization/verify", verifyController);
-
-//authorizeController.ts
-function verifyController(req, res) {
-    try {
-        const accesstoken = req.body.accessToken;
-        const isVerified = Authorization.verifyToken(accesstoken, "Access");
-
-        if (isVerified) {
-            res.setStatus(200).send();
-        } else {
-            res.setStatus(401).send();
-        }
-    } catch (e) {
-        logger.warn("e");
-        res.setStatus(403).send();
-    }
-}
-```
-
-서버에선 미리 만들어둔 Authorization 클래스를 이용해 토큰을 검증하고, 결과에 따라 상태 코드를 다르게 응답합니다.
-
-### 클라이언트 토큰 리프레시 요청 작성
-
-만약 클라이언트에서 Access Token을 받았는데 401(Unauthorized) 응답을 받는 경우 Refresh Token을 이용해 Access Token을 재발급 받는 함수를 실행합니다.
-
-```js
-async function requestTokenRefresh() {
-    const refreshToken = window.localStorage.getItem("refreshToken");
-    if (refreshToken == null) return false;
-
-    return await fetchPOST(`${url}/authorization/refresh`, { refreshToken }).then(async (response) => {
-        const isOK = 200;
-        if (response.status === isOK) {
-            return true;
-        } else {
-            return false;
-        }
-    });
-}
-```
-
-### 토큰 리프레시 응답 로직 작성
-
-```ts
-//authorizeRouter.ts
-authorizeRouter.post("/authorization/refresh", tokenRefreshController);
-
-//authorizeController.ts
-function tokenRefreshController(req, res) {
-    try {
-        const refreshToken = req.body.refreshToken;
-        const accessToken = Authorization.tokenRefresh(refreshToken);
-        if (accessToken) {
-            res.setStatus(200).json({ accessToken });
-        } else {
-            res.setStatus(401).send();
-        }
-    } catch (e) {
-        logger.warn(e);
-        res.setStatus(403).send();
-    }
-}
-```
-
-### 토큰 검증 여부에 따라 다른 상태 렌더링 하기
-
-```js
-//mainLayout.js
-async function render() {
-    const tokenValid = await verifyAccessTokenValid();
-  
-    const navigationNode = document
-        .createRange()
-        .createContextualFragment(Navigation("HELLO, WEB!",
-            tokenValid
-                ? [HorizontalHugFrame("user-naviator-button-list", [
-                    SmallButton("멤버리스트", "user-memberlist-button"),
-                    SmallButton("마이페이지", "user-mypage-button"),
-                    SmallButton("로그아웃", "user-logout-button")
-                ])]
-                : [SmallButton("로그인/회원가입", "user-navigator-button")]
-        ));
-        ...
-```
-
-### 로그아웃 처리
-
-```ts
-//mainLayout.js
-function addEvent(isLogin) {
-    if (isLogin) {
-        document.getElementById("user-logout-button").addEventListener("click", (event) => {
-            window.localStorage.removeItem("accessToken");
-            window.localStorage.removeItem("refreshToken");
-            window.location.reload();
-        });
-        ...
-```
-
-클라이언트에서 로그아웃 버튼을 누르면 클라이언트에서 보관하고 있던 토큰을 파기하고, 새로고침 하는 것으로 처리할 수 있었습니다.
-
-
 <details>
 <summary>1주차</summary>
 <div markdown="1">
@@ -2797,6 +2054,874 @@ https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81
 
 ..어떻게 해야 하지? ㅠㅠ 어떻게 작성하면 좋을지 감이 안잡힙니다.
 
+
+</div>
+</details>
+
+
+</div>
+</details>
+
+
+<details>
+<summary>3주차</summary>
+<div markdown="1">
+
+# 🔥 나만의 주간 계획서 (3)
+
+## ✅ 나만의 체크포인트 ⭕❌
+
+⭕ 리액트에서 바닐라로 FE 사양 변경 
+	⭕ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+	⭕ 전체 페이지를 리액트에서 바닐라로 변환
+	⭕ 웹 프론트 이벤트 및 기능 Script로 변환
+
+⭕ 토큰 발급 설계 및 구현
+
+⭕ 웹 프론트 구현
+	⭕ 메인 페이지 구현
+	⭕ 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
+	⭕ 로그인 상태가 아닐 경우 로그인 버튼 표시
+
+⭕ 로그아웃 구현
+	⭕ 로그아웃 요청 시 토큰 삭제 로직 추가
+
+❌ 동적인 HTML 응답 구현
+	❌ 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
+	⭕ 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
+		- 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
+
+⭕ 게시판 기능을 포함한 ERD 다시 그리기
+
+❌ 게시판 기능 완성
+	❌ 메인 하단에 글쓰기 버튼 추가
+		- 글쓰기 버튼 시 write.html로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	❌ write.html에서는 글을 입력할 수 있도록
+	❌ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	❌ 404 및 기타 에러 처리 페이지 구현
+
+❌ 테스트 코드 작성
+	❌ Jest 세부 기능 학습
+	❌ HTTP Message에 대한 테스트 코드 작성
+	❌ 비즈니스 로직에 대한 테스트 코드 작성
+
+## 📝 학습 및 구현 계획
+
+### 월요일
+
+- 리액트에서 바닐라로 FE 사양 변경 
+	- 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+	- 전체 페이지를 리액트에서 바닐라로 변환
+	- 웹 프론트 이벤트 및 기능 Script로 변환
+
+### 화요일
+
+- 웹 프론트 구현
+	- 메인 페이지 구현
+	- 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
+	- 로그인 상태가 아닐 경우 로그인 버튼 표시
+
+- 로그아웃 구현
+	- 로그아웃 요청 시 세션 및 토큰 삭제 로직 추가
+
+### 수요일
+
+- 동적인 HTML 응답 구현
+	- 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
+	- 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
+		- 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
+
+### 목요일
+
+- 게시판 기능을 포함한 ERD 다시 그리기
+
+- 게시판 기능 완성
+	- 메인 하단에 글쓰기 버튼 추가
+		- 글쓰기 버튼 시 write.html로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	- write.html에서는 글을 입력할 수 있도록
+	- 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	- 404 및 기타 에러 처리 페이지 구현
+
+
+## ✏️ 고민과 해결 과정 쌓아가기
+
+<details>
+<summary>월요일</summary>
+<div markdown="1">
+
+### 리액트에서 바닐라로 마이그레이션 하기
+
+첫 주차에 웹 프론트를 리액트로 개발했었는데, 리액트 사용은 권장하지 않는다고 해서 새로운 웹 페이지 구현에 앞서 웹 프론트를 바닐라로 마이그레이션 하는 작업이 필요했습니다.
+
+```
+//마이그레이션 이전
+📦FE  
+ ┣ 📂src  
+ ┃ ┣ 📂components  
+ ┃ ┃ ┣ 📜Button.tsx  
+ ┃ ┃ ┣ 📜Frame.tsx  
+ ┃ ┃ ┗ 📜InputBox.tsx  
+ ┃ ┣ 📂layouts  
+ ┃ ┃ ┣ 📜Login.tsx  
+ ┃ ┃ ┗ 📜Register.tsx  
+ ┃ ┣ 📂stylesheets  
+ ┃ ┃ ┣ 📜Button.css  
+ ┃ ┃ ┣ 📜foundation.css  
+ ┃ ┃ ┣ 📜Frame.css  
+ ┃ ┃ ┣ 📜index.css  
+ ┃ ┃ ┗ 📜InputBox.css  
+ ┃ ┣ 📜main.tsx  
+ ┃ ┗ 📜vite-env.d.ts  
+ ┣ 📜.env  
+ ┣ 📜.gitignore  
+ ┣ 📜eslint.config.js  
+ ┣ 📜index.html  
+ ┣ 📜package-lock.json  
+ ┣ 📜package.json  
+ ┣ 📜tsconfig.app.json  
+ ┣ 📜tsconfig.json  
+ ┣ 📜tsconfig.node.json  
+ ┗ 📜vite.config.ts
+
+📦static  
+ ┣ 📂assets  
+ ┃ ┣ 📜index-5axTRczP.css  
+ ┃ ┗ 📜index-BYA0q6UV.js  
+ ┣ 📜favicon.ico  
+ ┗ 📜index.html
+```
+
+tsx 파일을 마이그레이션함과 함께 FE 디렉토리에서 정적 파일들을 분리해 `static` 디렉토리에 포함시켜줬습니다.
+
+```
+//마이그레이션 이후
+📦static  
+ ┣ 📂components  
+ ┃ ┣ 📜Button.ts  
+ ┃ ┣ 📜Frame.ts  
+ ┃ ┗ 📜InputBox.ts  
+ ┣ 📂layouts  
+ ┃ ┣ 📜loginLayout.ts  
+ ┃ ┣ 📜mainLayout.ts  
+ ┃ ┗ 📜registerLayout.ts  
+ ┣ 📂stylesheets  
+ ┃ ┣ 📜Button.css  
+ ┃ ┣ 📜foundation.css  
+ ┃ ┣ 📜Frame.css  
+ ┃ ┣ 📜index.css  
+ ┃ ┗ 📜InputBox.css  
+ ┣ 📜favicon.ico  
+ ┗ 📜index.html
+```
+
+
+### .ts 확장자 MIME 타입 에러
+
+리액트로 개발했던 .tsx 파일을 .ts 파일로 바꾸고 서버에서 파일을 송신했는데
+
+```
+Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of "undefined". Strict MIME type checking is enforced for module scripts per HTML spec.
+```
+
+.ts 확장자에 대한 Contnet-Type 처리를 안해줘서 발생했던 문제였기 때문에 .ts 확장자에 대한 Content-Type 응답을 추가해줬습니다.
+
+다만 이후에 .ts 파일을 그대로 보내니 웹 브라우저에서 ts를 인식하지 못하는 문제를 마주했습니다.
+
+저에겐 두 가지 선택지가 있었는데
+
+1. .ts 파일을 .js 파일로 바꾼다.
+2. .ts 파일을 .js 파일로 컴파일 해서 보내주기
+
+굳이 ts가 필요한 상황은 아니었기 때문에 .js 파일로 바꾸기로 결정 했습니다.
+
+
+### Response Content-Length에 관한 문제
+
+
+```
+//서버에서 보내는 경우
+export { SmallButton, LargeButton }
+
+//브라우저에서 받는 경우
+export { SmallButton, LargeButton
+```
+
+파일이 정해진 만큼 수신 되지 않는다는 것에 대해 원인을 파악하기 위해 Content-Length를 파일 크기에 임의의 수를 더해 읽히는지 확인해봤는데
+
+Content-Length를 올리면 정상적으로 읽히는 것을 확인할 수 있었습니다.
+
+파일의 크기는 정상적인데 왜 Content-Length를 올려야 정상적으로 파일을 끝까지 읽을까?에 대해 생각해봤습니다.
+
+합리적인 추론으로 HTTP Message의 Body로 보내는 메시지에 무언가 데이터가 추가되어 들어간다고 판단할 수 있었고, file은 Buffer의 형태로 전달하기 때문에 header와 body를 구분하는 empty line이 문제일 수 있겠다고 생각했습니다.
+
+```ts
+//문제가 된 부분
+const emptyLine = "\r\n\r\n";
+```
+
+근데 이 부분은 사실 지난 주 HTTP Response Message 문제와 반대되는 문제인데 오히려 지난 주에는 `\r\n`으로 보냈을 때 `Failed to load resource: net::ERR_INVALID_HTTP_RESPONSE` 에러를 만났기 때문입니다.
+
+즉 `send()` 를 보낼 땐 emptyLine이 추가가 되어야 된다는 의미였고, send 함수 외에는 body가 항상 포함되는 함수기 때문에 body가 비어있을 때 `\r\n`을 포함하도록 바꾸어 해결했습니다.
+
+```ts
+private socketWrite(header, body = "\r\n") {
+        if (!this.statusCode) throw new Error("Status code has not been set yet.");
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
+        const emptyLine = "\r\n";
+
+        this.socket.write(startLine);
+        this.socket.write(header);
+        this.socket.write(emptyLine);
+        if (body) this.socket.write(body);
+    }
+}
+```
+
+</div>
+</details>
+
+
+<details>
+<summary>화요일</summary>
+<div markdown="1">
+
+
+### 로그인 시 redirect에 대한 고민
+
+```ts
+res.redirect("/");
+
+res.setStatus(200).send("/");
+```
+
+클라이언트에서 로그인을 시도하고, 서버에서는 로그인에 성공 시 클라이언트를 메인 페이지로 보내주도록 구현해야 했었는데,
+
+제가 선택 가능한, 서버에서 보내줄 수 있는 응답이 2종류가 있었습니다.
+
+1. status code를 302로 설정하고, HTTP Response Message Header에 Location으로 url을 설정해서 전달하는 방식,
+
+2. status code를 200으로 설정하고 plain/text로 redirect될 url을 내용으로 전달하는 방식
+
+만약 1번 방식을 사용하여 응답을 할 경우 브라우저에서 응답을 받았을 때 즉시 리다이렉트를 해  메인페이지에 대한 html을 받아오지만
+
+현재 Ajax 방식으로 요청을 보내기 때문에 DOM 파싱을 수동으로 해줘야 한다는 문제가 있었고,
+
+2번 방식을 사용할 경우 window.location.href를 이용해 수동 리다이렉트를 해줄 수 있고 DOM 파싱이 알아서 되지만,
+
+리다이렉션을 유도하지만 응답 코드가 200이라서 개인적으로 찜찜한 기분이 든다는 것이 문제였습니다.
+
+```ts
+//signinController.ts
+res.setStatus(200).json({ redirect: "/" });
+
+//loginLayout.js
+await fetch(`${url}/user/login`, {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({ email, password })
+}).then((response) => {
+	const isOK = 200;
+	if (response.status === isOK) return response.json();
+}).then((json) => {
+	if (json != null) window.location.href = json.redirect;
+});
+```
+
+결과적으로 서버는 로그인 성공 시 status code를 200으로 설정하고 body로 리다이렉트할 url을 보내면,
+
+클라이언트는 응답받은 status code에 따라 리다이렉트를 할지, 로그인 에러 처리를 응답할지 결정하도록 했습니다.
+
+
+### 토큰 설계 및 구현
+
+이번 주 요구사항에 맞게 기존 쿠키-세션을 이용하던 방식에서 토큰을 사용하는 방식으로 변경을 하고,
+필요하다면 세션을 함께 이용하도록 하려고 합니다.
+
+우선 토큰을 자체적으로 제작해야 하기 때문에 어떻게 구현하더라도 상관 없어서 정말 쉽게 구현하려면 쉽게 구현할 수 있겠지만, 
+
+제대로 발급 과정을 설계하고, 응답할 수 있도록 만들려고 합니다.
+
+#### 토큰 구조 설계
+
+우선 토큰을 발급하는 과정을 개발하기 앞서 토큰이 어떤 구조로 이루어지는지 설계해야 했습니다.
+
+토큰의 발급을 Access Token과 Refresh Token 으로 나누어 발급할 예정이긴 하지만, 토큰의 구조는 동일하게 만들 예정입니다.
+
+```
+SECRET.BODY.INTEGRITY_TAG
+```
+
+우선 토큰 인증 과정에서 해당 토큰에 대한 무결성 검사를 구현하고 싶었습니다.
+
+그렇기 때문에 토큰을 마침표로 구분하는 `시크릿.바디.무결성태그` 구조로 만들고, 시크릿과 바디를 복호화 한 이후 합쳐서 해싱했을 때 무결성 태그가 완성되는지 확인하는 방식으로 구현할 예정입니다.
+
+```
+토큰의 구성
+
+1. 시크릿 (서버에서 관리하는 시크릿 키)
+2. 바디
+	- iat (발행 시간)
+	- exp (만료 시간)
+	- grd (등급)
+	- typ (토큰 타입)
+1. 무결성 태그 (시크릿과 바디를 합친 것을 해싱한 값)
+```
+
+#### 어떻게 암호화 할 것인가?
+
+토큰의 내용을 암호화 하기 위해서 각 내용을 AES 대칭 암호화 방식을 이용할 예정입니다.
+
+AES 암호화 방식에서도 다양한 방법으로 암호화 할 수 있었는데
+
+```
+사용 가능한 알고리즘 (AES-비트-모드)
+- AES-128-CBC
+- AES-192-CBC
+- AES-256-CBC
+- AES-128-GCM
+- AES-192-GCM
+- AES-256-GCM
+```
+
+- CBC (Cipher Block Chaining) 모드와 GCM (Galois/Counter Mode) 모드의 차이
+
+```
+CBC 모드는 데이터를 블록 단위로 나눠 첫 블록을 IV와 함께 암호화 한 이후 이후 블록을 암호화된 이전 블록과 함께 암호화를 수행
+
+데이터를 블록 단위로 나누기 때문에 데이터의 길이를 블록 크기로 맞추기 위해서 필요한 경우 패딩이 추가될 수 있음
+```
+
+```
+GCM 모드도 데이터를 블록 단위로 나누지만, IV를 활용해 카운터를 생성하고 블록마다 카운터를 증가시켜 함께 암호화 하는 방식
+
+GCM 모드는 Galois 필드를 사용하여 인증 태그를 생성하고, 계산하여 데이터 무결성을 검증할 수 있음
+```
+
+무결성 검사는 토큰 자체로 할 예정이고, 그리 복잡하게 구현할 필요까지는 없다고 생각해 CBC 모드, 그리고 그 중에서도 256bit를 이용한 방식으로 암호화를 하겠습니다.
+
+#### 토큰 발급과 인증 흐름 설계
+
+<img src="https://i.ibb.co/9wG2dYN/Pasted-image-20241008203513.png" alt="token_architecture">
+
+#### 구현
+
+설계를 끝냈으니, 이제 설계한 내용에 맞도록 구현을 할 예정입니다.
+
+우선 토큰의 각 부분을 암호화 하고 복호화 할 수 있는 함수를 만들어야 했습니다.
+
+```ts
+//AES 암호화에서 사용할 방식
+const alg = 'aes-256-cbc';
+//256비트의 랜덤 키
+const encryptedKey = crypto.randomBytes(32);
+//초기화용 벡터 값
+const initializeVector = crypto.randomBytes(16);
+
+//암호화 함수
+function encrypt(text) {
+    const cipher = crypto.createCipheriv(alg, encryptedKey, initializeVector);
+    let encrypted = cipher.update(text, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
+    return encrypted;
+}
+
+//복호화 함수
+function decrypt(encryptedText) {
+    const decipher = crypto.createDecipheriv(alg, encryptedKey, initializeVector);
+    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+}
+
+//무결성 검사용 태그 생성 함수
+function createIntegrityTag(secret, body) {
+    return crypto.createHash("sha256").update(body + secret).digest("hex");
+}
+```
+
+
+암호화 및 복호화에 관한 함수를 만들었으니, 이제 암호화 함수를 이용해 토큰을 발급하는 함수를 작성했습니다.
+
+- 토큰 생성 함수
+
+```ts
+//Authorization.ts
+class Authorization {
+    static generateToken(tokenType: TokenType) {
+        const iat = new Date();
+        const exp = new Date();
+        tokenType === "Access"
+            ? exp.setMinutes(exp.getMinutes() + 15)
+            : exp.setDate(exp.getDate() + 61);
+        const grd = gradeType.USER;
+        const typ = tokenType;
+        const body: TokenBody = { iat, exp, grd, typ };
+
+        const secretOfToken = encrypt(process.env.SECRET);
+        const bodyOfToken = encrypt(JSON.stringify(body));
+        const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
+
+        const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
+        return token;
+    }
+}
+```
+
+Access Token은 15분의 기한을 가지도록 했고, Refresh Token은 61일의 기한을 가지도록 했는데 
+
+Refresh Token을 61일로 설정한 이유는 특별한 이유는 아니었고,
+카카오에서 2달로 설정했다는 것을 참고해 설정했습니다.
+
+https://devtalk.kakao.com/t/refresh-token/128850
+
+
+- 토큰 검증 함수
+
+```ts
+//Authorization.ts
+class Authorization {
+    static verifyToken(token, tokenType: TokenType) {
+        const now = new Date();
+        const [secretOfToken, bodyOfToken, integrityTag] = accessToken.split(".");
+        const secret = decrypt(secretOfToken);
+        const bodyJSON = decrypt(bodyOfToken);
+        const thisContentIntegrityTag = createIntegrityTag(secret, bodyJSON);
+        const body = JSON.parse(bodyJSON) as TokenBody;
+        const exp = new Date(body.exp);
+  
+        if (secret !== process.env.SECRET) return false;
+        if (thisContentIntegrityTag !== integrityTag) return false;
+        if (body.typ !== tokenType) return false;
+        if (exp.getTime() < now.getTime()) throw new Error(`Invalid {tokenType} Token`);
+        return true;
+    }
+}
+```
+
+토큰 검증 함수에선 인자로 전달받은 Token을 분해해 유효성을 검증하도록 작성했습니다.
+
+검증 함수에서 수행하는 일은 아래와 같습니다.
+
+1. 토큰 분해
+2. secret 검증
+3. 토큰의 내용이 무결한지 무결성 태그를 통한 검증
+4. typ 검증
+5. exp (만료일) 검증
+
+검증 과정에서 실패하면 false를 반환하지만 만약 토큰이 무결함을 확인했는데 만료일이 지난 경우에만 Access Token 혹은 Refresh Token 재발급을 수행할 수 있도록 처리하기 위해 에러 처리를 해줬습니다.
+
+- 토큰 재발급 함수
+
+```ts
+class Authorization {
+    static tokenRefresh(refreshToken) {
+        const tokenVerifyResult = this.verifyToken(refreshToken, "Refresh");
+        if (tokenVerifyResult) return this.generateToken("Access");
+        else return false;
+    }
+}
+```
+
+토큰 재발급 함수는 우선 Refresh Token에 대한 검증을 시도하고 만약 문제가 없다면 새로운 Access Token을, 문제가 있다면 fasle를 반환하도록 작성했습니다.
+
+
+</div>
+</details>
+
+<details>
+<summary>수요일</summary>
+<div markdown="1">
+
+### 로그인 시 토큰 전달
+
+기존 쿠키와 세션을 함께 사용하던 방식에서 토큰을 이용하도록 변경하기 위해 
+
+기존 쿠키 및 세션 설정 로직을 제거하고 토큰을 발급해서 전달하는 로직으로 수정해야 했습니다.
+
+- 변경 전
+
+```ts
+//signInController.ts 기존 쿠키&세션 방식
+const sid = sha1Encryption(email + Date.now().toString());
+
+session.set(sid, result.id);
+
+res.setCookie("sid", sid, { HttpOnly: true, Path: "/", "Max-Age": 30 * DAY });
+
+res.setStatus(200).json({ redirect: "/" });
+```
+
+- 변경 후
+
+```ts
+//signInController.ts 토큰 방식
+const accessToken = Authorization.generateToken("Access");
+const refreshToken = Authorization.generateToken("Refresh");
+
+res.setStatus(200).json({ redirect: "/", accessToken, refreshToken });
+```
+
+### Fetch 정형화
+
+클라이언트가 로그인 이후 접근 권한이 필요한 모든 요청에 대해 토큰을 함께 보낼 수 있도록,
+
+언제 Access Token이 재발급될지 모르기 때문에 응답 결과에 따라 항상 로컬 스토리지를 갱신할 수 있도록 하기 위해
+
+Fetch를 정형화 할 필요가 있다고 생각했습니다.
+
+```js
+//loginLayout.js
+
+await fetch(`${url}/user/login`, {
+	method: "POST",
+	headers: { "Content-Type": "application/json" },
+	body: JSON.stringify({ email, password })
+}).then((response) => {
+	const isOK = 200;
+	if (response.status === isOK) return response.json();
+}).then((json) => {
+	if (json != null) window.location.href = json.redirect;
+});
+```
+
+기존에는 위처럼 각 페이지에서 fetch 모듈을 직접 호출하고 있었지만 
+
+Access Token의 존재 여부를 확인하고 함께 전송해서 응답을 받았을 때 Access / Refresh Token이 존재한다면 갱신해주는 공용 fetch 함수를 작성해줬습니다.
+
+저장 위치는 클라이언트의 Local Storage에 저장하기로 결정했고, 사용법은 MDN 문서를 참고했습니다.
+
+https://developer.mozilla.org/en-US/docs/Web/API/Storage
+
+
+```js
+//fetch.js
+async function fetchPOST(uri, data) {
+    const accessToken = window.localStorage.getItem("accessToken");
+    if (accessToken != null) data.accessToken = accessToken;
+
+    await fetch(uri, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    }).then(async (response) => {
+        const contentType = response.headers.get("Content-Type");
+        const isJSON = contentType === "application/json";
+        return [response, isJSON ? await response.json() : {}];
+    }).then(([response, body]) => {
+        if (body.accessToken != null) {
+            window.localStorage.setItem("accessToken", body.accessToken);
+        }
+        if (body.refreshToken != null) {
+            window.localStorage.setItem("refreshToken", body.refreshToken);
+        }
+        return response;
+    });
+}
+
+//loginLayout.js
+fetchPOST(`${url}/user/login`, { email, password }).then((response) => {
+	const isOK = 200;
+	if (response.status === isOK) return response.json();
+}).then((json) => {
+	 if (json != null) window.location.href = json.redirect;
+});
+```
+
+### Response 객체 중복 읽기 문제
+
+앞서 fetch 함수에서 Access Token과 Refresh Token을 처리하기 위해 정형화를 시도했는데
+
+그 과정에서 Response를 한 번 `.json()` 으로 읽고, 이후 Response 개체를 밖으로 반환해 추가 로직을 구현하려고 했었습니다.
+
+```ts
+// 첫번째 Response 사용 (토큰 처리)
+return [response, isJSON ? await response.json() : {}];
+
+// 두번째 외부에서 Response 사용
+const isOK = 200;
+if (response.status === isOK) return response.json();
+```
+
+그런데 Response 객체를 외부에서 사용을 시도 했을 때 아래의 에러를 만나게 되었습니다.
+
+```
+Uncaught (in promise) TypeError: Failed to execute 'json' on 'Response': body stream already read
+```
+
+해당 에러가 발생한 이유는 한 번 Response 객체를 읽으면 그 이후에는 같은 객체를 다시 읽을 수 없기 때문에 발생하는 문제였고,
+
+이를 해결하기 위해 처음 Response 객체를 읽을 때 해당 객체를 클론해서 읽도록 변경하여 해결할 수 있었습니다.
+
+```ts
+//개선된 첫번째 Response 사용 (토큰 처리)
+return [response, isJSON ? await response.clone().json() : {}];
+```
+
+
+### 토큰 유효성 확인하기
+
+처음에는 토큰을 이용해서 클라이언트가 어떻게 로그인 상태인 것을 알 수 있도록 구현할까? 를 고민했습니다.
+
+고민 과정에서 생각한 방법이 2가지 있었는데
+
+1. Access Token을 보내서 토큰이 유효한지 확인하는 검증 요청만 보낸다.
+2. Access Token을 보내서 토큰이 유효한지 확인하고 유저 정보를 가져오도록 한다.
+
+어쨌든 결국 토큰에는 서버에서 관리하는 Secret이 포함되어 있기 때문에 Access Token을 보내서 유효한지 검증을 수행해야 한다고 생각했고, 
+
+데이터를 제공하는 서버와 인증을 수행하는 서버가 현재는 동일하지만 인증을 수행하는 역할과 데이터를 전달하는 역할을 논리적으로 분리하고 싶다고 생각했습니다.
+
+그렇기 때문에 토큰의 유효성만을 확인하는 방식으로 진행하도록 하겠습니다.
+
+```js
+// scripts/authorization.js
+async function verifyAccessTokenValid() {
+    const accessToken = window.localStorage.getItem("accessToken");
+    if (accessToken == null) return false;
+
+    return await fetchPOST(`${url}/autorization/login`, { email, password }).then(async (response) => {
+        const isOK = 200;
+        const UNATHORIZED = 401;
+        if (response.status === isOK) {
+            return true;
+        }
+        else if (response.status === UNATHORIZED) {
+            return await requestTokenRefresh();
+        } else {
+            return false;
+        }
+    });
+}
+```
+
+클라이언트는 메인 페이지를 불러올 때 토큰이 유효한지 확인하는데, 만약 로컬 스토리지에서 Access Token을 찾지 못한다면 인증을 거치지 않고 바로 비로그인 상태로 간주하도록 했습니다.
+
+만약 토큰 검증 요청을 보냈을 때 유효하다면 상태코드 200을, 만료됐다면 401을, 
+서버 에러 혹은 토큰 변조 등으로 인한 검증이 불가능한 상황이라면 false를 반환해 비로그인 상태임을 알리도록 했습니다.
+
+### 서버 측 토큰 검증 결과 반환 로직 작성
+
+```ts
+//app.ts
+routeStack.use("/authorization", authorizeRouter);
+
+//authorizeRouter.ts
+authorizeRouter.post("/authorization/verify", verifyController);
+
+//authorizeController.ts
+function verifyController(req, res) {
+    try {
+        const accesstoken = req.body.accessToken;
+        const isVerified = Authorization.verifyToken(accesstoken, "Access");
+
+        if (isVerified) {
+            res.setStatus(200).send();
+        } else {
+            res.setStatus(401).send();
+        }
+    } catch (e) {
+        logger.warn("e");
+        res.setStatus(403).send();
+    }
+}
+```
+
+서버에선 미리 만들어둔 Authorization 클래스를 이용해 토큰을 검증하고, 결과에 따라 상태 코드를 다르게 응답합니다.
+
+### 클라이언트 토큰 리프레시 요청 작성
+
+만약 클라이언트에서 Access Token을 받았는데 401(Unauthorized) 응답을 받는 경우 Refresh Token을 이용해 Access Token을 재발급 받는 함수를 실행합니다.
+
+```js
+async function requestTokenRefresh() {
+    const refreshToken = window.localStorage.getItem("refreshToken");
+    if (refreshToken == null) return false;
+
+    return await fetchPOST(`${url}/authorization/refresh`, { refreshToken }).then(async (response) => {
+        const isOK = 200;
+        if (response.status === isOK) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+}
+```
+
+### 토큰 리프레시 응답 로직 작성
+
+```ts
+//authorizeRouter.ts
+authorizeRouter.post("/authorization/refresh", tokenRefreshController);
+
+//authorizeController.ts
+function tokenRefreshController(req, res) {
+    try {
+        const refreshToken = req.body.refreshToken;
+        const accessToken = Authorization.tokenRefresh(refreshToken);
+        if (accessToken) {
+            res.setStatus(200).json({ accessToken });
+        } else {
+            res.setStatus(401).send();
+        }
+    } catch (e) {
+        logger.warn(e);
+        res.setStatus(403).send();
+    }
+}
+```
+
+### 토큰 검증 여부에 따라 다른 상태 렌더링 하기
+
+```js
+//mainLayout.js
+async function render() {
+    const tokenValid = await verifyAccessTokenValid();
+  
+    const navigationNode = document
+        .createRange()
+        .createContextualFragment(Navigation("HELLO, WEB!",
+            tokenValid
+                ? [HorizontalHugFrame("user-naviator-button-list", [
+                    SmallButton("멤버리스트", "user-memberlist-button"),
+                    SmallButton("마이페이지", "user-mypage-button"),
+                    SmallButton("로그아웃", "user-logout-button")
+                ])]
+                : [SmallButton("로그인/회원가입", "user-navigator-button")]
+        ));
+        ...
+```
+
+### 로그아웃 처리
+
+```ts
+//mainLayout.js
+function addEvent(isLogin) {
+    if (isLogin) {
+        document.getElementById("user-logout-button").addEventListener("click", (event) => {
+            window.localStorage.removeItem("accessToken");
+            window.localStorage.removeItem("refreshToken");
+            window.location.reload();
+        });
+        ...
+```
+
+클라이언트에서 로그아웃 버튼을 누르면 클라이언트에서 보관하고 있던 토큰을 파기하고, 새로고침 하는 것으로 처리할 수 있었습니다.
+
+</div>
+</details>
+
+<details>
+<summary>목요일</summary>
+<div markdown="1">
+
+### 게시판 기능을 포함한 ERD 다시 그리기
+
+<img src="https://i.ibb.co/dMdrk8r/Pasted-image-20241010172624.png" alt="post-erd">
+
+```sql
+CREATE TABLE member (
+  email VARCHAR(30) NOT NULL,
+  password VARCHAR(100) NOT NULL,
+  name VARCHAR(20) NOT NULL,
+  PRIMARY KEY (email)
+);
+  
+CREATE TABLE post (
+  id INT AUTO_INCREMENT,
+  member_email VARCHAR(30) NOT NULL,
+  title VARCHAR(50) NOT NULL,
+  author VARCHAR(20) NOT NULL,
+  createAt TIMESTAMP NOT NULL,
+  content VARCHAR(1000) NOT NULL,
+  view INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (member_email) REFERENCES member(email)
+);
+  
+CREATE TABLE comment (
+  id INT AUTO_INCREMENT,
+  post_id INT NOT NULL,
+  author VARCHAR(20) NOT NULL,
+  createAt TIMESTAMP NOT NULL,
+  content VARCHAR(200) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (post_id) REFERENCES post(id)
+);
+```
+
+### mock 데이터 삽입
+
+우선은 게시판 기능 중에서도 조회를 먼저 구현하기 위해서 각 `memeber` `post` `comment` 테이블에 mock 데이터를 삽입하려고 합니다.
+
+mock 데이터는 테이블을 기반으로 GPT를 이용해 .csv 파일의 형태로 생성했습니다.
+
+```console
+scp member.csv jinyoung@[HOST]:home/jinyoung
+...외 2개
+```
+
+로컬 PC의 파일을 VM 환경에 전송해줬고, mysql에서 읽을 수 있는 위치로 옮겨줬습니다. 
+
+```bash
+sudo mv member.csv /var/lib/mysql-files
+...외 2개
+```
+
+이후 `LOAD DATA`를 이용해  파일을 삽입해줬습니다.
+
+```bash
+LOAD DATA INFILE '/var/lib/mysql-files/comment.csv'  
+INTO TABLE comment  
+FIELDS TERMINATED BY ','  
+ENCLOSED BY '"' LINES  
+TERMINATED BY '\n'  
+IGNORE 1 LINES  
+(id,post_id,author,createAt,content);
+...외 2개
+```
+
+### 메인 페이지 게시판 레이아웃
+
+post_id를 기준으로 내림차순 한 페이지당 10개 씩, 5페이지 단위의 존재 여부를 보여줄 예정이기 때문에
+한 번의 조회마다 최대 50개의 게시글을 가져오고,
+
+5페이지 넘어가기 버튼을 눌렀을 때 다음 게시글 50개를 가져와서 렌더링 하는 방식으로 구현할 예정
+
+### 글 작성 페이지
+
+### 글 보기 페이지
+
+### 유저 리스트 페이지
+
+```
+시나리오
+
+주소창에 입력 -> 페이지를 내려줌 -> 토큰 인증 함수 호출 -> 
+- 문제 없으면 데이터 요청 -> 데이터 받고 렌더링
+- 문제 있으면 로그인 창으로 리디렉션
+```
+
+```ts
+//UserRepository.ts
+class UserRepository {
+    static async getUserPublicData() {
+        return await DBManager.select({
+            table: this.tableName,
+            column: "email, name",
+            condition: null
+        });
+    }
+```
+
+
+### 에러 페이지
+
+### 피드백 반영
 
 </div>
 </details>

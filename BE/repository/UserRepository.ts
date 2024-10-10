@@ -1,13 +1,21 @@
 import { DBManager } from "../database/DBManager";
 
 class UserRepository {
-    static tableName = "users";
+    static tableName = "member";
 
     static async getUser(email) {
         return await DBManager.select({
             table: this.tableName,
             column: "*",
             condition: `email="${email}"`
+        });
+    }
+
+    static async getUserPublicData() {
+        return await DBManager.select({
+            table: this.tableName,
+            column: "email, name",
+            condition: null
         });
     }
 
