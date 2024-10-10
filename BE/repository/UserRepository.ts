@@ -1,7 +1,7 @@
 import { DBManager } from "../database/DBManager";
 
 class UserRepository {
-    static tableName = "users";
+    static tableName = "member";
 
     static async getUser(email) {
         return await DBManager.select({
