@@ -32,17 +32,17 @@ function addEvent(isLogin) {
 
     if (isLogin) {
         //logout
-        document.getElementById("user-logout-button").addEventListener("click", (event) => {
-            window.localStorage.removeItem("accessToken");
-            window.localStorage.removeItem("refreshToken");
-            window.location.reload();
+        document.getElementById("user-logout-button").addEventListener("click", (_) => {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            location.reload();
         });
         //memberlist
         //TODO: 멤버 리스트 페이지로 이동
     } else {
         //navigate to login page
-        document.getElementById("user-navigator-button").addEventListener("click", (event) => {
-            window.location.href = `${url}/login.html`;
+        document.getElementById("user-navigator-button").addEventListener("click", (_) => {
+            location.href = `${url}/login.html`;
         });
     }
 }
