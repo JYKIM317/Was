@@ -15,7 +15,6 @@ class UserRepository {
         return await DBManager.select({
             table: this.TABLE_NAME,
             column: "email, name",
-            condition: null
         });
     }
 

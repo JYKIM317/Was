@@ -1,6 +1,16 @@
 import mysql from "mysql2/promise";
 import dotenv from "dotenv";
 
+type SelectOption = {
+    table: string
+    column: string
+    condition?: string
+    orderBy?: string
+    desc?: boolean
+    limit?: number
+    offset?: number
+}
+
 class DatabaseManager {
     connectionPool: mysql.Pool;
     constructor() {
@@ -23,9 +33,14 @@ class DatabaseManager {
         return result;
     }
 
-    async select({ table, column, condition }) {
-        const where = condition == null ? "" : ` WHERE ${condition}`;
-        const query = `SELECT ${column} FROM ${table}${where};`;
+    async select(data: SelectOption) {
+        const where = data.condition == null ? "" : ` WHERE ${data.condition}`;
+        const orderBy = data.orderBy == null ? "" : ` ORDER BY ${data.orderBy}`;
+        const desc = data.desc == null ? "" : ` DESC`;
+        const limit = data.limit == null ? "" : ` LIMIT ${data.limit}`;
+        const offset = data.offset == null ? "" : ` OFFSET ${data.offset}`;
+
+        const query = `SELECT ${data.column} FROM ${data.table}${where}${orderBy}${desc}${limit}${offset};`;
         return await this.executeQuery(query);
     }
 
