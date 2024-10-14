@@ -97,7 +97,7 @@ export class Response {
         this.socket.write(startLine);
         this.socket.write(header);
         this.socket.write(CRLF);
-        if (body) this.socket.write(body);
+        this.socket.write(body);
     }
 }
 
