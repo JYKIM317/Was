@@ -25,11 +25,12 @@ class Authorization {
         const typ = tokenType;
         const body: TokenBody = { iat, exp, grd, typ };
 
-        const secretOfToken = encrypt(process.env.SECRET);
-        const bodyOfToken = encrypt(JSON.stringify(body));
-        const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
+        const token = [
+            encrypt(process.env.SECRET),
+            encrypt(JSON.stringify(body)),
+            createIntegrityTag(process.env.SECRET, JSON.stringify(body))
+        ].join('.');
 
-        const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
         return token;
     }
 
