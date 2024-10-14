@@ -1,5 +1,5 @@
-import { passwordEncryption } from "../util/crypto";
-import { UserRepository } from "../repository/UserRepository";
+import { passwordEncryption } from "../../util/crypto";
+import { UserRepository } from "../../repository/UserRepository";
 
 type signUpInfo = {
     email: string,

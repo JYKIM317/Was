@@ -1,8 +1,8 @@
 
-import { logger } from "../logger";
-import { UserRepository } from "../repository/UserRepository";
-import { passwordEncryption } from "../util/crypto";
-import Authorization from "../core/auth/Authorization"
+import { logger } from "../../logger";
+import { UserRepository } from "../../repository/UserRepository";
+import { passwordEncryption } from "../../util/crypto";
+import Authorization from "../../core/auth/Authorization"
 import bcrypt from "bcrypt"
 
 type signInInfo = {

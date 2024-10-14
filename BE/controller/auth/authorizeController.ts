@@ -1,5 +1,5 @@
-import Authorization from "../core/auth/Authorization"
-import { logger } from "../logger";
+import Authorization from "../../core/auth/Authorization"
+import { logger } from "../../logger";
 
 function verifyController(req, res) {
     try {
