@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import net from 'net';
-import { statusMsg, contentType } from "../../util/const";
-import { cookieOption } from "./Cookie";
+import { STATUS_MESSAGE, CONTENT_TYPE, CRLF } from "../../util/const";
+import { CookieOption } from "./Cookie";
 
 export class Response {
     private socket: net.Socket;
@@ -18,8 +18,8 @@ export class Response {
     send(data?: string) {
         let header = this.setInitialHeaderOption();
         if (data) {
-            header += `Content-Type: text/plain; charset=UTF-8\r\n`;
-            header += `Content-Length: ${Buffer.byteLength(data, "utf8")}\r\n`;
+            header += `Content-Type: text/plain; charset=UTF-8${CRLF}`;
+            header += `Content-Length: ${Buffer.byteLength(data, "utf8")}${CRLF}`;
         }
 
         this.socketWrite(header, data);
@@ -30,8 +30,8 @@ export class Response {
         const ext = path.extname(filePath);
         const file = fs.readFileSync(filePath);
         let header = this.setInitialHeaderOption();
-        header += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
-        header += `Content-Length: ${Buffer.byteLength(file)}\r\n`;
+        header += `Content-Type: ${CONTENT_TYPE[ext]}; charset=UTF-8${CRLF}`;
+        header += `Content-Length: ${Buffer.byteLength(file)}${CRLF}`;
 
         this.socketWrite(header, file);
     }
@@ -39,8 +39,8 @@ export class Response {
     json(data: object) {
         const body = JSON.stringify(data);
         let header = this.setInitialHeaderOption();
-        header += `Content-Type: application/json\r\n`;
-        header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
+        header += `Content-Type: application/json${CRLF}`;
+        header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}${CRLF}`;
 
         this.socketWrite(header, body);
     }
@@ -48,13 +48,13 @@ export class Response {
     redirect(url, statusCode = 302) {
         this.statusCode = statusCode;
         let header = this.setInitialHeaderOption();
-        header += `Location: ${url}\r\n`;
+        header += `Location: ${url}${CRLF}`;
 
         this.socketWrite(header);
     }
 
     setStatus(statusCode) {
-        const message = statusMsg[statusCode];
+        const message = STATUS_MESSAGE[statusCode];
         if (message) {
             this.statusCode = statusCode;
         } else {
@@ -64,7 +64,7 @@ export class Response {
         return this;
     }
 
-    setCookie(key: string, value, option?: cookieOption) {
+    setCookie(key: string, value, option?: CookieOption) {
         this.cookie = `${key}=${value}`;
         if (option) Object.keys(option).forEach((opt) => {
             if (typeof option[opt] !== 'boolean') {
@@ -78,27 +78,26 @@ export class Response {
 
     private setInitialHeaderOption() {
         let header = "";
-        header += `Server: Jinyoung\r\n`;
-        header += `Date: ${new Date().toUTCString()}\r\n`;
-        header += `Connection: ${this.connection}\r\n`;
+        header += `Server: Jinyoung${CRLF}`;
+        header += `Date: ${new Date().toUTCString()}${CRLF}`;
+        header += `Connection: ${this.connection}${CRLF}`;
         if (this.connection.toLowerCase() === 'keep-alive') {
-            header += `Keep-Alive: timeout=5, max=1000\r\n`;
+            header += `Keep-Alive: timeout=5, max=1000${CRLF}`;
         }
         if (this.cookie) {
-            header += `Set-Cookie: ${this.cookie}\r\n`;
+            header += `Set-Cookie: ${this.cookie}${CRLF}`;
         }
         return header;
     }
 
-    private socketWrite(header, body: Buffer | string = "\r\n") {
+    private socketWrite(header, body: Buffer | string = CRLF) {
         if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        const emptyLine = "\r\n";
+        const startLine = `HTTP/1.1 ${this.statusCode} ${STATUS_MESSAGE[this.statusCode]}${CRLF}`;
 
         this.socket.write(startLine);
         this.socket.write(header);
-        this.socket.write(emptyLine);
-        if (body) this.socket.write(body);
+        this.socket.write(CRLF);
+        this.socket.write(body);
     }
 }
 

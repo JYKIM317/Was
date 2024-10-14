@@ -7,10 +7,12 @@ import { staticRouter } from './route/staticRouter';
 import { userRouter } from './route/userRouter';
 import { session } from './core/session/Session';
 import { authorizeRouter } from './route/authorizeRouter';
+import { boardRouter } from './route/boardRouter';
 
 routeStack.use("/", staticRouter);
 routeStack.use("/user", userRouter);
 routeStack.use("/authorization", authorizeRouter);
+routeStack.use("/board", boardRouter);
 
 const server = net.createServer(socket => {
     socket.on("data", (data) => {

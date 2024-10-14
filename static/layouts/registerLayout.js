@@ -30,7 +30,7 @@ function addEvent() {
     const url = "http://localhost:8080";
 
     //register fetch
-    document.getElementById("login-button").addEventListener("click", async (event) => {
+    document.getElementById("login-button").addEventListener("click", async (_) => {
         const name = document.getElementById("input-name").querySelector("input").value.trim();
         const email = document.getElementById("input-email").querySelector("input").value.trim();
         const password = document.getElementById("input-password").querySelector("input").value.trim();
@@ -45,8 +45,8 @@ function addEvent() {
     });
 
     //navigate to login page
-    document.getElementById("user-navigator-button").addEventListener("click", (event) => {
-        window.location.href = `${url}/login.html`;
+    document.getElementById("user-navigator-button").addEventListener("click", (_) => {
+        location.href = `${url}/login.html`;
     });
 }
 

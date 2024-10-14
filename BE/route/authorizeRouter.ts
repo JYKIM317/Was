@@ -1,5 +1,5 @@
 import { Router } from '../core/router/Router';
-import { verifyController, tokenRefreshController } from '../controller/authorizeController';
+import { verifyController, tokenRefreshController } from '../controller/auth/authorizeController';
 
 
 const authorizeRouter = new Router();

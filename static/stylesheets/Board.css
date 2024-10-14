@@ -1,0 +1,36 @@
+.post-table {
+    min-width: 65rem;
+}
+
+.post-element {
+    padding: 1rem 0 1rem 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 2.5rem;
+    font: var(--font-body-r);
+    color: var(--color-black);
+    cursor: pointer;
+    z-index: 10;
+}
+
+.post-element-title {
+    width: 31.25rem;
+    padding: 0 1.5rem 0 1.5rem;
+}
+
+.post-element-author,
+.post-element-create-at,
+.post-element-view-count {
+    width: 8.75rem;
+    text-align: center;
+}
+
+.post-table #table-head {
+    font: var(--font-bold-s);
+    color: var(--color-gray-200);
+    cursor: default;
+}
+
+#table-head .post-element-title {
+    text-align: center;
+}

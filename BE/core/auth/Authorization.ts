@@ -1,6 +1,6 @@
 import { encrypt, decrypt, createIntegrityTag } from "./crypto"
 
-enum gradeType {
+enum GradeType {
     ADMIN = 0,
     USER = 1
 }
@@ -21,15 +21,16 @@ class Authorization {
         tokenType === "Access"
             ? exp.setMinutes(exp.getMinutes() + 15)
             : exp.setDate(exp.getDate() + 61);
-        const grd = gradeType.USER;
+        const grd = GradeType.USER;
         const typ = tokenType;
         const body: TokenBody = { iat, exp, grd, typ };
 
-        const secretOfToken = encrypt(process.env.SECRET);
-        const bodyOfToken = encrypt(JSON.stringify(body));
-        const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
+        const token = [
+            encrypt(process.env.SECRET),
+            encrypt(JSON.stringify(body)),
+            createIntegrityTag(process.env.SECRET, JSON.stringify(body))
+        ].join('.');
 
-        const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
         return token;
     }
 

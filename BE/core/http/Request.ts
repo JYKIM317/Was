@@ -10,24 +10,24 @@ export class Request {
     query: { [key: string]: string } = {};
     error?: string;
 
-    constructor(msg) {
-        this.parseMsg(msg);
+    constructor(message) {
+        this.parseMessage(message);
     }
 
-    private parseMsg(msg) {
-        const [headerMsg, bodyMsg] = msg.split("\r\n\r\n");
-        const [startLine, ...requestHeader] = headerMsg.split("\r\n");
+    private parseMessage(message) {
+        const [headerMessage, bodyMessage] = message.split("\r\n\r\n");
+        const [startLine, ...requestHeader] = headerMessage.split("\r\n");
         this.parseStartLine(startLine);
         this.parseHeader(requestHeader);
-        this.parseBody(bodyMsg);
+        this.parseBody(bodyMessage);
     }
 
     private parseStartLine(startLine) {
         [this.method, this.path, this.version] = startLine.split(' ');
     }
 
-    private parseHeader(headerMsg) {
-        headerMsg.forEach((line) => {
+    private parseHeader(headerMessage) {
+        headerMessage.forEach((line) => {
             const [key, value] = line.split(":");
             this.headers[key.toLowerCase()] = value.trim();
         });
@@ -38,17 +38,17 @@ export class Request {
         }
     }
 
-    private parseBody(bodyMsg) {
-        const bodyMsgExist = bodyMsg !== "";
+    private parseBody(bodyMessage) {
+        const bodyMessageExist = bodyMessage !== "";
         const contentJSON = 'application/json';
         if (this.headers["content-type"] === contentJSON) {
-            this.body = JSON.parse(bodyMsg);
+            this.body = JSON.parse(bodyMessage);
         } else {
-            this.body = bodyMsg;
+            this.body = bodyMessage;
         }
 
-        if (bodyMsgExist) {
-            const checkContentLength = this.headers["content-length"] === Buffer.byteLength(bodyMsg).toString();
+        if (bodyMessageExist) {
+            const checkContentLength = this.headers["content-length"] === Buffer.byteLength(bodyMessage).toString();
             if (!checkContentLength) this.error = "Invalid Content-Length";
         }
     }

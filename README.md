@@ -1,4 +1,302 @@
 
+# 🔥 나만의 주간 계획서 (4)
+
+## ✅ 나만의 체크포인트 ⭕❌
+
+⭕ 주간 계획 수립
+
+❌ 게시판 기능 완성
+	
+	⭕ 게시판 레이아웃 구성
+    - 서버 측 게시판 데이터 반환 로직 작성
+    - 게시판 데이터 받아오는 함수 작성
+    - 메인 페이지 게시판 HTML 렌더링 구현
+    - 메인 페이지 게시판 CSS 구현
+	
+	❌ 메인 하단에 글쓰기 버튼 추가
+		- 글쓰기 버튼 시 write.html로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	
+	❌ write.html에서는 글을 입력할 수 있도록
+	
+	❌ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+
+❌ 글쓰기 이미지 업로드 기능 구현
+	
+	❌ 이미지 업로드 버튼 구현
+	
+	❌ 이미지 업로드 구현
+	
+	❌ 서버에 이미지 파일 저장
+	
+	❌ 이미지 요청에 대한 응답 구현
+	
+	❌ 글 본문 이미지 표시
+
+❌ Github 로그인 구현
+	
+	❌ Github 로그인 버튼 구현
+	
+	❌ Github 인증 구현
+	
+	❌ Github 리디렉션 및 프론트 로직 구현
+
+❌ 테스트 코드 작성
+	
+	❌ HTTP Message에 대한 테스트 코드 작성
+	
+	❌ 비즈니스 로직에 대한 테스트 코드 작성
+	
+	❌ 인증 로직 테스트 코드 작성
+
+## 📝 학습 및 구현 계획
+
+### 월요일
+
+게시판 기능 완성
+	
+	게시판 레이아웃 구성
+	
+	메인 하단에 글쓰기 버튼 추가
+		- 글쓰기 버튼 시 write.html로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	
+	write.html에서는 글을 입력할 수 있도록
+	
+	로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+
+### 화요일
+
+글쓰기 이미지 업로드 기능 구현
+	
+	이미지 업로드 버튼 구현
+	
+	이미지 업로드 구현
+	
+	서버에 이미지 파일 저장
+	
+	이미지 요청에 대한 응답 구현
+	
+	글 본문 이미지 표시
+
+### 수요일
+
+Github 로그인 구현
+	
+	Github 로그인 버튼 구현
+	
+	Github 인증 구현
+	
+	Github 리디렉션 및 프론트 로직 구현
+
+### 목요일
+
+일정에 맞췄을 시 리팩토링 및 추가 기능 구현 혹은 테스트 코드 작성
+
+## ✏️ 고민과 해결 과정 쌓아가기
+
+### 피드백 개선
+
+#### 상수 네이밍 대문자 스네이크 케이스로 변경
+
+```ts
+//변경 전
+const alg = 'aes-256-cbc';
+const encryptedKey = crypto.randomBytes(32);
+const initializeVector = crypto.randomBytes(16);
+...등
+
+//변경 이후
+const ALG = 'aes-256-cbc';
+const ENCRYPTED_KEY = crypto.randomBytes(32);
+const INITIALIZE_VECTOR = crypto.randomBytes(16);
+...등
+```
+
+#### 비밀번호 암호화 bcrypt로 변경 
+
+md5는 안전한 암호화 방식이 아니라는 의견을 들을 수 있었습니다.
+암호화 방식을 sha 방식으로 바꿀지, bcrypt 방식으로 바꿀지 고민했는데 느리지만 조금 더 안전한 bcrypt 방식으로 바꾸자 했습니다.
+
+```ts
+//기존 PW 암호화
+//For password encryption
+function md5Encryption(data) {
+    return crypto.createHash("md5").update(data + process.env.SECRET).digest("hex");
+}
+```
+
+```ts
+//변경된 PW 암호화
+//For password encryption
+function passwordEncryption(data) {
+    return bcrypt.hashSync(data, process.env.SECRET);
+}
+```
+
+#### 반복되는 문자열 상수화
+
+```ts
+//개선 전
+header += `Content-Type: application/json\r\n`;
+...
+
+//개선 후
+//const.ts
+const CRLF = "\r\n";
+//Response.ts
+header += `Content-Type: application/json${CRLF}`;
+...
+```
+
+#### 문자열 연결 로직 변경
+
+```ts
+//기존 Authorization.ts
+const secretOfToken = encrypt(process.env.SECRET);
+const bodyOfToken = encrypt(JSON.stringify(body));
+const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
+
+const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
+```
+
+```ts
+//변경 Authorization.ts
+const token = [
+	encrypt(process.env.SECRET),
+	encrypt(JSON.stringify(body)),
+	createIntegrityTag(process.env.SECRET, JSON.stringify(body))
+].join('.');
+```
+
+### 메인 페이지 게시판 레이아웃
+
+우선 게시글의 데이터를 어떻게 가져오면 좋을까? 를 고민했습니다. 
+
+가져와야 하는 것
+- 해당 페이지 글 목록
+  `localhost:8080/board/post?p=1`
+
+post_id를 기준으로 내림차순 한 페이지당 10개 씩, 5페이지 단위의 존재 여부를 보여줄 예정입니다.
+
+서버 측 데이터 반환을 구현하기 위해 라우터를 새롭게 만들어 경로를 등록해줬고,
+
+```ts
+//boardRouter.ts
+const boardRouter = new Router();
+  
+boardRouter.get("/board/post", boardController);
+boardRouter.post("/board/post/:postId", postController);
+boardRouter.post("/board/comment/:postId", commentController);
+
+//app.ts
+routeStack.use("/board", boardRouter);
+```
+
+아래같은 구조로 쿼리를 발생할 수 있도록 만들기 위해
+
+```sql
+SELECT * 
+FROM post
+ORDER BY createdAt DESC
+LIMIT 10 
+OFFSET page * 10;
+```
+
+PostRepository와 메서드를 선언해줬습니다.
+
+```ts
+//PostRepository.ts
+class PostRepository {
+    static TABLE_NAME = "post";
+
+    static async getBoard(page) {
+	    const SELECT_PAGE = page * 10 - 10;
+	    
+        return await DBManager.select({
+            table: this.TABLE_NAME,
+            column: "*",
+            orderBy: "createdAt",
+            desc: true,
+            limit: 10,
+            offset: SELECT_PAGE
+        });
+    }
+}
+```
+
+이후 데이터를 받아와 반환해주는 함수를 작성해줬습니다.
+
+```ts
+//postController.ts
+async function boardController(req, res) {
+    try {
+        const page = req.query.p;
+        PostRepository.getBoard(page).then((response) => {
+            const result = response[0];
+            res.setStatus(200).json({ result });
+        });
+    } catch (e) {
+        logger.error(e);
+        res.setStatus(500).send();
+    }
+}
+```
+
+클라이언트에선 게시판 글을 불러오는 함수를 작성해줬고, 이를 호출해서 사용할 예정입니다.
+
+```js
+// /scripts/board.js
+async function getBoardPage(page) {
+    const uri = url + `/board/post?p=${page}`;
+    return await fetchGET(uri).then((response) => {
+        const isOK = 200;
+        return response.status === isOK ? response.json() : { result: [] };
+    });
+}
+```
+
+게시판이 렌더링될 `mainLayout`에서 받아온 게시글 데이터를 통해 게시판을 렌더링하고 각 게시글의 상위 프레임인 `board`에 이벤트를 등록해 이벤트 버블링을 통한 이벤트 감지와, 해당 클릭 이벤트를 처리할 예정입니다.
+
+```js
+//mainLayout.js
+async function render() {
+	//게시판
+    await getBoardPage(1).then((data) => {
+        const tableHead = { title: "제목", author: "작성자", createAt: "작성일자", view: "조회수" };
+        const postList = data.result.map((element) => {
+            element.createAt = dateFormatParser(element.createAt);
+            return PostElement(element, element.id);
+        });
+        const postTable = PostTable([PostElement(tableHead, "table-head"), ...postList]);
+        const board = Board([postTable]);
+        const boardNode = document
+            .createRange()
+            .createContextualFragment(board);
+       document.body.querySelector("#root").appendChild(boardNode);
+    });
+...
+
+function addEvent(isLogin) {
+	...
+    document.getElementById("board").addEventListener("click", async (event) => {
+        const targetElement = event.target.closest(".post-element");
+        if (targetElement.id !== "table-head") {
+            await fetchPOST(url + `/board/post/${targetElement.id}`).then((response) => {
+                const isOK = 200;
+                if (response.status === isOK) return response.json();
+                else return {};
+            }).then((json) => {
+                if (json.redirect != null) location.href = json.redirect;
+            });
+        }
+    });
+}
+```
+
+
 <details>
 <summary>1주차</summary>
 <div markdown="1">

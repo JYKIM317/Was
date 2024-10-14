@@ -35,7 +35,7 @@ function addEvent() {
     const url = "http://localhost:8080";
 
     //login fetch
-    document.getElementById("login-button").addEventListener("click", async (event) => {
+    document.getElementById("login-button").addEventListener("click", async (_) => {
         const email = document.getElementById("input-email").querySelector("input").value.trim();
         const password = document.getElementById("input-password").querySelector("input").value.trim();
 
@@ -45,14 +45,14 @@ function addEvent() {
                 if (response.status === isOK) return response.json();
                 else return {};
             }).then((json) => {
-                if (json.redirect != null) window.location.href = json.redirect;
+                if (json.redirect != null) location.href = json.redirect;
             });
         }
     });
 
     //navigate to register page
-    document.getElementById("user-navigator-button").addEventListener("click", (event) => {
-        window.location.href = `${url}/register.html`;
+    document.getElementById("user-navigator-button").addEventListener("click", (_) => {
+        location.href = `${url}/register.html`;
     });
 }
 
