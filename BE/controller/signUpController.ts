@@ -1,4 +1,4 @@
-import { md5Encryption } from "../util/crypto";
+import { passwordEncryption } from "../util/crypto";
 import { UserRepository } from "../repository/UserRepository";
 
 type signUpInfo = {
@@ -10,7 +10,7 @@ type signUpInfo = {
 function signUpController(req, res) {
     const userData: signUpInfo = req.body as signUpInfo;
     const { email, password, name } = userData;
-    const encryptionPW = md5Encryption(password);
+    const encryptionPW = passwordEncryption(password);
     const emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$"
     const isEmailStandard = email.match(emailRegexp) != null;
     const isPasswordStandard = password.trim() !== "";
