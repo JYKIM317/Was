@@ -1,11 +1,11 @@
 import { DBManager } from "../database/DBManager";
 
 class UserRepository {
-    static tableName = "member";
+    static TABLE_NAME = "member";
 
     static async getUser(email) {
         return await DBManager.select({
-            table: this.tableName,
+            table: this.TABLE_NAME,
             column: "*",
             condition: `email="${email}"`
         });
@@ -13,7 +13,7 @@ class UserRepository {
 
     static async getUserPublicData() {
         return await DBManager.select({
-            table: this.tableName,
+            table: this.TABLE_NAME,
             column: "email, name",
             condition: null
         });
@@ -21,7 +21,7 @@ class UserRepository {
 
     static async createUser(email, password, name) {
         return await DBManager.insert({
-            table: this.tableName,
+            table: this.TABLE_NAME,
             columns: ["email", "password", "name"],
             values: [email, password, name]
         });
