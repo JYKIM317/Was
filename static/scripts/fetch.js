@@ -21,4 +21,10 @@ async function fetchPOST(uri, data = {}) {
     });
 }
 
-export { fetchPOST }
+async function fetchGET(uri) {
+    return await fetch(uri, {
+        method: "GET",
+    });
+}
+
+export { fetchGET, fetchPOST }
