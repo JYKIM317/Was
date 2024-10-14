@@ -1,5 +1,5 @@
 import { Router } from '../core/router/Router';
-import { staticController } from '../controller/staticController';
+import { staticController } from '../controller/static/staticController';
 
 const staticRouter = new Router();
 

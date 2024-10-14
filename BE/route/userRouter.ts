@@ -1,7 +1,7 @@
 import { Router } from "../core/router/Router";
-import { signUpController } from "../controller/signUpController";
-import { signInController } from "../controller/signInController";
-import { userListController } from "../controller/userlistController";
+import { signUpController } from "../controller/sign/signUpController";
+import { signInController } from "../controller/sign/signInController";
+import { userListController } from "../controller/user/userlistController";
 
 const userRouter = new Router();
 
