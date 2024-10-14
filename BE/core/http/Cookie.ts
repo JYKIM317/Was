@@ -1,14 +1,14 @@
 
-type cookieSameSiteOption = "Strict" | "Lax" | "None";
+type CookieSameSiteOption = "Strict" | "Lax" | "None";
 
-type cookieOption = {
+type CookieOption = {
     Domain?: string;
     Expires?: Date;
     HttpOnly?: boolean;
     "Max-Age"?: number;
     Path?: string;
     Secure?: boolean;
-    SameSite?: cookieSameSiteOption;
+    SameSite?: CookieSameSiteOption;
     Partitioned?: boolean;
 }
 
@@ -23,4 +23,4 @@ function cookieParser(cookieString) {
     return cookieObject;
 }
 
-export { cookieOption, cookieParser }
+export { CookieOption, cookieParser }

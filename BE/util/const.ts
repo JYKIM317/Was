@@ -1,4 +1,4 @@
-const statusMsg = {
+const STATUS_MESSAGE = {
     100: "Continue",
     101: "Switching Protocols",
     102: "Processing",
@@ -62,7 +62,7 @@ const statusMsg = {
     511: "Network Authentication Required"
 };
 
-const contentType = {
+const CONTENT_TYPE = {
     '.html': 'text/html',
     '.css': 'text/css',
     '.js': 'application/javascript',
@@ -73,4 +73,4 @@ const contentType = {
 
 const CRLF = "\r\n";
 
-export { statusMsg, contentType, CRLF }
+export { STATUS_MESSAGE, CONTENT_TYPE, CRLF }

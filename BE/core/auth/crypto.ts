@@ -1,18 +1,18 @@
 import crypto from "crypto";
 
-const alg = 'aes-256-cbc';
-const encryptedKey = crypto.randomBytes(32);
-const initializeVector = crypto.randomBytes(16);
+const ALG = 'aes-256-cbc';
+const ENCRYPTED_KEY = crypto.randomBytes(32);
+const INITIALIZE_VECTOR = crypto.randomBytes(16);
 
 function encrypt(text) {
-    const cipher = crypto.createCipheriv(alg, encryptedKey, initializeVector);
+    const cipher = crypto.createCipheriv(ALG, ENCRYPTED_KEY, INITIALIZE_VECTOR);
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
     return encrypted;
 }
 
 function decrypt(encryptedText) {
-    const decipher = crypto.createDecipheriv(alg, encryptedKey, initializeVector);
+    const decipher = crypto.createDecipheriv(ALG, ENCRYPTED_KEY, INITIALIZE_VECTOR);
     let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
     return decrypted;

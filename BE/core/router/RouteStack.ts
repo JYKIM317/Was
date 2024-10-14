@@ -1,10 +1,7 @@
 import { Router } from "./Router";
 
 /*
-RouteStack
-나중에 개선할 수 있으면 좋겠어요
-탐색할 때 시간 복잡도를 고려해서 Map, object같은 타입을 고려하는 것이 좋을 듯
-아니면 트리형태
+TODO: 이후 개선 탐색할 때 시간 복잡도를 고려해서 Map, object같은 타입 혹은 트리형태를 고려하는 것이 좋을 듯
 */
 
 class RouteStack {

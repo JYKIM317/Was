@@ -1,8 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import net from 'net';
-import { statusMsg, contentType, CRLF } from "../../util/const";
-import { cookieOption } from "./Cookie";
+import { STATUS_MESSAGE, CONTENT_TYPE, CRLF } from "../../util/const";
+import { CookieOption } from "./Cookie";
 
 export class Response {
     private socket: net.Socket;
@@ -30,7 +30,7 @@ export class Response {
         const ext = path.extname(filePath);
         const file = fs.readFileSync(filePath);
         let header = this.setInitialHeaderOption();
-        header += `Content-Type: ${contentType[ext]}; charset=UTF-8${CRLF}`;
+        header += `Content-Type: ${CONTENT_TYPE[ext]}; charset=UTF-8${CRLF}`;
         header += `Content-Length: ${Buffer.byteLength(file)}${CRLF}`;
 
         this.socketWrite(header, file);
@@ -54,7 +54,7 @@ export class Response {
     }
 
     setStatus(statusCode) {
-        const message = statusMsg[statusCode];
+        const message = STATUS_MESSAGE[statusCode];
         if (message) {
             this.statusCode = statusCode;
         } else {
@@ -64,7 +64,7 @@ export class Response {
         return this;
     }
 
-    setCookie(key: string, value, option?: cookieOption) {
+    setCookie(key: string, value, option?: CookieOption) {
         this.cookie = `${key}=${value}`;
         if (option) Object.keys(option).forEach((opt) => {
             if (typeof option[opt] !== 'boolean') {
@@ -92,7 +92,7 @@ export class Response {
 
     private socketWrite(header, body: Buffer | string = CRLF) {
         if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}${CRLF}`;
+        const startLine = `HTTP/1.1 ${this.statusCode} ${STATUS_MESSAGE[this.statusCode]}${CRLF}`;
 
         this.socket.write(startLine);
         this.socket.write(header);
