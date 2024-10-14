@@ -3,6 +3,7 @@
 @import "./Button.css";
 @import "./InputBox.css";
 @import "./Frame.css";
+@import "./Board.css";
 
 * {
     font-family: "Pretendard Variable";
