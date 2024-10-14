@@ -1,6 +1,9 @@
 import { SmallButton } from "../components/Button.js";
 import { Navigation, Information, HorizontalHugFrame } from "../components/Frame.js";
 import { verifyAccessTokenValid } from "../scripts/authorization.js";
+import { getBoardPage } from "../scripts/board.js";
+import { Board, PostTable, PostElement } from "../components/Board.js"
+import { fetchPOST } from "../scripts/fetch.js";
 
 async function render() {
     const tokenValid = await verifyAccessTokenValid();
@@ -23,6 +26,23 @@ async function render() {
     fragment.appendChild(informationNode);
 
     document.body.querySelector("#root").appendChild(fragment);
+
+    //게시판 보드
+    await getBoardPage(1).then((data) => {
+        const tableHead = { title: "제목", author: "작성자", createAt: "작성일자", view: "조회수" };
+        const postList = data.result.map((element) => {
+            element.createAt = dateFormatParser(element.createAt);
+            return PostElement(element, element.id);
+        });
+        const postTable = PostTable([PostElement(tableHead, "table-head"), ...postList]);
+        const board = Board([postTable]);
+        const boardNode = document
+            .createRange()
+            .createContextualFragment(board);
+
+        document.body.querySelector("#root").appendChild(boardNode);
+    });
+
     addEvent(tokenValid);
 }
 
@@ -37,14 +57,35 @@ function addEvent(isLogin) {
             localStorage.removeItem("refreshToken");
             location.reload();
         });
-        //memberlist
-        //TODO: 멤버 리스트 페이지로 이동
     } else {
         //navigate to login page
         document.getElementById("user-navigator-button").addEventListener("click", (_) => {
             location.href = `${url}/login.html`;
         });
     }
+
+    document.getElementById("board").addEventListener("click", async (event) => {
+        const targetElement = event.target.closest(".post-element");
+        if (targetElement.id !== "table-head") {
+            await fetchPOST(url + `/board/post/${targetElement.id}`).then((response) => {
+                const isOK = 200;
+                if (response.status === isOK) return response.json();
+                else return {};
+            }).then((json) => {
+                if (json.redirect != null) location.href = json.redirect;
+            });
+        }
+    });
+}
+
+
+function dateFormatParser(date) {
+    const thisDate = new Date(date);
+    return [
+        thisDate.getFullYear(),
+        `${thisDate.getMonth()}`.padStart(2, "0"),
+        `${thisDate.getDay()}`.padStart(2, "0")
+    ].join("-");
 }
 
 render();
