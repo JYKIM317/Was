@@ -15,7 +15,7 @@ async function boardController(req, res) {
 }
 
 async function postController(req, res) {
-
+    console.log(req);
 }
 
 
