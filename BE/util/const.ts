@@ -71,4 +71,6 @@ const contentType = {
     '.jpg': 'image/jpeg'
 }
 
-export { statusMsg, contentType }
+const CRLF = "\r\n";
+
+export { statusMsg, contentType, CRLF }

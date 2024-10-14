@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import net from 'net';
-import { statusMsg, contentType } from "../../util/const";
+import { statusMsg, contentType, CRLF } from "../../util/const";
 import { cookieOption } from "./Cookie";
 
 export class Response {
@@ -18,8 +18,8 @@ export class Response {
     send(data?: string) {
         let header = this.setInitialHeaderOption();
         if (data) {
-            header += `Content-Type: text/plain; charset=UTF-8\r\n`;
-            header += `Content-Length: ${Buffer.byteLength(data, "utf8")}\r\n`;
+            header += `Content-Type: text/plain; charset=UTF-8${CRLF}`;
+            header += `Content-Length: ${Buffer.byteLength(data, "utf8")}${CRLF}`;
         }
 
         this.socketWrite(header, data);
@@ -30,8 +30,8 @@ export class Response {
         const ext = path.extname(filePath);
         const file = fs.readFileSync(filePath);
         let header = this.setInitialHeaderOption();
-        header += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
-        header += `Content-Length: ${Buffer.byteLength(file)}\r\n`;
+        header += `Content-Type: ${contentType[ext]}; charset=UTF-8${CRLF}`;
+        header += `Content-Length: ${Buffer.byteLength(file)}${CRLF}`;
 
         this.socketWrite(header, file);
     }
@@ -39,8 +39,8 @@ export class Response {
     json(data: object) {
         const body = JSON.stringify(data);
         let header = this.setInitialHeaderOption();
-        header += `Content-Type: application/json\r\n`;
-        header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
+        header += `Content-Type: application/json${CRLF}`;
+        header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}${CRLF}`;
 
         this.socketWrite(header, body);
     }
@@ -48,7 +48,7 @@ export class Response {
     redirect(url, statusCode = 302) {
         this.statusCode = statusCode;
         let header = this.setInitialHeaderOption();
-        header += `Location: ${url}\r\n`;
+        header += `Location: ${url}${CRLF}`;
 
         this.socketWrite(header);
     }
@@ -78,26 +78,25 @@ export class Response {
 
     private setInitialHeaderOption() {
         let header = "";
-        header += `Server: Jinyoung\r\n`;
-        header += `Date: ${new Date().toUTCString()}\r\n`;
-        header += `Connection: ${this.connection}\r\n`;
+        header += `Server: Jinyoung${CRLF}`;
+        header += `Date: ${new Date().toUTCString()}${CRLF}`;
+        header += `Connection: ${this.connection}${CRLF}`;
         if (this.connection.toLowerCase() === 'keep-alive') {
-            header += `Keep-Alive: timeout=5, max=1000\r\n`;
+            header += `Keep-Alive: timeout=5, max=1000${CRLF}`;
         }
         if (this.cookie) {
-            header += `Set-Cookie: ${this.cookie}\r\n`;
+            header += `Set-Cookie: ${this.cookie}${CRLF}`;
         }
         return header;
     }
 
-    private socketWrite(header, body: Buffer | string = "\r\n") {
+    private socketWrite(header, body: Buffer | string = CRLF) {
         if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        const emptyLine = "\r\n";
+        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}${CRLF}`;
 
         this.socket.write(startLine);
         this.socket.write(header);
-        this.socket.write(emptyLine);
+        this.socket.write(CRLF);
         if (body) this.socket.write(body);
     }
 }
