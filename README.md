@@ -5,7 +5,7 @@
 
 ⭕ 주간 계획 수립
 
-❌ 게시판 기능 완성
+⭕ 게시판 기능 완성
 	
 	⭕ 게시판 레이아웃 구성
     - 서버 측 게시판 데이터 반환 로직 작성
@@ -13,13 +13,13 @@
     - 메인 페이지 게시판 HTML 렌더링 구현
     - 메인 페이지 게시판 CSS 구현
 	
-	❌ 메인 하단에 글쓰기 버튼 추가
+	⭕ 메인 하단에 글쓰기 버튼 추가
 		- 글쓰기 버튼 시 write.html로 이동
 		- 만약 비로그인 유저라면 로그인 페이지로 이동
 	
-	❌ write.html에서는 글을 입력할 수 있도록
+	⭕ write.html에서는 글을 입력할 수 있도록
 	
-	❌ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+	⭕ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
 		- 만약 비로그인 유저라면 로그인 페이지로 이동
 
 ❌ 글쓰기 이미지 업로드 기능 구현
@@ -96,6 +96,10 @@ Github 로그인 구현
 일정에 맞췄을 시 리팩토링 및 추가 기능 구현 혹은 테스트 코드 작성
 
 ## ✏️ 고민과 해결 과정 쌓아가기
+
+<details>
+<summary>월요일</summary>
+<div markdown="1">
 
 ### 피드백 개선
 
@@ -296,6 +300,284 @@ function addEvent(isLogin) {
 }
 ```
 
+</div>
+</details>
+
+
+### 피드백 반영
+
+> DB에서 데이터를 받아올 때 Meta Data가 필요한 경우가 아니라면 값만 반환해도 좋지 않을까요?
+
+```ts
+//DBManager.ts
+private async executeQuery(query, values?) {
+        const connection = await this.connectionPool.getConnection();
+        const result = connection.query(query, values); 
+        connection.release();
+        return result;
+}
+
+//controller 계층
+const result = response[0][0];
+```
+
+```ts
+//DBManager.ts
+private async executeQuery(query, values?) {
+        const connection = await this.connectionPool.getConnection();
+        const [result] = await connection.query(query, values); 
+        connection.release();
+        return result;
+}
+
+//controller 계층
+const result = response[0];
+```
+
+> Request.ts에는 아직 CRLF가 상수화가 안됐어요!
+
+```ts
+//Request.ts
+//전
+const [headerMessage, bodyMessage] = message.split("\r\n\r\n");
+
+//후
+const [headerMessage, bodyMessage] = message.split(`${CRLF}${CRLF}`);
+```
+
+
+- 글 본문 페이지 - 토큰 상태 확인 후 리디렉션하는 서버 응답 구현 - 글 본문 페이지 구현 - 글 작성 페이지 - 토큰이 유효할 때만 글쓰기 버튼이 렌더링되도록 구현 - 토큰 상태 확인 후 리디렉션하는 서버 응답 구현 - 글 작성 페이지 구현
+
+### 글 작성 페이지
+
+우선 글 작성 페이지를 만들기 위해 메인 하단에 글 쓰기 버튼을 추가해주기로 했습니다.
+
+```js
+// components/Board.js
+const BoardNavigation = (children = []) => {
+    const childrenNode = children.join("\n");
+    return `<div class="board-navigation">
+        ${childrenNode}
+    </div>`;
+}
+
+//mainLayout.js
+const boardNavigation = BoardNavigation([SmallButton("글쓰기", "write-button")]);
+
+
+//addEvent() {
+document.getElementById("write-button").addEventListener("click", (_) => {
+    location.href = url + "/write.html";
+});
+```
+
+글 쓰기 버튼을 누르면 미리 만들어둔 write 페이지로 이동하며 해당 html을 불러오게 됩니다.
+
+write.html에선 writeLayout.js 를 호출해 화면을 렌더링하는데
+
+```html
+    <script type="module" src="./layouts/writeLayout.js"></script>
+```
+
+writeLayout.js 에선 토큰의 유효성을 검증해 유효하지 않을 경우 로그인 페이지로 이동시키는 역할을 우선적으로 수행합니다.
+
+```js
+//writeLayout.js
+async function render() {
+    const tokenValid = await verifyAccessTokenValid();
+    if (!tokenValid) location.href = url + "/login.html";
+    ...
+```
+
+정상적이라면 화면을 렌더링할 수 있도록 작성했습니다.
+
+```js
+//writeLayout.js
+async function render() {
+	...
+    const fragment = document.createDocumentFragment();
+    fragment.appendChild(navigationNode);
+    fragment.appendChild(postTitleNode);
+    fragment.appendChild(writeTitleNode);
+    fragment.appendChild(writeContentNode);
+
+    document.body.querySelector("#root").appendChild(fragment);
+    addEvent();
+```
+
+만약 글 쓰기 버튼이 여러 번 눌리면 요청이 반복해서 갈 수 있기 때문에 `writeLoadingState` 라는 전역 변수를 선언해줬고,
+
+Loading 중이라면 이벤트를 실행하지않고, 반대라면 요청을 보낼 수 있도록 만들었습니다.
+
+```js
+//writeLayout.js
+const writeLoadingState = false;
+
+//addEvent() {
+        if (writeLoadingState) return;
+        writeLoadingState = true;
+
+        fetchPOST(url + "/board/post", { title, content }).then((response) => {
+            writeLoadingState = false;
+            ...
+```
+
+글 작성 시 보내는 요청 메서드가 결과적으로 POST인데 PUT으로 생성할지 POST로 생성할지 고민했었습니다.
+
+이와 관련해서 사례를 찾아보던 중 모 회사 개발자 블로그에서 관련 RFC SPEC과 함께 언급한 부분이 있어서 신뢰하고 따르려고 합니다.
+
+https://docs.tosspayments.com/blog/rest-api-post-put-patch
+
+### 서버 글 작성 로직에 관한 고민
+
+클라이언트에서 글의 내용과 함께 작성 요청을 보내는 것 까지 구현은 했는데, 한 가지 고민에 빠지게 되었습니다.
+
+현재 토큰을 통해 해당 유저가 로그인을 한 유저인지 아닌지 구분하는 상태이고, 토큰에는 유저에 대한 정보는 담지 않았기 때문에
+
+**"유저의 정보를 어디서 관리할 것인가"** 라는 고민이었습니다.
+
+해당 문제에 대해 여러 가지 경우의 수를 생각해봤는데
+
+1. 로그인 시 클라이언트에서 상태를 저장하는 방법
+2. 서버에서 토큰과 세션을 이용해 유저의 상태를 기억하는 방법
+3. 토큰에 누구인지 기록하는 방법
+
+으로 총 3개의 경우를 생각해봤습니다.
+
+고민 끝에 기왕이면 토큰에 정보를 담고 있고, 무상태인 점을 끝까지 유지하면 좋을 것 같아서 토큰 발급 시에 유저 ID를 함께 담아서 식별하는 방법으로 결정했습니다.
+
+### 토큰에 유저 정보 담기
+
+우선 토큰에 담을 데이터는 유저를 식별하기 위한 Email만 담을 예정입니다.
+
+그래서 토큰의 내용이 담길 Body 부분에 Aud (Audience) 를 추가해 해당 토큰의 수신자가 누군지 표시할 예정입니다.
+
+```ts
+//Authorization.ts
+type TokenBody = {
+    iat: Date,
+    exp: Date,
+    grd: number,
+    typ: TokenType,
+    aud: string //추가됨
+};
+```
+
+이를 위해 토큰을 발급할 때도 aud를 인자로 받도록 했습니다.
+
+```ts
+//변경 전
+class Authorization {
+    static generateToken(tokenType: TokenType) {
+    
+//변경 후
+class Authorization {
+    static generateToken(tokenType: TokenType, aud: string /*추가됨*/) {
+
+
+//사용 예시
+Authorization.generateToken("Access", email);
+```
+
+### 글 작성 등록 로직 구현
+
+우선 `PostRepository`에 글을 등록하는 `createPost` 메서드를 작성해줬습니다.
+
+```ts
+//postRepository.ts
+class PostRepository {
+    static createPost(postData) {
+        return DBManager.insert({
+            table: this.TABLE_NAME,
+            columns: Object.keys(postData),
+            values: Object.values(postData)
+        });
+    }
+    ...
+```
+
+그리고 해당 `createPost` 메서드를 호출하는 `postWriteController` 함수를 작성해줬습니다.
+
+```ts
+//postWriteController.ts
+async function postWriteController(req, res) {
+        const accesstoken = req.body.accessToken;
+        const isVerified = Authorization.verifyToken(accesstoken, "Access");
+        if (!isVerified) return res.setStatus(401).send();
+        
+        const [_, bodyOfToken] = accesstoken.split(".");
+        const bodyJsonString = decrypt(bodyOfToken);
+        const result = await UserRepository.getUser(JSON.parse(bodyJsonString).aud);
+        const userData = result[0];
+        ...
+```
+
+우선 `postWriteController` 에서 유저 정보를 가져오기 위해 토큰을 한 번 검증한 이후 `UserRepository` 메서드를 호출해줬습니다.
+
+이후 해당 유저 데이터와 전달받은 글 내용을 조합해 등록 메서드를 호출했습니다.
+
+```ts
+//postWriteController() {
+        const { title, content } = req.body;
+        const postData = {
+            title, content,
+            member_email: userData.email,
+            author: userData.name,
+            createAt: dateFormatParser(new Date()),
+            view: 0
+        };
+
+        await PostRepository.createPost(postData);
+        res.setStatus(201).send();
+}
+```
+
+해당 `Controller` 함수는 `boardRouter`에 등록해줬습니다.
+
+```ts
+//boardRouter.ts
+boardRouter.post("/board/post", postWriteController);
+```
+
+### 글 보기 페이지
+
+메인 페이지 게시판에서 특정 글을 클릭했을 때 해당 글을 상세보기 할 수 있는 페이지로 이동해야 했습니다.
+
+우선 해당 페이지를 눌렀을 때 데이터를 반환할 수 있도록 DB에 접근해 데이터를 확인하는 로직을 작성했습니다. 
+
+```ts
+//PostRepository.ts
+class PostRepository {
+    static getPost(postId) {
+        return DBManager.select({
+            table: this.TABLE_NAME,
+            column: "*",
+            condition: `id=${postId}`
+        });
+    }
+    ...
+```
+
+이후 가져온 데이터의 유무에 따라 상태코드를 결정해 데이터를 반환하는 Controller 함수를 만들어줬습니다.
+
+```ts
+//postController.ts
+async function postController(req, res) {
+    try {
+        const postId = req.params.postId;
+        PostRepository.getPost(postId).then((response) => {
+            const post = response[0];
+            const isPostExist = post != null;
+  
+            if (isPostExist) res.setStatus(200).json(post);
+            else res.setStatus(404).send();
+        });
+    } catch (e) {
+        logger.error(e);
+        res.setStatus(500).send();
+    }
+}
+```
 
 <details>
 <summary>1주차</summary>

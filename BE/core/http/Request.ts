@@ -1,4 +1,5 @@
-import { cookieParser } from "./Cookie";
+import { cookieParser } from "./Cookie"
+import { CRLF } from "../../util/const"
 
 export class Request {
     headers: { [key: string]: string | object } = {};
@@ -15,8 +16,8 @@ export class Request {
     }
 
     private parseMessage(message) {
-        const [headerMessage, bodyMessage] = message.split("\r\n\r\n");
-        const [startLine, ...requestHeader] = headerMessage.split("\r\n");
+        const [headerMessage, bodyMessage] = message.split(`${CRLF}${CRLF}`);
+        const [startLine, ...requestHeader] = headerMessage.split(CRLF);
         this.parseStartLine(startLine);
         this.parseHeader(requestHeader);
         this.parseBody(bodyMessage);

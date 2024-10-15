@@ -28,12 +28,12 @@ class DatabaseManager {
 
     private async executeQuery(query, values?) {
         const connection = await this.connectionPool.getConnection();
-        const result = connection.query(query, values);
+        const [result] = await connection.query(query, values);
         connection.release();
         return result;
     }
 
-    async select(data: SelectOption) {
+    select(data: SelectOption) {
         const where = data.condition == null ? "" : ` WHERE ${data.condition}`;
         const orderBy = data.orderBy == null ? "" : ` ORDER BY ${data.orderBy}`;
         const desc = data.desc == null ? "" : ` DESC`;
@@ -41,26 +41,26 @@ class DatabaseManager {
         const offset = data.offset == null ? "" : ` OFFSET ${data.offset}`;
 
         const query = `SELECT ${data.column} FROM ${data.table}${where}${orderBy}${desc}${limit}${offset};`;
-        return await this.executeQuery(query);
+        return this.executeQuery(query);
     }
 
-    async insert({ table, columns, values }) {
+    insert({ table, columns, values }) {
         const insertColumns = columns.join(", ");
         const valuePlaceholders = columns.map(() => "?").join(", ");
         const query = `INSERT INTO ${table} (${insertColumns}) VALUES (${valuePlaceholders});`;
-        return await this.executeQuery(query, values);
+        return this.executeQuery(query, values);
     }
 
-    async update({ table, updates, condition = null }) {
+    update({ table, updates, condition = null }) {
         const updateData = updates.join(", ");
         const where = condition == null ? "" : ` WHERE ${condition}`;
         const query = `UPDATE ${table} SET ${updateData}${where};`;
-        return await this.executeQuery(query);
+        return this.executeQuery(query);
     }
 
-    async delete({ table, condition }) {
+    delete({ table, condition }) {
         const query = `DELETE FROM ${table} WHERE ${condition};`;
-        return await this.executeQuery(query);
+        return this.executeQuery(query);
     }
 }
 
