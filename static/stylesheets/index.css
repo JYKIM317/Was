@@ -4,6 +4,7 @@
 @import "./InputBox.css";
 @import "./Frame.css";
 @import "./Board.css";
+@import "./post.css";
 
 * {
     font-family: "Pretendard Variable";
@@ -13,6 +14,7 @@
 body {
     display: flex;
     justify-content: center;
+    margin-bottom: 5rem;
 }
 
 #root {
