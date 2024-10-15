@@ -15,7 +15,19 @@ async function boardController(req, res) {
 }
 
 async function postController(req, res) {
-    console.log(req);
+    try {
+        const postId = req.params.postId;
+        PostRepository.getPost(postId).then((response) => {
+            const post = response[0];
+            const isPostExist = post != null;
+
+            if (isPostExist) res.setStatus(200).json(post);
+            else res.setStatus(404).send();
+        });
+    } catch (e) {
+        logger.error(e);
+        res.setStatus(500).send();
+    }
 }
 
 

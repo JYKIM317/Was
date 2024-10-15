@@ -25,7 +25,11 @@ class PostRepository {
     }
 
     static getPost(postId) {
-
+        return DBManager.select({
+            table: this.TABLE_NAME,
+            column: "*",
+            condition: `id=${postId}`
+        });
     }
 }
 
