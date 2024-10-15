@@ -86,11 +86,7 @@ function addEvent(isLogin) {
     });
 
     document.getElementById("write-button").addEventListener("click", (_) => {
-        fetchGET(url + "/write.html").then((response) => {
-            return response.json();
-        }).then((json) => {
-            if (json.redirect != null) location.href = json.redirect;
-        });
+        location.href = url + "/write.html";
     });
 }
 
