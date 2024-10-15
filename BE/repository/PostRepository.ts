@@ -3,10 +3,10 @@ import { DBManager } from "../database/DBManager";
 class PostRepository {
     static TABLE_NAME = "post";
 
-    static async getBoard(page) {
+    static getBoard(page) {
         const SELECT_PAGE_OFFSET = page * 10 - 10;
 
-        return await DBManager.select({
+        return DBManager.select({
             table: this.TABLE_NAME,
             column: "*",
             orderBy: "id",
@@ -16,7 +16,11 @@ class PostRepository {
         });
     }
 
-    static async getPost(postId) {
+    static createPost(postData) {
+
+    }
+
+    static getPost(postId) {
 
     }
 }
