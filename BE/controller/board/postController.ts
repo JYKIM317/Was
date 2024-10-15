@@ -5,7 +5,7 @@ async function boardController(req, res) {
     try {
         const page = req.query.p;
         PostRepository.getBoard(page).then((response) => {
-            const result = response[0];
+            const result = response;
             res.setStatus(200).json({ result });
         });
     } catch (e) {
