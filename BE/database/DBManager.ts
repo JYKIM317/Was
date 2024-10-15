@@ -44,7 +44,7 @@ class DatabaseManager {
         return this.executeQuery(query);
     }
 
-    async insert({ table, columns, values }) {
+    insert({ table, columns, values }) {
         const insertColumns = columns.join(", ");
         const valuePlaceholders = columns.map(() => "?").join(", ");
         const query = `INSERT INTO ${table} (${insertColumns}) VALUES (${valuePlaceholders});`;
