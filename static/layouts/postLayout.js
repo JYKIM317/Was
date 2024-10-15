@@ -57,7 +57,15 @@ async function render() {
 }
 
 function addEvent() {
+    document.getElementById("user-logout-button").addEventListener("click", (_) => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        location.href = url;
+    });
 
+    document.getElementById("main-navigator-button").addEventListener("click", (_) => {
+        location.href = url;
+    });
 }
 
 function dateFormatParser(date) {
