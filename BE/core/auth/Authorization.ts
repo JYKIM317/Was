@@ -11,11 +11,12 @@ type TokenBody = {
     iat: Date,
     exp: Date,
     grd: number,
-    typ: TokenType
+    typ: TokenType,
+    aud: string
 };
 
 class Authorization {
-    static generateToken(tokenType: TokenType) {
+    static generateToken(tokenType: TokenType, aud: string) {
         const iat = new Date();
         const exp = new Date();
         tokenType === "Access"
@@ -23,7 +24,7 @@ class Authorization {
             : exp.setDate(exp.getDate() + 61);
         const grd = GradeType.USER;
         const typ = tokenType;
-        const body: TokenBody = { iat, exp, grd, typ };
+        const body: TokenBody = { iat, exp, grd, typ, aud };
 
         const token = [
             encrypt(process.env.SECRET),
@@ -36,7 +37,11 @@ class Authorization {
 
     static tokenRefresh(refreshToken) {
         const tokenVerifyResult = this.verifyToken(refreshToken, "Refresh");
-        if (tokenVerifyResult) return this.generateToken("Access");
+        if (tokenVerifyResult) {
+            const [_, bodyOfToken] = refreshToken.split(".");
+            const bodyJsonString = decrypt(bodyOfToken);
+            return this.generateToken("Access", JSON.parse(bodyJsonString).aud);
+        }
         else return false;
     }
 
@@ -44,9 +49,9 @@ class Authorization {
         const now = new Date();
         const [secretOfToken, bodyOfToken, integrityTag] = token.split(".");
         const secret = decrypt(secretOfToken);
-        const bodyJSON = decrypt(bodyOfToken);
-        const thisContentIntegrityTag = createIntegrityTag(secret, bodyJSON);
-        const body = JSON.parse(bodyJSON) as TokenBody;
+        const bodyJsonString = decrypt(bodyOfToken);
+        const thisContentIntegrityTag = createIntegrityTag(secret, bodyJsonString);
+        const body = JSON.parse(bodyJsonString) as TokenBody;
         const exp = new Date(body.exp);
 
         if (secret !== process.env.SECRET) throw new Error(`Invalid ${tokenType} Token`);

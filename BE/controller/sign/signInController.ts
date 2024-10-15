@@ -20,8 +20,8 @@ function signInController(req, res) {
             if (!userExist) return res.setStatus(400).send();
             if (!bcrypt.compareSync(password, result.password)) return res.setStatus(400).send();
 
-            const accessToken = Authorization.generateToken("Access");
-            const refreshToken = Authorization.generateToken("Refresh");
+            const accessToken = Authorization.generateToken("Access", email);
+            const refreshToken = Authorization.generateToken("Refresh", email);
             res.setStatus(200).json({ redirect: "/", accessToken, refreshToken });
         });
     } catch (e) {
