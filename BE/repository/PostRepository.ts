@@ -17,7 +17,11 @@ class PostRepository {
     }
 
     static createPost(postData) {
-
+        return DBManager.insert({
+            table: this.TABLE_NAME,
+            columns: Object.keys(postData),
+            values: Object.values(postData)
+        });
     }
 
     static getPost(postId) {
