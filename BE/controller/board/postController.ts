@@ -21,7 +21,10 @@ async function postController(req, res) {
             const post = response[0];
             const isPostExist = post != null;
 
-            if (isPostExist) res.setStatus(200).json(post);
+            if (isPostExist) {
+                PostRepository.updatePostViewCount(postId);
+                res.setStatus(200).json(post);
+            }
             else res.setStatus(404).send();
         });
     } catch (e) {

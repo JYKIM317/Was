@@ -51,9 +51,9 @@ class DatabaseManager {
         return this.executeQuery(query, values);
     }
 
-    update({ table, updates, condition = null }) {
+    update({ table, updates, condition }) {
         const updateData = updates.join(", ");
-        const where = condition == null ? "" : ` WHERE ${condition}`;
+        const where = ` WHERE ${condition}`;
         const query = `UPDATE ${table} SET ${updateData}${where};`;
         return this.executeQuery(query);
     }
