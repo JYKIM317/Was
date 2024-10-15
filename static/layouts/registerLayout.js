@@ -1,6 +1,7 @@
 import { LargeButton, SmallButton } from "../components/Button.js";
 import { InputBox } from "../components/InputBox.js";
 import { Navigation, Information, VerticalHugFrame } from "../components/Frame.js";
+import { fetchPOST } from "../scripts/fetch.js";
 
 function render() {
     const navigationNode = document
@@ -30,16 +31,18 @@ function addEvent() {
     const url = "http://localhost:8080";
 
     //register fetch
-    document.getElementById("login-button").addEventListener("click", async (_) => {
+    document.getElementById("register-button").addEventListener("click", async (_) => {
         const name = document.getElementById("input-name").querySelector("input").value.trim();
         const email = document.getElementById("input-email").querySelector("input").value.trim();
         const password = document.getElementById("input-password").querySelector("input").value.trim();
 
         if (name !== "" && email !== "" && password !== "") {
-            await fetch(`${url}/user/register`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, name })
+            fetchPOST(`${url}/user/register`, { email, password, name }).then((response) => {
+                const isOK = 200;
+                if (response.status === isOK) return response.json();
+                else return {};
+            }).then((json) => {
+                if (json.redirect != null) location.href = json.redirect;
             });
         }
     });
