@@ -34,3 +34,11 @@
 #table-head .post-element-title {
     text-align: center;
 }
+
+.board-navigation {
+    width: 65rem;
+    height: 2.4375rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

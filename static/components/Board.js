@@ -45,4 +45,11 @@ const PostViewCount = (viewCount) => {
     </div>`;
 }
 
-export { Board, PostTable, PostElement }
+const BoardNavigation = (children = []) => {
+    const childrenNode = children.join("\n");
+    return `<div class="board-navigation">
+        ${childrenNode}
+    </div>`;
+}
+
+export { Board, PostTable, PostElement, BoardNavigation }
