@@ -6,6 +6,7 @@ import { verifyAccessTokenValid } from "../scripts/authorization.js";
 import { PostNavigation } from "../components/Post.js"
 
 const url = "http://localhost:8080";
+let writeLoadingState = false;
 
 async function render() {
     const tokenValid = await verifyAccessTokenValid();
@@ -56,7 +57,23 @@ function addEvent() {
     });
 
     document.getElementById("write-button").addEventListener("click", (_) => {
-        console.log("dsf");
+        const titleBox = document.getElementById("write-title");
+        const contentBox = document.getElementById("write-content");
+        const title = titleBox.querySelector("input").value.trim();
+        const content = contentBox.querySelector("textarea").value.trim();
+        const NON_TEXT = "";
+
+        if (writeLoadingState) return;
+        if (title == NON_TEXT || content == NON_TEXT) return;
+
+        writeLoadingState = true;
+        fetchPOST(url + "/board/post", { title, content }).then((response) => {
+            writeLoadingState = false;
+            const isCreate = 201;
+            if (response.status === isCreate) {
+                location.href = url;
+            }
+        });
     });
 }
 
