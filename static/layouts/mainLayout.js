@@ -3,7 +3,7 @@ import { Navigation, Information, HorizontalHugFrame } from "../components/Frame
 import { verifyAccessTokenValid } from "../scripts/authorization.js";
 import { getBoardPage } from "../scripts/board.js";
 import { Board, PostTable, PostElement, BoardNavigation } from "../components/Board.js"
-import { fetchGET, fetchPOST } from "../scripts/fetch.js";
+import { fetchPOST } from "../scripts/fetch.js";
 
 async function render() {
     const tokenValid = await verifyAccessTokenValid();
