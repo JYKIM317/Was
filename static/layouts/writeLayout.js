@@ -56,7 +56,7 @@ function addEvent() {
         location.href = url;
     });
 
-    document.getElementById("write-button").addEventListener("click", (_) => {
+    document.getElementById("write-button").addEventListener("click", async (_) => {
         const titleBox = document.getElementById("write-title");
         const contentBox = document.getElementById("write-content");
         const title = titleBox.querySelector("input").value.trim();
@@ -67,6 +67,7 @@ function addEvent() {
         if (title == NON_TEXT || content == NON_TEXT) return;
 
         writeLoadingState = true;
+        await verifyAccessTokenValid();
         fetchPOST(url + "/board/post", { title, content }).then((response) => {
             writeLoadingState = false;
             const isCreate = 201;
