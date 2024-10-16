@@ -5,7 +5,6 @@ import { Response } from './core/http/Response';
 import { routeStack } from './core/router/RouteStack';
 import { staticRouter } from './route/staticRouter';
 import { userRouter } from './route/userRouter';
-import { session } from './core/session/Session';
 import { authorizeRouter } from './route/authorizeRouter';
 import { boardRouter } from './route/boardRouter';
 
