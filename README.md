@@ -22,11 +22,11 @@
 	⭕ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
 		- 만약 비로그인 유저라면 로그인 페이지로 이동
 
-❌ 글쓰기 이미지 업로드 기능 구현
+⭕ 글쓰기 이미지 업로드 기능 구현
 	
-	❌ 이미지 업로드 버튼 구현
+	⭕ 이미지 업로드 버튼 구현
 	
-	❌ 이미지 업로드 구현
+	⭕ 이미지 업로드 구현
 	
 	❌ 서버에 이미지 파일 저장
 	
@@ -304,6 +304,11 @@ function addEvent(isLogin) {
 </details>
 
 
+<details>
+<summary>화요일</summary>
+<div markdown="1">
+
+
 ### 피드백 반영
 
 > DB에서 데이터를 받아올 때 Meta Data가 필요한 경우가 아니라면 값만 반환해도 좋지 않을까요?
@@ -578,6 +583,154 @@ async function postController(req, res) {
     }
 }
 ```
+
+</div>
+</details>
+
+
+### 남은 기간 계획 고민하기
+
+수요일에 들어서서 남은 기간이 2일인데, 어떤 부분을 학습하고, 포기할지 고민해야 했습니다.
+
+제가 선택할 수 있는 선택지는 두 가지가 있었는데
+
+1. 이미지 업로드 및 응답에 더불어 HTTP Request 청크 처리하기
+2. 간단하게 InnoDB 엔진을 모방해서 DB 구현해보기
+
+HTTP Request 청크를 합치는 것도 의미 있는 것 경험이 될 같았지만 사실 마음으론 DB를 구현해보는 것이 저에겐 더 의미있는 학습이 될 수 있지 않을까? 라고 생각했습니다.
+
+근데 문제는 DB를 남은 기간동안 제대로 구현할 수 있을지,
+이도저도 아니게 되는 것은 아닐지 고민이 된다는 것이었습니다.
+
+```md
+<!--원래 계획-->
+
+글쓰기 이미지 업로드 기능 구현
+	
+	이미지 업로드 버튼 구현
+	
+	이미지 업로드 구현
+	
+	서버에 이미지 파일 저장
+	
+	이미지 요청에 대한 응답 구현
+	
+	글 본문 이미지 표시
+
+Github 로그인 구현
+	
+	Github 로그인 버튼 구현
+	
+	Github 인증 구현
+	
+	Github 리디렉션 및 프론트 로직 구현
+```
+
+
+
+고민 끝에 DB를 구현해보는 것이 좋겠다고 생각해 레퍼런스를 수집하고, InnoDB Engine에 관한 지식을 학습하던 중..
+
+도저히 2일만에 끝낼 수 있는 스케일이 아닐 것이라고 생각했습니다.
+
+단순히 CRUD 기능만 트랜잭션이나, 캐시없이 구현한다면 어떻게든 구현은 할 수 있을 것으로 판단했지만 그러면 결국 더 이상 DB가 아닌 간단한 파일 시스템이 아닌가? 라는 생각을 했습니다.
+
+그래서 늦었지만 급하게 HTTP 청크와 이미지 업로드를 처리해보려고 합니다 ㅠㅠ..
+
+
+### HTTP Request chunk
+
+HTTP Request에 데이터가 많이 포함되어 길어질 경우 헤더와 바디가 분리되는 문제가 있었습니다.
+
+```ts
+//app.ts
+const server = net.createServer(socket => {
+    socket.on("data", (data) => {
+        const socketData = data.toString();
+        const req = new Request(socketData);
+        ...
+```
+
+기존에는 Buffer 타입의 `data`를 전달받았을 경우 데이터를 문자열로 바꿔 Request 객체로 만들어주는 과정이 있었는데
+
+헤더와 바디가 분리되어 오게 돼 Request 객체를 생성해줄 때 에러가 발생하는 문제였습니다.
+
+이에 대해 socketData를 Buffer 타입으로 바꾸고, 
+`try-catch` 문으로 Request 객체 생성 부분을 감싸 에러가 발생하면 넘어가 다음 버퍼를 응답받아 합친 뒤 다시 Request 객체를 만들도록 변경했습니다.
+
+```ts
+const server = net.createServer(socket => {
+    let socketData = Buffer.alloc(0);
+    socket.on("data", (data) => {
+        socketData = Buffer.concat([socketData, data]);
+        try {
+            const req = new Request(socketData.toString());
+            ...
+```
+
+
+### 이미지 업로드 구현
+
+```js
+//writeLayout.js
+    const fileInput = document.getElementById("fileInput");
+    document.getElementById("add-image-button").addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        const fileType = file.type;
+        if (fileType.startsWith('image/')) {
+            image = file;
+        } else {
+            image = null;
+            alert("이미지 파일만 올려주세요");
+        }
+    });
+```
+
+```js
+//writeLayout.js
+        if (image) {
+            const formData = new FormData();
+            formData.append('image', image);
+            formData.append('data', { title, content });
+            fetchFormDataPOST(url + "/board/post", formData).then((response) => {
+                writeLoadingState = false;
+                const isCreate = 201;
+                if (response.status === isCreate) {
+                    location.href = url;
+                }
+            });
+        }
+```
+
+### 폼데이터 전송 함수 구현
+
+```js
+//fetch.js
+async function fetchFormDataPOST(uri, formData) {
+    const accessToken = window.localStorage.getItem("accessToken");
+    if (accessToken != null) formData.append('data', { accessToken });
+  
+    return await fetch(uri, {
+        method: "POST",
+        body: formData
+    }).then(async (response) => {
+        const contentType = response.headers.get("Content-Type");
+        const isJSON = contentType === "application/json";
+        return [response, isJSON ? await response.clone().json() : {}];
+    }).then(([response, body]) => {
+        if (body.accessToken != null) {
+            window.localStorage.setItem("accessToken", body.accessToken);
+        }
+        if (body.refreshToken != null) {
+            window.localStorage.setItem("refreshToken", body.refreshToken);
+        }
+        return response;
+    });
+}
+```
+
+오늘은 고민이 많았습니다. 이미지 업로드와 OAuth2.0 경험을 할지, DB를 간단하게나마 구현해보는 경험을 할지에 대해서요, 사실 저한테는 DB를 간단하게나마 구현해보는 것이 조금 더 의미있지 않을까 싶어서 InnoDB Engine을 모방해보려고 했고, 관련 레퍼런스를 모으고 설계하던 중 도저히 2일만에 결과를 볼 수 있는 스케일이 아닐 것으로 판단했습니다. 포기할 거 다 포기하고 파일 저장만 한다면 구현이야 가능하겠지만 그러면 간단한 파일시스템과 다른게 뭐지 싶더라고요, 그래서 급하게 노선을 틀었지만 이도저도 아니게 된 것 같아서 조금 아쉽네요.. 선택을 할 때에는 견적을 잘 짜야한다는 것을 새롭게 느끼며 오늘 하루를 보냈습니다 흑흑..
+
 
 <details>
 <summary>1주차</summary>
