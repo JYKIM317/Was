@@ -21,10 +21,32 @@ async function fetchPOST(uri, data = {}) {
     });
 }
 
+async function fetchFormDataPOST(uri, formData) {
+    const accessToken = window.localStorage.getItem("accessToken");
+    if (accessToken != null) formData.append('data', { accessToken });
+
+    return await fetch(uri, {
+        method: "POST",
+        body: formData
+    }).then(async (response) => {
+        const contentType = response.headers.get("Content-Type");
+        const isJSON = contentType === "application/json";
+        return [response, isJSON ? await response.clone().json() : {}];
+    }).then(([response, body]) => {
+        if (body.accessToken != null) {
+            window.localStorage.setItem("accessToken", body.accessToken);
+        }
+        if (body.refreshToken != null) {
+            window.localStorage.setItem("refreshToken", body.refreshToken);
+        }
+        return response;
+    });
+}
+
 async function fetchGET(uri) {
     return await fetch(uri, {
         method: "GET",
     });
 }
 
-export { fetchGET, fetchPOST }
+export { fetchGET, fetchPOST, fetchFormDataPOST }
