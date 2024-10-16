@@ -1,5 +1,7 @@
 import { PostRepository } from "../../repository/PostRepository"
 import { logger } from "../../logger";
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 async function boardController(req, res) {
     try {
@@ -21,7 +23,10 @@ async function postController(req, res) {
             const post = response[0];
             const isPostExist = post != null;
 
-            if (isPostExist) res.setStatus(200).json(post);
+            if (isPostExist) {
+                PostRepository.updatePostViewCount(postId);
+                res.setStatus(200).json(post);
+            }
             else res.setStatus(404).send();
         });
     } catch (e) {
@@ -30,5 +35,16 @@ async function postController(req, res) {
     }
 }
 
+function postPageContoller(req, res) {
+    const filePath = fileURLToPath(import.meta.url);
+    const staticFilePath = path.join(filePath, "../../../../", "static");
+    const postPageFilePath = path.join(staticFilePath, "post.html");
+    try {
+        res.setStatus(200).sendFile(postPageFilePath);
+    } catch (e) {
+        res.setStatus(404).send();
+    }
+}
 
-export { boardController, postController }
+
+export { boardController, postController, postPageContoller }

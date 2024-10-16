@@ -3,7 +3,6 @@ import { Navigation, Information, HorizontalHugFrame } from "../components/Frame
 import { verifyAccessTokenValid } from "../scripts/authorization.js";
 import { getBoardPage } from "../scripts/board.js";
 import { Board, PostTable, PostElement, BoardNavigation } from "../components/Board.js"
-import { fetchPOST } from "../scripts/fetch.js";
 
 async function render() {
     const tokenValid = await verifyAccessTokenValid();
@@ -75,13 +74,7 @@ function addEvent(isLogin) {
     document.querySelector(".post-table").addEventListener("click", async (event) => {
         const targetElement = event.target.closest(".post-element");
         if (targetElement.id !== "table-head") {
-            fetchPOST(url + `/board/post/${targetElement.id}`).then((response) => {
-                const isOK = 200;
-                if (response.status === isOK) return response.json();
-                else return {};
-            }).then((json) => {
-                if (json.redirect != null) location.href = json.redirect;
-            });
+            location.href = url + `/board/post/${targetElement.id}`;
         }
     });
 

@@ -31,6 +31,14 @@ class PostRepository {
             condition: `id=${postId}`
         });
     }
+
+    static async updatePostViewCount(postId) {
+        return await DBManager.update({
+            table: this.TABLE_NAME,
+            updates: ["view = view + 1"],
+            condition: `id = ${postId}`
+        });
+    }
 }
 
 export { PostRepository }
