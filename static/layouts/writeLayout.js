@@ -1,4 +1,4 @@
-import { fetchPOST } from "../scripts/fetch.js";
+import { fetchPOST, fetchFormDataPOST } from "../scripts/fetch.js";
 import { SmallButton } from "../components/Button.js";
 import { InputBox, TextAreaBox } from "../components/InputBox.js";
 import { Navigation, Information, HorizontalHugFrame } from "../components/Frame.js";
@@ -36,7 +36,13 @@ async function render() {
 
     const boardNavigationNode = document
         .createRange()
-        .createContextualFragment(PostNavigation("post-write-navigation", [SmallButton("작성 완료", "write-button")]));
+        .createContextualFragment(PostNavigation("post-write-navigation", [
+            HorizontalHugFrame("naviation-frame", [
+                `<input type="file" id="fileInput" style="display: none;">`,
+                SmallButton("이미지 첨부", "add-image-button"),
+                SmallButton("작성 완료", "write-button")
+            ])
+        ]));
 
     const fragment = document.createDocumentFragment();
     fragment.appendChild(navigationNode);
@@ -49,11 +55,27 @@ async function render() {
     addEvent();
 }
 
+
 function addEvent() {
+    let image = null;
+
     document.getElementById("user-logout-button").addEventListener("click", (_) => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         location.href = url;
+    });
+
+    const fileInput = document.getElementById("fileInput");
+    document.getElementById("add-image-button").addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        const fileType = file.type;
+        if (fileType.startsWith('image/')) {
+            image = file;
+        } else {
+            image = null;
+            alert("이미지 파일만 올려주세요");
+        }
     });
 
     document.getElementById("write-button").addEventListener("click", async (_) => {
@@ -68,13 +90,27 @@ function addEvent() {
 
         writeLoadingState = true;
         await verifyAccessTokenValid();
-        fetchPOST(url + "/board/post", { title, content }).then((response) => {
-            writeLoadingState = false;
-            const isCreate = 201;
-            if (response.status === isCreate) {
-                location.href = url;
-            }
-        });
+
+        if (image) {
+            const formData = new FormData();
+            formData.append('image', image);
+            formData.append('data', { title, content });
+            fetchFormDataPOST(url + "/board/post", formData).then((response) => {
+                writeLoadingState = false;
+                const isCreate = 201;
+                if (response.status === isCreate) {
+                    location.href = url;
+                }
+            });
+        } else {
+            fetchPOST(url + "/board/post", { title, content }).then((response) => {
+                writeLoadingState = false;
+                const isCreate = 201;
+                if (response.status === isCreate) {
+                    location.href = url;
+                }
+            });
+        }
     });
 }
 
