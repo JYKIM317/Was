@@ -15,10 +15,10 @@ async function postWriteController(req, res) {
         const bodyJsonString = decrypt(bodyOfToken);
         const result = await UserRepository.getUser(JSON.parse(bodyJsonString).aud);
         const userData = result[0];
-        const { title, content } = req.body;
+        const { title, content, image } = req.body;
 
         const postData = {
-            title, content,
+            title, content, image,
             member_email: userData.email,
             author: userData.name,
             createAt: dateFormatParser(new Date()),
