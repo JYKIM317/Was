@@ -3,6 +3,7 @@ import { logger } from "../../logger";
 import fs from "fs";
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { CONTENT_TYPE } from "../../util/const";
 
 const filePath = fileURLToPath(import.meta.url);
 const staticFilePath = path.join(filePath, "../../../../", "static");
@@ -31,9 +32,10 @@ async function postController(req, res) {
 
             if (post.image != null) {
                 const thisPostImagePath = path.join(imageStoragePath, post["member_email"], post.image);
-                fs.existsSync(thisPostImagePath)
-                    ? post.image = fs.readFileSync(thisPostImagePath).toString("base64")
-                    : post.image = null;
+                if (fs.existsSync(thisPostImagePath)) {
+                    post.image = fs.readFileSync(thisPostImagePath).toString("base64");
+                    post.imageType = CONTENT_TYPE[path.extname(thisPostImagePath)];
+                } else post.image = null;
             }
 
             PostRepository.updatePostViewCount(postId);
