@@ -8,7 +8,7 @@ const url = "http://localhost:8080";
 
 async function render() {
     const tokenValid = await verifyAccessTokenValid();
-    if (!tokenValid) location.href = url + "/login.html";
+    if (!tokenValid) return location.href = url + "/login.html";
 
     const postData = await fetchPOST(location.href).then((response) => response.json());
 
