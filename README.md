@@ -1,737 +1,4 @@
 
-# 🔥 나만의 주간 계획서 (4)
-
-## ✅ 나만의 체크포인트 ⭕❌
-
-⭕ 주간 계획 수립
-
-⭕ 게시판 기능 완성
-	
-	⭕ 게시판 레이아웃 구성
-    - 서버 측 게시판 데이터 반환 로직 작성
-    - 게시판 데이터 받아오는 함수 작성
-    - 메인 페이지 게시판 HTML 렌더링 구현
-    - 메인 페이지 게시판 CSS 구현
-	
-	⭕ 메인 하단에 글쓰기 버튼 추가
-		- 글쓰기 버튼 시 write.html로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	
-	⭕ write.html에서는 글을 입력할 수 있도록
-	
-	⭕ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-
-⭕ 글쓰기 이미지 업로드 기능 구현
-	
-	⭕ 이미지 업로드 버튼 구현
-	
-	⭕ 이미지 업로드 구현
-	
-	❌ 서버에 이미지 파일 저장
-	
-	❌ 이미지 요청에 대한 응답 구현
-	
-	❌ 글 본문 이미지 표시
-
-❌ Github 로그인 구현
-	
-	❌ Github 로그인 버튼 구현
-	
-	❌ Github 인증 구현
-	
-	❌ Github 리디렉션 및 프론트 로직 구현
-
-❌ 테스트 코드 작성
-	
-	❌ HTTP Message에 대한 테스트 코드 작성
-	
-	❌ 비즈니스 로직에 대한 테스트 코드 작성
-	
-	❌ 인증 로직 테스트 코드 작성
-
-## 📝 학습 및 구현 계획
-
-### 월요일
-
-게시판 기능 완성
-	
-	게시판 레이아웃 구성
-	
-	메인 하단에 글쓰기 버튼 추가
-		- 글쓰기 버튼 시 write.html로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	
-	write.html에서는 글을 입력할 수 있도록
-	
-	로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-
-### 화요일
-
-글쓰기 이미지 업로드 기능 구현
-	
-	이미지 업로드 버튼 구현
-	
-	이미지 업로드 구현
-	
-	서버에 이미지 파일 저장
-	
-	이미지 요청에 대한 응답 구현
-	
-	글 본문 이미지 표시
-
-### 수요일
-
-Github 로그인 구현
-	
-	Github 로그인 버튼 구현
-	
-	Github 인증 구현
-	
-	Github 리디렉션 및 프론트 로직 구현
-
-### 목요일
-
-일정에 맞췄을 시 리팩토링 및 추가 기능 구현 혹은 테스트 코드 작성
-
-## ✏️ 고민과 해결 과정 쌓아가기
-
-<details>
-<summary>월요일</summary>
-<div markdown="1">
-
-### 피드백 개선
-
-#### 상수 네이밍 대문자 스네이크 케이스로 변경
-
-```ts
-//변경 전
-const alg = 'aes-256-cbc';
-const encryptedKey = crypto.randomBytes(32);
-const initializeVector = crypto.randomBytes(16);
-...등
-
-//변경 이후
-const ALG = 'aes-256-cbc';
-const ENCRYPTED_KEY = crypto.randomBytes(32);
-const INITIALIZE_VECTOR = crypto.randomBytes(16);
-...등
-```
-
-#### 비밀번호 암호화 bcrypt로 변경 
-
-md5는 안전한 암호화 방식이 아니라는 의견을 들을 수 있었습니다.
-암호화 방식을 sha 방식으로 바꿀지, bcrypt 방식으로 바꿀지 고민했는데 느리지만 조금 더 안전한 bcrypt 방식으로 바꾸자 했습니다.
-
-```ts
-//기존 PW 암호화
-//For password encryption
-function md5Encryption(data) {
-    return crypto.createHash("md5").update(data + process.env.SECRET).digest("hex");
-}
-```
-
-```ts
-//변경된 PW 암호화
-//For password encryption
-function passwordEncryption(data) {
-    return bcrypt.hashSync(data, process.env.SECRET);
-}
-```
-
-#### 반복되는 문자열 상수화
-
-```ts
-//개선 전
-header += `Content-Type: application/json\r\n`;
-...
-
-//개선 후
-//const.ts
-const CRLF = "\r\n";
-//Response.ts
-header += `Content-Type: application/json${CRLF}`;
-...
-```
-
-#### 문자열 연결 로직 변경
-
-```ts
-//기존 Authorization.ts
-const secretOfToken = encrypt(process.env.SECRET);
-const bodyOfToken = encrypt(JSON.stringify(body));
-const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
-
-const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
-```
-
-```ts
-//변경 Authorization.ts
-const token = [
-	encrypt(process.env.SECRET),
-	encrypt(JSON.stringify(body)),
-	createIntegrityTag(process.env.SECRET, JSON.stringify(body))
-].join('.');
-```
-
-### 메인 페이지 게시판 레이아웃
-
-우선 게시글의 데이터를 어떻게 가져오면 좋을까? 를 고민했습니다. 
-
-가져와야 하는 것
-- 해당 페이지 글 목록
-  `localhost:8080/board/post?p=1`
-
-post_id를 기준으로 내림차순 한 페이지당 10개 씩, 5페이지 단위의 존재 여부를 보여줄 예정입니다.
-
-서버 측 데이터 반환을 구현하기 위해 라우터를 새롭게 만들어 경로를 등록해줬고,
-
-```ts
-//boardRouter.ts
-const boardRouter = new Router();
-  
-boardRouter.get("/board/post", boardController);
-boardRouter.post("/board/post/:postId", postController);
-boardRouter.post("/board/comment/:postId", commentController);
-
-//app.ts
-routeStack.use("/board", boardRouter);
-```
-
-아래같은 구조로 쿼리를 발생할 수 있도록 만들기 위해
-
-```sql
-SELECT * 
-FROM post
-ORDER BY createdAt DESC
-LIMIT 10 
-OFFSET page * 10;
-```
-
-PostRepository와 메서드를 선언해줬습니다.
-
-```ts
-//PostRepository.ts
-class PostRepository {
-    static TABLE_NAME = "post";
-
-    static async getBoard(page) {
-	    const SELECT_PAGE = page * 10 - 10;
-	    
-        return await DBManager.select({
-            table: this.TABLE_NAME,
-            column: "*",
-            orderBy: "createdAt",
-            desc: true,
-            limit: 10,
-            offset: SELECT_PAGE
-        });
-    }
-}
-```
-
-이후 데이터를 받아와 반환해주는 함수를 작성해줬습니다.
-
-```ts
-//postController.ts
-async function boardController(req, res) {
-    try {
-        const page = req.query.p;
-        PostRepository.getBoard(page).then((response) => {
-            const result = response[0];
-            res.setStatus(200).json({ result });
-        });
-    } catch (e) {
-        logger.error(e);
-        res.setStatus(500).send();
-    }
-}
-```
-
-클라이언트에선 게시판 글을 불러오는 함수를 작성해줬고, 이를 호출해서 사용할 예정입니다.
-
-```js
-// /scripts/board.js
-async function getBoardPage(page) {
-    const uri = url + `/board/post?p=${page}`;
-    return await fetchGET(uri).then((response) => {
-        const isOK = 200;
-        return response.status === isOK ? response.json() : { result: [] };
-    });
-}
-```
-
-게시판이 렌더링될 `mainLayout`에서 받아온 게시글 데이터를 통해 게시판을 렌더링하고 각 게시글의 상위 프레임인 `board`에 이벤트를 등록해 이벤트 버블링을 통한 이벤트 감지와, 해당 클릭 이벤트를 처리할 예정입니다.
-
-```js
-//mainLayout.js
-async function render() {
-	//게시판
-    await getBoardPage(1).then((data) => {
-        const tableHead = { title: "제목", author: "작성자", createAt: "작성일자", view: "조회수" };
-        const postList = data.result.map((element) => {
-            element.createAt = dateFormatParser(element.createAt);
-            return PostElement(element, element.id);
-        });
-        const postTable = PostTable([PostElement(tableHead, "table-head"), ...postList]);
-        const board = Board([postTable]);
-        const boardNode = document
-            .createRange()
-            .createContextualFragment(board);
-       document.body.querySelector("#root").appendChild(boardNode);
-    });
-...
-
-function addEvent(isLogin) {
-	...
-    document.getElementById("board").addEventListener("click", async (event) => {
-        const targetElement = event.target.closest(".post-element");
-        if (targetElement.id !== "table-head") {
-            await fetchPOST(url + `/board/post/${targetElement.id}`).then((response) => {
-                const isOK = 200;
-                if (response.status === isOK) return response.json();
-                else return {};
-            }).then((json) => {
-                if (json.redirect != null) location.href = json.redirect;
-            });
-        }
-    });
-}
-```
-
-</div>
-</details>
-
-
-<details>
-<summary>화요일</summary>
-<div markdown="1">
-
-
-### 피드백 반영
-
-> DB에서 데이터를 받아올 때 Meta Data가 필요한 경우가 아니라면 값만 반환해도 좋지 않을까요?
-
-```ts
-//DBManager.ts
-private async executeQuery(query, values?) {
-        const connection = await this.connectionPool.getConnection();
-        const result = connection.query(query, values); 
-        connection.release();
-        return result;
-}
-
-//controller 계층
-const result = response[0][0];
-```
-
-```ts
-//DBManager.ts
-private async executeQuery(query, values?) {
-        const connection = await this.connectionPool.getConnection();
-        const [result] = await connection.query(query, values); 
-        connection.release();
-        return result;
-}
-
-//controller 계층
-const result = response[0];
-```
-
-> Request.ts에는 아직 CRLF가 상수화가 안됐어요!
-
-```ts
-//Request.ts
-//전
-const [headerMessage, bodyMessage] = message.split("\r\n\r\n");
-
-//후
-const [headerMessage, bodyMessage] = message.split(`${CRLF}${CRLF}`);
-```
-
-
-- 글 본문 페이지 - 토큰 상태 확인 후 리디렉션하는 서버 응답 구현 - 글 본문 페이지 구현 - 글 작성 페이지 - 토큰이 유효할 때만 글쓰기 버튼이 렌더링되도록 구현 - 토큰 상태 확인 후 리디렉션하는 서버 응답 구현 - 글 작성 페이지 구현
-
-### 글 작성 페이지
-
-우선 글 작성 페이지를 만들기 위해 메인 하단에 글 쓰기 버튼을 추가해주기로 했습니다.
-
-```js
-// components/Board.js
-const BoardNavigation = (children = []) => {
-    const childrenNode = children.join("\n");
-    return `<div class="board-navigation">
-        ${childrenNode}
-    </div>`;
-}
-
-//mainLayout.js
-const boardNavigation = BoardNavigation([SmallButton("글쓰기", "write-button")]);
-
-
-//addEvent() {
-document.getElementById("write-button").addEventListener("click", (_) => {
-    location.href = url + "/write.html";
-});
-```
-
-글 쓰기 버튼을 누르면 미리 만들어둔 write 페이지로 이동하며 해당 html을 불러오게 됩니다.
-
-write.html에선 writeLayout.js 를 호출해 화면을 렌더링하는데
-
-```html
-    <script type="module" src="./layouts/writeLayout.js"></script>
-```
-
-writeLayout.js 에선 토큰의 유효성을 검증해 유효하지 않을 경우 로그인 페이지로 이동시키는 역할을 우선적으로 수행합니다.
-
-```js
-//writeLayout.js
-async function render() {
-    const tokenValid = await verifyAccessTokenValid();
-    if (!tokenValid) location.href = url + "/login.html";
-    ...
-```
-
-정상적이라면 화면을 렌더링할 수 있도록 작성했습니다.
-
-```js
-//writeLayout.js
-async function render() {
-	...
-    const fragment = document.createDocumentFragment();
-    fragment.appendChild(navigationNode);
-    fragment.appendChild(postTitleNode);
-    fragment.appendChild(writeTitleNode);
-    fragment.appendChild(writeContentNode);
-
-    document.body.querySelector("#root").appendChild(fragment);
-    addEvent();
-```
-
-만약 글 쓰기 버튼이 여러 번 눌리면 요청이 반복해서 갈 수 있기 때문에 `writeLoadingState` 라는 전역 변수를 선언해줬고,
-
-Loading 중이라면 이벤트를 실행하지않고, 반대라면 요청을 보낼 수 있도록 만들었습니다.
-
-```js
-//writeLayout.js
-const writeLoadingState = false;
-
-//addEvent() {
-        if (writeLoadingState) return;
-        writeLoadingState = true;
-
-        fetchPOST(url + "/board/post", { title, content }).then((response) => {
-            writeLoadingState = false;
-            ...
-```
-
-글 작성 시 보내는 요청 메서드가 결과적으로 POST인데 PUT으로 생성할지 POST로 생성할지 고민했었습니다.
-
-이와 관련해서 사례를 찾아보던 중 모 회사 개발자 블로그에서 관련 RFC SPEC과 함께 언급한 부분이 있어서 신뢰하고 따르려고 합니다.
-
-https://docs.tosspayments.com/blog/rest-api-post-put-patch
-
-### 서버 글 작성 로직에 관한 고민
-
-클라이언트에서 글의 내용과 함께 작성 요청을 보내는 것 까지 구현은 했는데, 한 가지 고민에 빠지게 되었습니다.
-
-현재 토큰을 통해 해당 유저가 로그인을 한 유저인지 아닌지 구분하는 상태이고, 토큰에는 유저에 대한 정보는 담지 않았기 때문에
-
-**"유저의 정보를 어디서 관리할 것인가"** 라는 고민이었습니다.
-
-해당 문제에 대해 여러 가지 경우의 수를 생각해봤는데
-
-1. 로그인 시 클라이언트에서 상태를 저장하는 방법
-2. 서버에서 토큰과 세션을 이용해 유저의 상태를 기억하는 방법
-3. 토큰에 누구인지 기록하는 방법
-
-으로 총 3개의 경우를 생각해봤습니다.
-
-고민 끝에 기왕이면 토큰에 정보를 담고 있고, 무상태인 점을 끝까지 유지하면 좋을 것 같아서 토큰 발급 시에 유저 ID를 함께 담아서 식별하는 방법으로 결정했습니다.
-
-### 토큰에 유저 정보 담기
-
-우선 토큰에 담을 데이터는 유저를 식별하기 위한 Email만 담을 예정입니다.
-
-그래서 토큰의 내용이 담길 Body 부분에 Aud (Audience) 를 추가해 해당 토큰의 수신자가 누군지 표시할 예정입니다.
-
-```ts
-//Authorization.ts
-type TokenBody = {
-    iat: Date,
-    exp: Date,
-    grd: number,
-    typ: TokenType,
-    aud: string //추가됨
-};
-```
-
-이를 위해 토큰을 발급할 때도 aud를 인자로 받도록 했습니다.
-
-```ts
-//변경 전
-class Authorization {
-    static generateToken(tokenType: TokenType) {
-    
-//변경 후
-class Authorization {
-    static generateToken(tokenType: TokenType, aud: string /*추가됨*/) {
-
-
-//사용 예시
-Authorization.generateToken("Access", email);
-```
-
-### 글 작성 등록 로직 구현
-
-우선 `PostRepository`에 글을 등록하는 `createPost` 메서드를 작성해줬습니다.
-
-```ts
-//postRepository.ts
-class PostRepository {
-    static createPost(postData) {
-        return DBManager.insert({
-            table: this.TABLE_NAME,
-            columns: Object.keys(postData),
-            values: Object.values(postData)
-        });
-    }
-    ...
-```
-
-그리고 해당 `createPost` 메서드를 호출하는 `postWriteController` 함수를 작성해줬습니다.
-
-```ts
-//postWriteController.ts
-async function postWriteController(req, res) {
-        const accesstoken = req.body.accessToken;
-        const isVerified = Authorization.verifyToken(accesstoken, "Access");
-        if (!isVerified) return res.setStatus(401).send();
-        
-        const [_, bodyOfToken] = accesstoken.split(".");
-        const bodyJsonString = decrypt(bodyOfToken);
-        const result = await UserRepository.getUser(JSON.parse(bodyJsonString).aud);
-        const userData = result[0];
-        ...
-```
-
-우선 `postWriteController` 에서 유저 정보를 가져오기 위해 토큰을 한 번 검증한 이후 `UserRepository` 메서드를 호출해줬습니다.
-
-이후 해당 유저 데이터와 전달받은 글 내용을 조합해 등록 메서드를 호출했습니다.
-
-```ts
-//postWriteController() {
-        const { title, content } = req.body;
-        const postData = {
-            title, content,
-            member_email: userData.email,
-            author: userData.name,
-            createAt: dateFormatParser(new Date()),
-            view: 0
-        };
-
-        await PostRepository.createPost(postData);
-        res.setStatus(201).send();
-}
-```
-
-해당 `Controller` 함수는 `boardRouter`에 등록해줬습니다.
-
-```ts
-//boardRouter.ts
-boardRouter.post("/board/post", postWriteController);
-```
-
-### 글 보기 페이지
-
-메인 페이지 게시판에서 특정 글을 클릭했을 때 해당 글을 상세보기 할 수 있는 페이지로 이동해야 했습니다.
-
-우선 해당 페이지를 눌렀을 때 데이터를 반환할 수 있도록 DB에 접근해 데이터를 확인하는 로직을 작성했습니다. 
-
-```ts
-//PostRepository.ts
-class PostRepository {
-    static getPost(postId) {
-        return DBManager.select({
-            table: this.TABLE_NAME,
-            column: "*",
-            condition: `id=${postId}`
-        });
-    }
-    ...
-```
-
-이후 가져온 데이터의 유무에 따라 상태코드를 결정해 데이터를 반환하는 Controller 함수를 만들어줬습니다.
-
-```ts
-//postController.ts
-async function postController(req, res) {
-    try {
-        const postId = req.params.postId;
-        PostRepository.getPost(postId).then((response) => {
-            const post = response[0];
-            const isPostExist = post != null;
-  
-            if (isPostExist) res.setStatus(200).json(post);
-            else res.setStatus(404).send();
-        });
-    } catch (e) {
-        logger.error(e);
-        res.setStatus(500).send();
-    }
-}
-```
-
-</div>
-</details>
-
-
-### 남은 기간 계획 고민하기
-
-수요일에 들어서서 남은 기간이 2일인데, 어떤 부분을 학습하고, 포기할지 고민해야 했습니다.
-
-제가 선택할 수 있는 선택지는 두 가지가 있었는데
-
-1. 이미지 업로드 및 응답에 더불어 HTTP Request 청크 처리하기
-2. 간단하게 InnoDB 엔진을 모방해서 DB 구현해보기
-
-HTTP Request 청크를 합치는 것도 의미 있는 것 경험이 될 같았지만 사실 마음으론 DB를 구현해보는 것이 저에겐 더 의미있는 학습이 될 수 있지 않을까? 라고 생각했습니다.
-
-근데 문제는 DB를 남은 기간동안 제대로 구현할 수 있을지,
-이도저도 아니게 되는 것은 아닐지 고민이 된다는 것이었습니다.
-
-```md
-<!--원래 계획-->
-
-글쓰기 이미지 업로드 기능 구현
-	
-	이미지 업로드 버튼 구현
-	
-	이미지 업로드 구현
-	
-	서버에 이미지 파일 저장
-	
-	이미지 요청에 대한 응답 구현
-	
-	글 본문 이미지 표시
-
-Github 로그인 구현
-	
-	Github 로그인 버튼 구현
-	
-	Github 인증 구현
-	
-	Github 리디렉션 및 프론트 로직 구현
-```
-
-
-
-고민 끝에 DB를 구현해보는 것이 좋겠다고 생각해 레퍼런스를 수집하고, InnoDB Engine에 관한 지식을 학습하던 중..
-
-도저히 2일만에 끝낼 수 있는 스케일이 아닐 것이라고 생각했습니다.
-
-단순히 CRUD 기능만 트랜잭션이나, 캐시없이 구현한다면 어떻게든 구현은 할 수 있을 것으로 판단했지만 그러면 결국 더 이상 DB가 아닌 간단한 파일 시스템이 아닌가? 라는 생각을 했습니다.
-
-그래서 늦었지만 급하게 HTTP 청크와 이미지 업로드를 처리해보려고 합니다 ㅠㅠ..
-
-
-### HTTP Request chunk
-
-HTTP Request에 데이터가 많이 포함되어 길어질 경우 헤더와 바디가 분리되는 문제가 있었습니다.
-
-```ts
-//app.ts
-const server = net.createServer(socket => {
-    socket.on("data", (data) => {
-        const socketData = data.toString();
-        const req = new Request(socketData);
-        ...
-```
-
-기존에는 Buffer 타입의 `data`를 전달받았을 경우 데이터를 문자열로 바꿔 Request 객체로 만들어주는 과정이 있었는데
-
-헤더와 바디가 분리되어 오게 돼 Request 객체를 생성해줄 때 에러가 발생하는 문제였습니다.
-
-이에 대해 socketData를 Buffer 타입으로 바꾸고, 
-`try-catch` 문으로 Request 객체 생성 부분을 감싸 에러가 발생하면 넘어가 다음 버퍼를 응답받아 합친 뒤 다시 Request 객체를 만들도록 변경했습니다.
-
-```ts
-const server = net.createServer(socket => {
-    let socketData = Buffer.alloc(0);
-    socket.on("data", (data) => {
-        socketData = Buffer.concat([socketData, data]);
-        try {
-            const req = new Request(socketData.toString());
-            ...
-```
-
-
-### 이미지 업로드 구현
-
-```js
-//writeLayout.js
-    const fileInput = document.getElementById("fileInput");
-    document.getElementById("add-image-button").addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        const fileType = file.type;
-        if (fileType.startsWith('image/')) {
-            image = file;
-        } else {
-            image = null;
-            alert("이미지 파일만 올려주세요");
-        }
-    });
-```
-
-```js
-//writeLayout.js
-        if (image) {
-            const formData = new FormData();
-            formData.append('image', image);
-            formData.append('data', { title, content });
-            fetchFormDataPOST(url + "/board/post", formData).then((response) => {
-                writeLoadingState = false;
-                const isCreate = 201;
-                if (response.status === isCreate) {
-                    location.href = url;
-                }
-            });
-        }
-```
-
-### 폼데이터 전송 함수 구현
-
-```js
-//fetch.js
-async function fetchFormDataPOST(uri, formData) {
-    const accessToken = window.localStorage.getItem("accessToken");
-    if (accessToken != null) formData.append('data', { accessToken });
-  
-    return await fetch(uri, {
-        method: "POST",
-        body: formData
-    }).then(async (response) => {
-        const contentType = response.headers.get("Content-Type");
-        const isJSON = contentType === "application/json";
-        return [response, isJSON ? await response.clone().json() : {}];
-    }).then(([response, body]) => {
-        if (body.accessToken != null) {
-            window.localStorage.setItem("accessToken", body.accessToken);
-        }
-        if (body.refreshToken != null) {
-            window.localStorage.setItem("refreshToken", body.refreshToken);
-        }
-        return response;
-    });
-}
-```
-
-오늘은 고민이 많았습니다. 이미지 업로드와 OAuth2.0 경험을 할지, DB를 간단하게나마 구현해보는 경험을 할지에 대해서요, 사실 저한테는 DB를 간단하게나마 구현해보는 것이 조금 더 의미있지 않을까 싶어서 InnoDB Engine을 모방해보려고 했고, 관련 레퍼런스를 모으고 설계하던 중 도저히 2일만에 결과를 볼 수 있는 스케일이 아닐 것으로 판단했습니다. 포기할 거 다 포기하고 파일 저장만 한다면 구현이야 가능하겠지만 그러면 간단한 파일시스템과 다른게 뭐지 싶더라고요, 그래서 급하게 노선을 틀었지만 이도저도 아니게 된 것 같아서 조금 아쉽네요.. 선택을 할 때에는 견적을 잘 짜야한다는 것을 새롭게 느끼며 오늘 하루를 보냈습니다 흑흑..
-
-
 <details>
 <summary>1주차</summary>
 <div markdown="1">
@@ -3655,6 +2922,876 @@ class UserRepository {
 ### 에러 페이지
 
 ### 피드백 반영
+
+</div>
+</details>
+
+
+</div>
+</details>
+
+
+<details>
+<summary>4주차</summary>
+<div markdown="1">
+
+
+# 🔥 나만의 주간 계획서 (4)
+
+## ✅ 나만의 체크포인트 ⭕❌
+
+⭕ 주간 계획 수립
+
+⭕ 게시판 기능 완성
+	
+	⭕ 게시판 레이아웃 구성
+    - 서버 측 게시판 데이터 반환 로직 작성
+    - 게시판 데이터 받아오는 함수 작성
+    - 메인 페이지 게시판 HTML 렌더링 구현
+    - 메인 페이지 게시판 CSS 구현
+	
+	⭕ 메인 하단에 글쓰기 버튼 추가
+		- 글쓰기 버튼 시 write.html로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	
+	⭕ write.html에서는 글을 입력할 수 있도록
+	
+	⭕ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+
+⭕ 글쓰기 이미지 업로드 기능 구현
+	
+	⭕ 이미지 업로드 버튼 구현
+	
+	⭕ 이미지 업로드 구현
+	
+	⭕ 서버에 이미지 파일 저장
+	
+	⭕ 이미지 요청에 대한 응답 구현
+	
+	⭕ 글 본문 이미지 표시
+
+❌ 테스트 코드 작성
+	
+	❌ HTTP Message에 대한 테스트 코드 작성
+	
+	❌ 비즈니스 로직에 대한 테스트 코드 작성
+	
+	❌ 인증 로직 테스트 코드 작성
+
+## 📝 학습 및 구현 계획
+
+### 월요일
+
+게시판 기능 완성
+	
+	게시판 레이아웃 구성
+	
+	메인 하단에 글쓰기 버튼 추가
+		- 글쓰기 버튼 시 write.html로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+	
+	write.html에서는 글을 입력할 수 있도록
+	
+	로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+		- 만약 비로그인 유저라면 로그인 페이지로 이동
+
+### 화요일
+
+글쓰기 이미지 업로드 기능 구현
+	
+	이미지 업로드 버튼 구현
+	
+	이미지 업로드 구현
+	
+	서버에 이미지 파일 저장
+	
+	이미지 요청에 대한 응답 구현
+	
+	글 본문 이미지 표시
+
+### 수요일
+
+Github 로그인 구현
+	
+	Github 로그인 버튼 구현
+	
+	Github 인증 구현
+	
+	Github 리디렉션 및 프론트 로직 구현
+
+### 목요일
+
+일정에 맞췄을 시 리팩토링 및 추가 기능 구현 혹은 테스트 코드 작성
+
+## ✏️ 고민과 해결 과정 쌓아가기
+
+<details>
+<summary>월요일</summary>
+<div markdown="1">
+
+### 피드백 개선
+
+#### 상수 네이밍 대문자 스네이크 케이스로 변경
+
+```ts
+//변경 전
+const alg = 'aes-256-cbc';
+const encryptedKey = crypto.randomBytes(32);
+const initializeVector = crypto.randomBytes(16);
+...등
+
+//변경 이후
+const ALG = 'aes-256-cbc';
+const ENCRYPTED_KEY = crypto.randomBytes(32);
+const INITIALIZE_VECTOR = crypto.randomBytes(16);
+...등
+```
+
+#### 비밀번호 암호화 bcrypt로 변경 
+
+md5는 안전한 암호화 방식이 아니라는 의견을 들을 수 있었습니다.
+암호화 방식을 sha 방식으로 바꿀지, bcrypt 방식으로 바꿀지 고민했는데 느리지만 조금 더 안전한 bcrypt 방식으로 바꾸자 했습니다.
+
+```ts
+//기존 PW 암호화
+//For password encryption
+function md5Encryption(data) {
+    return crypto.createHash("md5").update(data + process.env.SECRET).digest("hex");
+}
+```
+
+```ts
+//변경된 PW 암호화
+//For password encryption
+function passwordEncryption(data) {
+    return bcrypt.hashSync(data, process.env.SECRET);
+}
+```
+
+#### 반복되는 문자열 상수화
+
+```ts
+//개선 전
+header += `Content-Type: application/json\r\n`;
+...
+
+//개선 후
+//const.ts
+const CRLF = "\r\n";
+//Response.ts
+header += `Content-Type: application/json${CRLF}`;
+...
+```
+
+#### 문자열 연결 로직 변경
+
+```ts
+//기존 Authorization.ts
+const secretOfToken = encrypt(process.env.SECRET);
+const bodyOfToken = encrypt(JSON.stringify(body));
+const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
+
+const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
+```
+
+```ts
+//변경 Authorization.ts
+const token = [
+	encrypt(process.env.SECRET),
+	encrypt(JSON.stringify(body)),
+	createIntegrityTag(process.env.SECRET, JSON.stringify(body))
+].join('.');
+```
+
+### 메인 페이지 게시판 레이아웃
+
+우선 게시글의 데이터를 어떻게 가져오면 좋을까? 를 고민했습니다. 
+
+가져와야 하는 것
+- 해당 페이지 글 목록
+  `localhost:8080/board/post?p=1`
+
+post_id를 기준으로 내림차순 한 페이지당 10개 씩, 5페이지 단위의 존재 여부를 보여줄 예정입니다.
+
+서버 측 데이터 반환을 구현하기 위해 라우터를 새롭게 만들어 경로를 등록해줬고,
+
+```ts
+//boardRouter.ts
+const boardRouter = new Router();
+  
+boardRouter.get("/board/post", boardController);
+boardRouter.post("/board/post/:postId", postController);
+boardRouter.post("/board/comment/:postId", commentController);
+
+//app.ts
+routeStack.use("/board", boardRouter);
+```
+
+아래같은 구조로 쿼리를 발생할 수 있도록 만들기 위해
+
+```sql
+SELECT * 
+FROM post
+ORDER BY createdAt DESC
+LIMIT 10 
+OFFSET page * 10;
+```
+
+PostRepository와 메서드를 선언해줬습니다.
+
+```ts
+//PostRepository.ts
+class PostRepository {
+    static TABLE_NAME = "post";
+
+    static async getBoard(page) {
+	    const SELECT_PAGE = page * 10 - 10;
+	    
+        return await DBManager.select({
+            table: this.TABLE_NAME,
+            column: "*",
+            orderBy: "createdAt",
+            desc: true,
+            limit: 10,
+            offset: SELECT_PAGE
+        });
+    }
+}
+```
+
+이후 데이터를 받아와 반환해주는 함수를 작성해줬습니다.
+
+```ts
+//postController.ts
+async function boardController(req, res) {
+    try {
+        const page = req.query.p;
+        PostRepository.getBoard(page).then((response) => {
+            const result = response[0];
+            res.setStatus(200).json({ result });
+        });
+    } catch (e) {
+        logger.error(e);
+        res.setStatus(500).send();
+    }
+}
+```
+
+클라이언트에선 게시판 글을 불러오는 함수를 작성해줬고, 이를 호출해서 사용할 예정입니다.
+
+```js
+// /scripts/board.js
+async function getBoardPage(page) {
+    const uri = url + `/board/post?p=${page}`;
+    return await fetchGET(uri).then((response) => {
+        const isOK = 200;
+        return response.status === isOK ? response.json() : { result: [] };
+    });
+}
+```
+
+게시판이 렌더링될 `mainLayout`에서 받아온 게시글 데이터를 통해 게시판을 렌더링하고 각 게시글의 상위 프레임인 `board`에 이벤트를 등록해 이벤트 버블링을 통한 이벤트 감지와, 해당 클릭 이벤트를 처리할 예정입니다.
+
+```js
+//mainLayout.js
+async function render() {
+	//게시판
+    await getBoardPage(1).then((data) => {
+        const tableHead = { title: "제목", author: "작성자", createAt: "작성일자", view: "조회수" };
+        const postList = data.result.map((element) => {
+            element.createAt = dateFormatParser(element.createAt);
+            return PostElement(element, element.id);
+        });
+        const postTable = PostTable([PostElement(tableHead, "table-head"), ...postList]);
+        const board = Board([postTable]);
+        const boardNode = document
+            .createRange()
+            .createContextualFragment(board);
+       document.body.querySelector("#root").appendChild(boardNode);
+    });
+...
+
+function addEvent(isLogin) {
+	...
+    document.getElementById("board").addEventListener("click", async (event) => {
+        const targetElement = event.target.closest(".post-element");
+        if (targetElement.id !== "table-head") {
+            await fetchPOST(url + `/board/post/${targetElement.id}`).then((response) => {
+                const isOK = 200;
+                if (response.status === isOK) return response.json();
+                else return {};
+            }).then((json) => {
+                if (json.redirect != null) location.href = json.redirect;
+            });
+        }
+    });
+}
+```
+
+</div>
+</details>
+
+
+<details>
+<summary>화요일</summary>
+<div markdown="1">
+
+
+### 피드백 반영
+
+> DB에서 데이터를 받아올 때 Meta Data가 필요한 경우가 아니라면 값만 반환해도 좋지 않을까요?
+
+```ts
+//DBManager.ts
+private async executeQuery(query, values?) {
+        const connection = await this.connectionPool.getConnection();
+        const result = connection.query(query, values); 
+        connection.release();
+        return result;
+}
+
+//controller 계층
+const result = response[0][0];
+```
+
+```ts
+//DBManager.ts
+private async executeQuery(query, values?) {
+        const connection = await this.connectionPool.getConnection();
+        const [result] = await connection.query(query, values); 
+        connection.release();
+        return result;
+}
+
+//controller 계층
+const result = response[0];
+```
+
+> Request.ts에는 아직 CRLF가 상수화가 안됐어요!
+
+```ts
+//Request.ts
+//전
+const [headerMessage, bodyMessage] = message.split("\r\n\r\n");
+
+//후
+const [headerMessage, bodyMessage] = message.split(`${CRLF}${CRLF}`);
+```
+
+
+- 글 본문 페이지 - 토큰 상태 확인 후 리디렉션하는 서버 응답 구현 - 글 본문 페이지 구현 - 글 작성 페이지 - 토큰이 유효할 때만 글쓰기 버튼이 렌더링되도록 구현 - 토큰 상태 확인 후 리디렉션하는 서버 응답 구현 - 글 작성 페이지 구현
+
+### 글 작성 페이지
+
+우선 글 작성 페이지를 만들기 위해 메인 하단에 글 쓰기 버튼을 추가해주기로 했습니다.
+
+```js
+// components/Board.js
+const BoardNavigation = (children = []) => {
+    const childrenNode = children.join("\n");
+    return `<div class="board-navigation">
+        ${childrenNode}
+    </div>`;
+}
+
+//mainLayout.js
+const boardNavigation = BoardNavigation([SmallButton("글쓰기", "write-button")]);
+
+
+//addEvent() {
+document.getElementById("write-button").addEventListener("click", (_) => {
+    location.href = url + "/write.html";
+});
+```
+
+글 쓰기 버튼을 누르면 미리 만들어둔 write 페이지로 이동하며 해당 html을 불러오게 됩니다.
+
+write.html에선 writeLayout.js 를 호출해 화면을 렌더링하는데
+
+```html
+    <script type="module" src="./layouts/writeLayout.js"></script>
+```
+
+writeLayout.js 에선 토큰의 유효성을 검증해 유효하지 않을 경우 로그인 페이지로 이동시키는 역할을 우선적으로 수행합니다.
+
+```js
+//writeLayout.js
+async function render() {
+    const tokenValid = await verifyAccessTokenValid();
+    if (!tokenValid) location.href = url + "/login.html";
+    ...
+```
+
+정상적이라면 화면을 렌더링할 수 있도록 작성했습니다.
+
+```js
+//writeLayout.js
+async function render() {
+	...
+    const fragment = document.createDocumentFragment();
+    fragment.appendChild(navigationNode);
+    fragment.appendChild(postTitleNode);
+    fragment.appendChild(writeTitleNode);
+    fragment.appendChild(writeContentNode);
+
+    document.body.querySelector("#root").appendChild(fragment);
+    addEvent();
+```
+
+만약 글 쓰기 버튼이 여러 번 눌리면 요청이 반복해서 갈 수 있기 때문에 `writeLoadingState` 라는 전역 변수를 선언해줬고,
+
+Loading 중이라면 이벤트를 실행하지않고, 반대라면 요청을 보낼 수 있도록 만들었습니다.
+
+```js
+//writeLayout.js
+const writeLoadingState = false;
+
+//addEvent() {
+        if (writeLoadingState) return;
+        writeLoadingState = true;
+
+        fetchPOST(url + "/board/post", { title, content }).then((response) => {
+            writeLoadingState = false;
+            ...
+```
+
+글 작성 시 보내는 요청 메서드가 결과적으로 POST인데 PUT으로 생성할지 POST로 생성할지 고민했었습니다.
+
+이와 관련해서 사례를 찾아보던 중 모 회사 개발자 블로그에서 관련 RFC SPEC과 함께 언급한 부분이 있어서 신뢰하고 따르려고 합니다.
+
+https://docs.tosspayments.com/blog/rest-api-post-put-patch
+
+### 서버 글 작성 로직에 관한 고민
+
+클라이언트에서 글의 내용과 함께 작성 요청을 보내는 것 까지 구현은 했는데, 한 가지 고민에 빠지게 되었습니다.
+
+현재 토큰을 통해 해당 유저가 로그인을 한 유저인지 아닌지 구분하는 상태이고, 토큰에는 유저에 대한 정보는 담지 않았기 때문에
+
+**"유저의 정보를 어디서 관리할 것인가"** 라는 고민이었습니다.
+
+해당 문제에 대해 여러 가지 경우의 수를 생각해봤는데
+
+1. 로그인 시 클라이언트에서 상태를 저장하는 방법
+2. 서버에서 토큰과 세션을 이용해 유저의 상태를 기억하는 방법
+3. 토큰에 누구인지 기록하는 방법
+
+으로 총 3개의 경우를 생각해봤습니다.
+
+고민 끝에 기왕이면 토큰에 정보를 담고 있고, 무상태인 점을 끝까지 유지하면 좋을 것 같아서 토큰 발급 시에 유저 ID를 함께 담아서 식별하는 방법으로 결정했습니다.
+
+### 토큰에 유저 정보 담기
+
+우선 토큰에 담을 데이터는 유저를 식별하기 위한 Email만 담을 예정입니다.
+
+그래서 토큰의 내용이 담길 Body 부분에 Aud (Audience) 를 추가해 해당 토큰의 수신자가 누군지 표시할 예정입니다.
+
+```ts
+//Authorization.ts
+type TokenBody = {
+    iat: Date,
+    exp: Date,
+    grd: number,
+    typ: TokenType,
+    aud: string //추가됨
+};
+```
+
+이를 위해 토큰을 발급할 때도 aud를 인자로 받도록 했습니다.
+
+```ts
+//변경 전
+class Authorization {
+    static generateToken(tokenType: TokenType) {
+    
+//변경 후
+class Authorization {
+    static generateToken(tokenType: TokenType, aud: string /*추가됨*/) {
+
+
+//사용 예시
+Authorization.generateToken("Access", email);
+```
+
+### 글 작성 등록 로직 구현
+
+우선 `PostRepository`에 글을 등록하는 `createPost` 메서드를 작성해줬습니다.
+
+```ts
+//postRepository.ts
+class PostRepository {
+    static createPost(postData) {
+        return DBManager.insert({
+            table: this.TABLE_NAME,
+            columns: Object.keys(postData),
+            values: Object.values(postData)
+        });
+    }
+    ...
+```
+
+그리고 해당 `createPost` 메서드를 호출하는 `postWriteController` 함수를 작성해줬습니다.
+
+```ts
+//postWriteController.ts
+async function postWriteController(req, res) {
+        const accesstoken = req.body.accessToken;
+        const isVerified = Authorization.verifyToken(accesstoken, "Access");
+        if (!isVerified) return res.setStatus(401).send();
+        
+        const [_, bodyOfToken] = accesstoken.split(".");
+        const bodyJsonString = decrypt(bodyOfToken);
+        const result = await UserRepository.getUser(JSON.parse(bodyJsonString).aud);
+        const userData = result[0];
+        ...
+```
+
+우선 `postWriteController` 에서 유저 정보를 가져오기 위해 토큰을 한 번 검증한 이후 `UserRepository` 메서드를 호출해줬습니다.
+
+이후 해당 유저 데이터와 전달받은 글 내용을 조합해 등록 메서드를 호출했습니다.
+
+```ts
+//postWriteController() {
+        const { title, content } = req.body;
+        const postData = {
+            title, content,
+            member_email: userData.email,
+            author: userData.name,
+            createAt: dateFormatParser(new Date()),
+            view: 0
+        };
+
+        await PostRepository.createPost(postData);
+        res.setStatus(201).send();
+}
+```
+
+해당 `Controller` 함수는 `boardRouter`에 등록해줬습니다.
+
+```ts
+//boardRouter.ts
+boardRouter.post("/board/post", postWriteController);
+```
+
+### 글 보기 페이지
+
+메인 페이지 게시판에서 특정 글을 클릭했을 때 해당 글을 상세보기 할 수 있는 페이지로 이동해야 했습니다.
+
+우선 해당 페이지를 눌렀을 때 데이터를 반환할 수 있도록 DB에 접근해 데이터를 확인하는 로직을 작성했습니다. 
+
+```ts
+//PostRepository.ts
+class PostRepository {
+    static getPost(postId) {
+        return DBManager.select({
+            table: this.TABLE_NAME,
+            column: "*",
+            condition: `id=${postId}`
+        });
+    }
+    ...
+```
+
+이후 가져온 데이터의 유무에 따라 상태코드를 결정해 데이터를 반환하는 Controller 함수를 만들어줬습니다.
+
+```ts
+//postController.ts
+async function postController(req, res) {
+    try {
+        const postId = req.params.postId;
+        PostRepository.getPost(postId).then((response) => {
+            const post = response[0];
+            const isPostExist = post != null;
+  
+            if (isPostExist) res.setStatus(200).json(post);
+            else res.setStatus(404).send();
+        });
+    } catch (e) {
+        logger.error(e);
+        res.setStatus(500).send();
+    }
+}
+```
+
+</div>
+</details>
+
+
+<details>
+<summary>수요일</summary>
+<div markdown="1">
+
+
+### 남은 기간 계획 고민하기
+
+수요일에 들어서서 남은 기간이 2일인데, 어떤 부분을 학습하고, 포기할지 고민해야 했습니다.
+
+제가 선택할 수 있는 선택지는 두 가지가 있었는데
+
+1. 이미지 업로드 및 응답에 더불어 HTTP Request 청크 처리하기
+2. 간단하게 InnoDB 엔진을 모방해서 DB 구현해보기
+
+HTTP Request 청크를 합치는 것도 의미 있는 것 경험이 될 같았지만 사실 마음으론 DB를 구현해보는 것이 저에겐 더 의미있는 학습이 될 수 있지 않을까? 라고 생각했습니다.
+
+근데 문제는 DB를 남은 기간동안 제대로 구현할 수 있을지,
+이도저도 아니게 되는 것은 아닐지 고민이 된다는 것이었습니다.
+
+```md
+<!--원래 계획-->
+
+글쓰기 이미지 업로드 기능 구현
+	
+	이미지 업로드 버튼 구현
+	
+	이미지 업로드 구현
+	
+	서버에 이미지 파일 저장
+	
+	이미지 요청에 대한 응답 구현
+	
+	글 본문 이미지 표시
+
+Github 로그인 구현
+	
+	Github 로그인 버튼 구현
+	
+	Github 인증 구현
+	
+	Github 리디렉션 및 프론트 로직 구현
+```
+
+
+
+고민 끝에 DB를 구현해보는 것이 좋겠다고 생각해 레퍼런스를 수집하고, InnoDB Engine에 관한 지식을 학습하던 중..
+
+도저히 2일만에 끝낼 수 있는 스케일이 아닐 것이라고 생각했습니다.
+
+단순히 CRUD 기능만 트랜잭션이나, 캐시없이 구현한다면 어떻게든 구현은 할 수 있을 것으로 판단했지만 그러면 결국 더 이상 DB가 아닌 간단한 파일 시스템이 아닌가? 라는 생각을 했습니다.
+
+그래서 늦었지만 급하게 HTTP 청크와 이미지 업로드를 처리해보려고 합니다 ㅠㅠ..
+
+
+### HTTP Request chunk
+
+HTTP Request에 데이터가 많이 포함되어 길어질 경우 헤더와 바디가 분리되는 문제가 있었습니다.
+
+```ts
+//app.ts
+const server = net.createServer(socket => {
+    socket.on("data", (data) => {
+        const socketData = data.toString();
+        const req = new Request(socketData);
+        ...
+```
+
+기존에는 Buffer 타입의 `data`를 전달받았을 경우 데이터를 문자열로 바꿔 Request 객체로 만들어주는 과정이 있었는데
+
+헤더와 바디가 분리되어 오게 돼 Request 객체를 생성해줄 때 에러가 발생하는 문제였습니다.
+
+이에 대해 socketData를 Buffer 타입으로 바꾸고, 
+`try-catch` 문으로 Request 객체 생성 부분을 감싸 에러가 발생하면 넘어가 다음 버퍼를 응답받아 합친 뒤 다시 Request 객체를 만들도록 변경했습니다.
+
+```ts
+const server = net.createServer(socket => {
+    let socketData = Buffer.alloc(0);
+    socket.on("data", (data) => {
+        socketData = Buffer.concat([socketData, data]);
+        try {
+            const req = new Request(socketData.toString());
+            ...
+```
+
+
+### 이미지 업로드 구현
+
+```js
+//writeLayout.js
+    const fileInput = document.getElementById("fileInput");
+    document.getElementById("add-image-button").addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        const fileType = file.type;
+        if (fileType.startsWith('image/')) {
+            image = file;
+        } else {
+            image = null;
+            alert("이미지 파일만 올려주세요");
+        }
+    });
+```
+
+```js
+//writeLayout.js
+        if (image) {
+            const formData = new FormData();
+            formData.append('image', image);
+            formData.append('data', { title, content });
+            fetchFormDataPOST(url + "/board/post", formData).then((response) => {
+                writeLoadingState = false;
+                const isCreate = 201;
+                if (response.status === isCreate) {
+                    location.href = url;
+                }
+            });
+        }
+```
+
+### 폼데이터 전송 함수 구현
+
+```js
+//fetch.js
+async function fetchFormDataPOST(uri, formData) {
+    const accessToken = window.localStorage.getItem("accessToken");
+    if (accessToken != null) formData.append('data', { accessToken });
+  
+    return await fetch(uri, {
+        method: "POST",
+        body: formData
+    }).then(async (response) => {
+        const contentType = response.headers.get("Content-Type");
+        const isJSON = contentType === "application/json";
+        return [response, isJSON ? await response.clone().json() : {}];
+    }).then(([response, body]) => {
+        if (body.accessToken != null) {
+            window.localStorage.setItem("accessToken", body.accessToken);
+        }
+        if (body.refreshToken != null) {
+            window.localStorage.setItem("refreshToken", body.refreshToken);
+        }
+        return response;
+    });
+}
+```
+
+오늘은 고민이 많았습니다. 이미지 업로드와 OAuth2.0 경험을 할지, DB를 간단하게나마 구현해보는 경험을 할지에 대해서요, 사실 저한테는 DB를 간단하게나마 구현해보는 것이 조금 더 의미있지 않을까 싶어서 InnoDB Engine을 모방해보려고 했고, 관련 레퍼런스를 모으고 설계하던 중 도저히 2일만에 결과를 볼 수 있는 스케일이 아닐 것으로 판단했습니다. 포기할 거 다 포기하고 파일 저장만 한다면 구현이야 가능하겠지만 그러면 간단한 파일시스템과 다른게 뭐지 싶더라고요, 그래서 급하게 노선을 틀었지만 이도저도 아니게 된 것 같아서 조금 아쉽네요.. 선택을 할 때에는 견적을 잘 짜야한다는 것을 새롭게 느끼며 오늘 하루를 보냈습니다 흑흑..
+
+
+</div>
+</details>
+
+
+<details>
+<summary>목요일</summary>
+<div markdown="1">
+
+
+### multipart/form-data 타입 처리 및 이미지 저장
+
+이미지를 formdata로 전송하니까 content-type이 multipart/from-data인 경우에 많은 문제들이 발생했습니다.
+
+1. 기존에는 헤더와 바디를 `\r\n\r\n` 으로 구분해 2개로 나누도록 했었는데, 
+
+```ts
+const [headerMessage, bodyMessage] = message.split(`${CRLF}${CRLF}`);
+```
+
+multipart/form-data의 각 부분도 `\r\n\r\n`으로 구분되어 전송 돼 body에 모든 데이터를 담지 못하는 문제도 있었고.
+
+```
+------WebKitFormBoundary0yAiHzed6GMtuk87
+Content-Disposition: form-data; name="image"; filename="컨벤션.png"
+Content-Type: image/png
+
+------WebKitFormBoundary0yAiHzed6GMtuk87
+Content-Disposition: form-data; name="data"
+
+[object Object]
+```
+
+
+2. Request Message를 Buffer -> string 타입으로 변환해서 사용하다 보니 다시 String으로 바꿔도 이미지가 깨지는 현상이 발생하였습니다.
+
+```
+aB#5\x1A�U���F\x01�\x0B\x02\x02\r�\t#�X\x0F\x00�~\x00�\x06\x00\x00\x00\x12\b\x04\x1A\x00\x00\x00H \x10h\x00\x00\x00 �@�\x01\x00\x00�... 7572 more characters
+
+그만 알아보자..
+```
+
+위 문제를 해결하기 위해 Request Message를 Buffer 타입으로 관리해야 했고, 피의 사투가 시작되었습니다..
+
+```ts
+//parser.ts
+function parseMultipart(bodyBuffer: Buffer, contentType) {
+    const [, boundary] = (contentType as string).split(";");
+    const [, delimiter] = boundary.trim().split("boundary=");
+  
+    const bodyBufferSplit = splitBuffer(bodyBuffer, delimiter);
+    const multipart = bodyBufferSplit.slice(1, -1);
+  
+    const CRLFBuffer = Buffer.from(CRLF);
+    const multipartData = multipart.map((part) => {
+        const partObject: { [key: string]: Buffer | string } = {};
+  
+        const headerPart = part.subarray(0, part.indexOf(`${CRLFBuffer}${CRLFBuffer}`));
+        const bodyPart = part.subarray(part.indexOf(`${CRLFBuffer}${CRLFBuffer}`) + CRLFBuffer.length * 2);
+  
+        const headerPartSplit = splitBuffer(headerPart, CRLF);
+        headerPartSplit.forEach((headerLine) => {
+            const headerLineSplit = splitBuffer(headerLine, ";");
+            headerLineSplit.forEach((attribute) => {
+                let [key, value] = splitBuffer(attribute, ":");
+
+                if (value == null) [key, value] = splitBuffer(attribute, "=");
+                if (value != null) partObject[key.toString().toLowerCase().trim()] = value.toString().replaceAll("\"", "");
+            });
+        });
+       partObject[partObject.name.toString()] = splitBuffer(bodyPart, "--")[0];
+  
+        if ((partObject["content-type"] ?? "").toString().trim().startsWith("image")) {
+            if (!fs.existsSync(imageStoragePath)) fs.mkdirSync(imageStoragePath);
+
+fs.writeFileSync(path.join(imageStoragePath, partObject.filename.toString()), bodyPart);
+        }
+  
+        return partObject;
+    });
+  
+    return multipartData;
+}
+```
+
+멀티파트 데이터를 버퍼로 파싱하던 중 버퍼를 특정 문자열 버퍼로 분리하는 메서드가 없어서 따로 만들어 줬습니다.
+
+```ts
+//parser.ts
+function splitBuffer(buffer: Buffer, delimiter: string) {
+    const result = [buffer];
+    let splitCount = 0;
+  
+    while (splitCount !== result.length) {
+        splitCount++;
+        const lastIndex = result.length - 1;
+        const delimiterIndex = result[lastIndex].indexOf(Buffer.from(delimiter));
+  
+        if (delimiterIndex !== -1) {
+            const separatedPart = result[lastIndex].subarray(0, delimiterIndex);
+            const extraPart = result[lastIndex].subarray(delimiterIndex + Buffer.from(delimiter).length);
+            result[lastIndex] = separatedPart;
+            result.push(extraPart);
+        }
+    }
+  
+    return result;
+}
+```
+
+### 서버에서 이미지 전달
+
+서버에서는 파일을 읽은 이후 어떻게 전달할지에 대해 고민을 했습니다.
+
+글을 읽을 때 내용과 함께 보내줘야 해서 JSON 객체로 함께 보내줘야 한다고 생각했고, JSON 객체에 이미지를 넣기 위해서는 인코딩을 해서 보내야하는 작업이 추가되어야 했습니다.
+
+```ts
+//postController.ts
+            if (post.image != null) {
+                const thisPostImagePath = path.join(imageStoragePath, post["member_email"], post.image);
+                if (fs.existsSync(thisPostImagePath)) {
+                    post.image = fs.readFileSync(thisPostImagePath).toString("base64");
+                    post.imageType = CONTENT_TYPE[path.extname(thisPostImagePath)];
+                } else post.image = null;
+            }
+```
+
 
 </div>
 </details>

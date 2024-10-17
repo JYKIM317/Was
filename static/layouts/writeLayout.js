@@ -94,7 +94,7 @@ function addEvent() {
         if (image) {
             const formData = new FormData();
             formData.append('image', image);
-            formData.append('data', { title, content });
+            formData.append('data', JSON.stringify({ title, content }));
             fetchFormDataPOST(url + "/board/post", formData).then((response) => {
                 writeLoadingState = false;
                 const isCreate = 201;

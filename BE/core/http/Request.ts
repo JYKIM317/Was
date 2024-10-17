@@ -1,5 +1,6 @@
 import { cookieParser } from "./Cookie"
 import { CRLF } from "../../util/const"
+import { parseMultipart } from "../../util/parser";
 
 export class Request {
     headers: { [key: string]: string | object } = {};
@@ -9,15 +10,17 @@ export class Request {
     version: string;
     params: { [key: string]: string } = {};
     query: { [key: string]: string } = {};
-    error?: string;
 
-    constructor(message) {
+    constructor(message: Buffer) {
         this.parseMessage(message);
     }
 
-    private parseMessage(message) {
-        const [headerMessage, bodyMessage] = message.split(`${CRLF}${CRLF}`);
-        const [startLine, ...requestHeader] = headerMessage.split(CRLF);
+    private parseMessage(message: Buffer) {
+        const emptyLineIndex = message.indexOf(Buffer.from(`${CRLF}${CRLF}`));
+        const emptyLineLength = Buffer.from(`${CRLF}${CRLF}`).length;
+        const [headerMessage, bodyMessage] = [message.subarray(0, emptyLineIndex), message.subarray(emptyLineIndex + emptyLineLength)];
+        const [startLine, ...requestHeader] = headerMessage.toString().split(CRLF);
+
         this.parseStartLine(startLine);
         this.parseHeader(requestHeader);
         this.parseBody(bodyMessage);
@@ -39,18 +42,29 @@ export class Request {
         }
     }
 
-    private parseBody(bodyMessage) {
-        const bodyMessageExist = bodyMessage !== "";
+    private parseBody(bodyBuffer: Buffer) {
+        const isContentLengthInvalid = (this.headers["content-length"] ?? "0") != bodyBuffer.length.toString();
+        if (isContentLengthInvalid) throw new Error("Content-Length Invalid");
+
+        const bodyMessage = bodyBuffer.toString();
         const contentJSON = 'application/json';
-        if (this.headers["content-type"] === contentJSON) {
+        const contentMultipart = 'multipart/form-data';
+
+        if ((this.headers["content-type"] as string ?? "").startsWith(contentJSON)) {
             this.body = JSON.parse(bodyMessage);
+        } else if ((this.headers["content-type"] as string ?? "").startsWith(contentMultipart)) {
+            this.body = {};
+            const multipartData = parseMultipart(bodyBuffer, this.headers["content-type"]);
+            multipartData.forEach((part) => {
+                if (part.name === "data") {
+                    Object.assign(this.body, JSON.parse(part.data.toString()));
+                } else if (part.name === "image") {
+                    this.body["image"] = part.filename;
+                    this.body["imageFile"] = part.image;
+                }
+            });
         } else {
             this.body = bodyMessage;
-        }
-
-        if (bodyMessageExist) {
-            const checkContentLength = this.headers["content-length"] === Buffer.byteLength(bodyMessage).toString();
-            if (!checkContentLength) this.error = "Invalid Content-Length";
         }
     }
 }
