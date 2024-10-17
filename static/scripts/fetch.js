@@ -23,7 +23,7 @@ async function fetchPOST(uri, data = {}) {
 
 async function fetchFormDataPOST(uri, formData) {
     const accessToken = window.localStorage.getItem("accessToken");
-    if (accessToken != null) formData.append('data', { accessToken });
+    if (accessToken != null) formData.append('data', JSON.stringify({ accessToken }));
 
     return await fetch(uri, {
         method: "POST",
