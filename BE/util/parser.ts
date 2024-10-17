@@ -1,10 +1,4 @@
-import fs from "fs";
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { CRLF } from "./const";
-
-const filePath = fileURLToPath(import.meta.url);
-const imageStoragePath = path.join(filePath, "../../../", "imageStorage");
 
 function dateFormatParser(date: Date) {
     const year = date.getFullYear();
@@ -42,11 +36,6 @@ function parseMultipart(bodyBuffer: Buffer, contentType) {
             });
         });
         partObject[partObject.name.toString()] = splitBuffer(bodyPart, "--")[0];
-
-        if ((partObject["content-type"] ?? "").toString().trim().startsWith("image")) {
-            if (!fs.existsSync(imageStoragePath)) fs.mkdirSync(imageStoragePath);
-            fs.writeFileSync(path.join(imageStoragePath, partObject.filename.toString()), bodyPart);
-        }
 
         return partObject;
     });

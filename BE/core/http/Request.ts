@@ -60,6 +60,7 @@ export class Request {
                     Object.assign(this.body, JSON.parse(part.data.toString()));
                 } else if (part.name === "image") {
                     this.body["image"] = part.filename;
+                    this.body["imageFile"] = part.image;
                 }
             });
         } else {
