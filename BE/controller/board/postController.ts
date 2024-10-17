@@ -1,7 +1,12 @@
 import { PostRepository } from "../../repository/PostRepository"
 import { logger } from "../../logger";
+import fs from "fs";
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+const filePath = fileURLToPath(import.meta.url);
+const staticFilePath = path.join(filePath, "../../../../", "static");
+const imageStoragePath = path.join(filePath, "../../../../", "imageStorage");
 
 async function boardController(req, res) {
     try {
@@ -22,12 +27,17 @@ async function postController(req, res) {
         PostRepository.getPost(postId).then((response) => {
             const post = response[0];
             const isPostExist = post != null;
+            if (!isPostExist) return res.setStatus(404).send();
 
-            if (isPostExist) {
-                PostRepository.updatePostViewCount(postId);
-                res.setStatus(200).json(post);
+            if (post.image != null) {
+                const thisPostImagePath = path.join(imageStoragePath, post["member_email"], post.image);
+                fs.existsSync(thisPostImagePath)
+                    ? post.image = fs.readFileSync(thisPostImagePath).toString("base64")
+                    : post.image = null;
             }
-            else res.setStatus(404).send();
+
+            PostRepository.updatePostViewCount(postId);
+            res.setStatus(200).json(post);
         });
     } catch (e) {
         logger.error(e);
@@ -36,8 +46,6 @@ async function postController(req, res) {
 }
 
 function postPageContoller(req, res) {
-    const filePath = fileURLToPath(import.meta.url);
-    const staticFilePath = path.join(filePath, "../../../../", "static");
     const postPageFilePath = path.join(staticFilePath, "post.html");
     try {
         res.setStatus(200).sendFile(postPageFilePath);
