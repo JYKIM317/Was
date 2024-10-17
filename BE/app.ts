@@ -20,7 +20,7 @@ const server = net.createServer(socket => {
         socketData = Buffer.concat([socketData, data]);
 
         try {
-            const req = new Request(socketData.toString());
+            const req = new Request(socketData);
             const res = new Response(socket, req.headers.connection);
 
             routeHandler(req, res);
@@ -36,7 +36,6 @@ const server = net.createServer(socket => {
 function routeHandler(req, res) {
     const router = routeStack.find(req.path);
     if (!router) return res.setStatus(404).send();
-    if (req.error != null) res.setStatus(400).send(req.error);
     else try {
         router.handler(req, res);
     } catch (e) {
