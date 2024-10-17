@@ -37,8 +37,12 @@
 .post-content {
     margin: auto;
     width: 42.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
     font: var(--font-body-r);
     color: var(--color-black);
+
 }
 
 .post-navigation {

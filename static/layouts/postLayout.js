@@ -2,7 +2,7 @@ import { fetchPOST } from "../scripts/fetch.js";
 import { SmallButton } from "../components/Button.js";
 import { Navigation, Information, HorizontalHugFrame } from "../components/Frame.js";
 import { verifyAccessTokenValid } from "../scripts/authorization.js";
-import { PostInfo, PostContent, PostNavigation } from "../components/Post.js"
+import { PostInfo, PostContent, PostNavigation, ImageContent } from "../components/Post.js"
 
 const url = "http://localhost:8080";
 
@@ -33,7 +33,10 @@ async function render() {
 
     const postContentNode = document
         .createRange()
-        .createContextualFragment(PostContent(postData.content));
+        .createContextualFragment(PostContent([
+            postData.image != null ? ImageContent(postData.image, postData.imageType) : "",
+            postData.content,
+        ]));
 
     const boardNavigationNode = document
         .createRange()

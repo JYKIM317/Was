@@ -6,10 +6,15 @@ const PostInfo = (author, createAt, viewCount) => {
     </div>`;
 }
 
-const PostContent = (content) => {
+const PostContent = (children = []) => {
+    const childrenNode = children.join("\n");
     return `<div class="post-content">
-        ${content}
+        ${childrenNode}
     </div>`;
+}
+
+const ImageContent = (image, contentType) => {
+    return `<img id="post-content-image" src="data:${contentType};base64,${image}" alt="image" />`;
 }
 
 const PostNavigation = (id, children = []) => {
@@ -19,4 +24,4 @@ const PostNavigation = (id, children = []) => {
     </div>`;
 }
 
-export { PostInfo, PostContent, PostNavigation }
+export { PostInfo, PostContent, PostNavigation, ImageContent }
