@@ -1,9 +1,13 @@
+# web-p2-was
+
+웹 풀스택 프로젝트 2 Was (TCP 모듈을 이용한 HTTP 구현 서버)
 
 <details>
 <summary>1주차</summary>
 <div markdown="1">
 
 ## dev 시작하기
+
 ```terminal
 cd FE
 
@@ -19,6 +23,7 @@ docker compose up
 
 nodemon
 ```
+
 # 🔥 우리의 주간 계획서 (1)
 
 ## 계획
@@ -27,114 +32,116 @@ nodemon
 
 ### 로거 (honux: winston 추천)
 
-  - 로거 라이브러리 선택과 기술적 근거 찾기
+- 로거 라이브러리 선택과 기술적 근거 찾기
 
 ### 웹 페이지 구현
 
-  - CSS 컬러 및 사이즈 템플릿 선언
+- CSS 컬러 및 사이즈 템플릿 선언
+- 리액트 학습
+- 컴포넌트 구현
+  - 로그인/회원가입 네비게이터 버튼 컴포넌트 구현
+  - 입력 폼 컴포넌트 구현
+  - 로그인 및 회원가입 동작 버튼 구현
+- 메인 페이지 구현
+- 로그인(Login) 페이지 구현
+- 회원가입(Register) 페이지 구현
+- 가입 완료 페이지 구현
+
+### NET 모듈 사용해서 HTTP 응답
+
+- HTTP 모듈의 동작 방식 함께 학습하기
+
+- 1단계
+
+  - 로거로 Request message를 확인하고, 출력
+  - http://localhost:3000/index.html 접속 시 정적 파일 응답
+
+- 2단계
+
+  - HTTP Request message 구문 분석 후
+    - URI에 맞는 응답
+    - Content Type 분석 후 응답 지원
+      ```
+      // 지원할 컨텐츠 타입의 확장자 목록
+      html
+      css
+      js
+      ico
+      png
+      jpg
+      ```
+
+- 3단계
+
+  - 요청에 맞게 회원가입 페이지 반환
+  - HTTP GET 요청으로 회원가입 정보 전달 (URI로 유저정보 전달)  
+    ex) /create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
+  - 유저 생성 및 저장 (DB로)
+
+- 추가 요구 사항
+  - 1단계: cluster(멀티 프로세스) 또는 worker thread(멀티 스레드) 활용
+  - 3단계: 테스트 라이브러리를 활용해서 단위 테스트를 적용
+
+## 📝 구체적인 학습 및 구현 계획
+
+### 월요일
+
+- 설계 architecture.md 작성
+- CSS 컬러 및 사이즈 템플릿 선언
+- 로거 라이브러리 선택과 기술적 근거 찾기
+- HTTP 모듈의 동작 방식 함께 학습하기
+
+- 1단계
+  - 로거로 Request message를 확인하고, 출력
+  - http://localhost:3000/index.html 접속 시 정적 파일 응답
+
+### 화요일
+
+- 2단계
+  - HTTP Request message 구문 분석 후
+    - URI에 맞는 응답
+    - Content Type 분석 후 응답 지원
+      ```
+      // 지원할 컨텐츠 타입의 확장자 목록
+      html
+      css
+      js
+      ico
+      png
+      jpg
+      ```
+
+### 수요일
+
+- 웹 페이지 구현
   - 리액트 학습
   - 컴포넌트 구현
     - 로그인/회원가입 네비게이터 버튼 컴포넌트 구현
     - 입력 폼 컴포넌트 구현
     - 로그인 및 회원가입 동작 버튼 구현
-  - 메인 페이지 구현
   - 로그인(Login) 페이지 구현
   - 회원가입(Register) 페이지 구현
   - 가입 완료 페이지 구현
 
-### NET 모듈 사용해서 HTTP 응답
-
-  - HTTP 모듈의 동작 방식 함께 학습하기
-
-  - 1단계
-    - 로거로 Request message를 확인하고, 출력
-    - http://localhost:3000/index.html 접속 시 정적 파일 응답
-
-  - 2단계
-    - HTTP Request message 구문 분석 후
-      - URI에 맞는 응답
-      - Content Type 분석 후 응답 지원
-        ```
-        // 지원할 컨텐츠 타입의 확장자 목록
-        html
-        css
-        js
-        ico
-        png
-        jpg
-        ```
-
-  - 3단계
-    - 요청에 맞게 회원가입 페이지 반환
-    - HTTP GET 요청으로 회원가입 정보 전달 (URI로 유저정보 전달)  
-      ex) /create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
-    - 유저 생성 및 저장 (DB로)
-
-  - 추가 요구 사항
-    - 1단계: cluster(멀티 프로세스) 또는 worker thread(멀티 스레드) 활용
-    - 3단계: 테스트 라이브러리를 활용해서 단위 테스트를 적용
-    
-
-## 📝 구체적인 학습 및 구현 계획
-
-### 월요일
-  - 설계 architecture.md 작성
-  - CSS 컬러 및 사이즈 템플릿 선언
-  - 로거 라이브러리 선택과 기술적 근거 찾기
-  - HTTP 모듈의 동작 방식 함께 학습하기
-
-  - 1단계
-    - 로거로 Request message를 확인하고, 출력
-    - http://localhost:3000/index.html 접속 시 정적 파일 응답
-
-
-### 화요일
-
-  - 2단계
-    - HTTP Request message 구문 분석 후
-      - URI에 맞는 응답
-      - Content Type 분석 후 응답 지원
-        ```
-        // 지원할 컨텐츠 타입의 확장자 목록
-        html
-        css
-        js
-        ico
-        png
-        jpg
-        ```
-
-### 수요일
-
-  - 웹 페이지 구현
-    - 리액트 학습
-    - 컴포넌트 구현
-      - 로그인/회원가입 네비게이터 버튼 컴포넌트 구현
-      - 입력 폼 컴포넌트 구현
-      - 로그인 및 회원가입 동작 버튼 구현
-    - 로그인(Login) 페이지 구현
-    - 회원가입(Register) 페이지 구현
-    - 가입 완료 페이지 구현
-
 ### 목요일
 
-  - 3단계
-    - 요청에 맞게 회원가입 페이지 반환
-    - HTTP GET 요청으로 회원가입 정보 전달 (URI로 유저정보 전달)  
-      ex) /create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
-    - 유저 생성 및 저장 (DB로)
+- 3단계
+  - 요청에 맞게 회원가입 페이지 반환
+  - HTTP GET 요청으로 회원가입 정보 전달 (URI로 유저정보 전달)  
+    ex) /create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
+  - 유저 생성 및 저장 (DB로)
 
 ### 시간이 남는다면
 
-  - 웹 페이지 구현
-    - 메인 페이지 구현
+- 웹 페이지 구현
 
-  - 추가 요구 사항
-    - 1단계: cluster(멀티 프로세스) 또는 worker thread(멀티 스레드) 활용
-    - 3단계: 테스트 라이브러리를 활용해서 단위 테스트를 적용
+  - 메인 페이지 구현
+
+- 추가 요구 사항
+  - 1단계: cluster(멀티 프로세스) 또는 worker thread(멀티 스레드) 활용
+  - 3단계: 테스트 라이브러리를 활용해서 단위 테스트를 적용
 
 ## ✏️ 고민과 해결 과정 쌓아가기
-
 
 <details>
 <summary>월요일</summary>
@@ -149,7 +156,6 @@ nodemon
 #### 흐름
 
 <img src="https://i.ibb.co/nD2PSg9/Pasted-image-20240923222932.png"  alt="flow">
-
 
 ### 로거 라이브러리 선택과 기술적 근거 찾기
 
@@ -197,24 +203,22 @@ npm install winston
 
 ```ts
 //logger.ts
-import winston from 'winston';
+import winston from "winston";
 
 const logger = winston.createLogger({
-    level: 'debug',
-    format: winston.format.json(),
-    transports: [
-        new winston.transports.Console()
-    ]
+  level: "debug",
+  format: winston.format.json(),
+  transports: [new winston.transports.Console()],
 });
 
-export { logger }
+export { logger };
 ```
 
 이후 export한 logger를 app.ts에서 응답 확인용으로 사용했습니다.
 
 ```ts
 //app.ts
-import { logger } from './logger';
+import { logger } from "./logger";
 
 logger.debug(request);
 ```
@@ -232,17 +236,19 @@ HTTP 요청에 정적 파일을 응답해주기 위해서 index.html을 만들�
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" crossorigin
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link
+      rel="stylesheet"
+      crossorigin
       href="https://cdn.jsdelivr.net/npm/reset-css@5.0.2/reset.min.css"
     />
-</head>
-<body>
-  <span> HI </span>
-</body>
+  </head>
+  <body>
+    <span> HI </span>
+  </body>
 </html>
 ```
 
@@ -285,14 +291,14 @@ HTTP Request Message를 전달받았을 때 요청에 대한 내용을 편리하
 ```ts
 // ./DTO/Request.ts
 class Request {
-    headers: {[key: string]: string} = {};
-    body: string;
-    method: string;
-    path: string;
-    version: string;
-    constructor(msg) {
-        this.parseMsg(msg);
-    }
+  headers: { [key: string]: string } = {};
+  body: string;
+  method: string;
+  path: string;
+  version: string;
+  constructor(msg) {
+    this.parseMsg(msg);
+  }
 }
 ```
 
@@ -320,7 +326,6 @@ HTTP Reqeust Message를 분리할 때 요청에 들어오는 Header와 Body를 �
     }
 ```
 
-
 ### HTTP Response 정의하기
 
 HTTP Request에 대한 정의가 끝나 이용하기 편한 상태로 만들어줬고, 요청에 따라
@@ -329,18 +334,22 @@ index.html 뿐만 아니라 다른 확장자의 파일도 응답해주고자 반
 ```ts
 // ./DTO/Response.ts
 export class Response {
-    responseMsg:string;
-    connection:string;
-    constructor(statusCode, connection, ext: string|null = null, body: string|null = null) {
-        this.connection = connection;
-        this.setStatusLine(statusCode);
-        this.setHeaders(connection, ext, body);
-    }
+  responseMsg: string;
+  connection: string;
+  constructor(
+    statusCode,
+    connection,
+    ext: string | null = null,
+    body: string | null = null
+  ) {
+    this.connection = connection;
+    this.setStatusLine(statusCode);
+    this.setHeaders(connection, ext, body);
+  }
 }
 ```
 
-Response 클래스에서는 HTTP Response Message String을 구성하기 위해 인자를 전달받고, 이를 통해 `responseMsg`를 구성하는 내부 메서드들로 구성되어 있습니다. 
-
+Response 클래스에서는 HTTP Response Message String을 구성하기 위해 인자를 전달받고, 이를 통해 `responseMsg`를 구성하는 내부 메서드들로 구성되어 있습니다.
 
 ### HTTP Response 객체에서 컨텐츠 타입을 지정하는 방법
 
@@ -354,18 +363,16 @@ Response 클래스에서는 HTTP Response Message String을 구성하기 위해 
 ```ts
 // ./DTO/Response.ts
 
-    //setHeaders() {
-    if (body) {
-        this.responseMsg += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
-        this.responseMsg += `Content-Length: ${body.length}\r\n`;
-	}
+//setHeaders() {
+if (body) {
+  this.responseMsg += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
+  this.responseMsg += `Content-Length: ${body.length}\r\n`;
+}
 ```
-
 
 ### Response 객체 응답 확인
 
 이후 만들어진 Response 인스턴스의 메시지를 전달했을 때 정상적으로 수신이 되는지 확인해줬습니다.
-
 
 ```
 //정상적인 응답
@@ -397,8 +404,8 @@ express의 router와 유사하게 `Router.requestHandler`에서 파라미터로 
 ```ts
 // ./route/Router.ts
 
-  //requestHandler()
-    if(exist) return this.route[req.method][routePath](req);
+//requestHandler()
+if (exist) return this.route[req.method][routePath](req);
 ```
 
 ### HTTP Path 구분에 관하여
@@ -409,19 +416,19 @@ HTTP 요청에 맞게 정적 파일을 응답해주기 위해서 요청의 Path�
 
 ```ts
 class Router {
-    //경로 보관
-    route = {
-        "GET": {},
-        "POST": {},
-        "PUT": {},
-        "PATCH": {},
-        "DELETE": {},
-        "UPDATE": {}
-    }
-    //경로 설정
-    get(path: string, func: Function) {
-        this.route.GET[path] = func;
-    }
+  //경로 보관
+  route = {
+    GET: {},
+    POST: {},
+    PUT: {},
+    PATCH: {},
+    DELETE: {},
+    UPDATE: {},
+  };
+  //경로 설정
+  get(path: string, func: Function) {
+    this.route.GET[path] = func;
+  }
 }
 ```
 
@@ -444,7 +451,7 @@ class Router {
 //while ->등록 여부 검사  o = 탈출 / x = 한 개 빼는 로직 실행 -> 검사 로직 / 한 개 빼는 로직이 실패할 경우 (root) => 404 탈출
 
 /*
-staticRoute['/stylesheets/index.css'] << 검사 
+staticRoute['/stylesheets/index.css'] << 검사
 x -> staticRoute['/stylesheets']; << 검사
 x -> staticRoute['/'] < 검사
 x -> 404
@@ -478,7 +485,7 @@ staticRoute['/'] << method 있을 수 있음
         if (path.endsWith('/')) {
             path = path.slice(0, -1);
         }
-        
+
         const lastSlashIndex = path.lastIndexOf('/');
 
         if(lastSlashIndex === - 1){
@@ -488,7 +495,6 @@ staticRoute['/'] << method 있을 수 있음
     }
 ```
 
-
 ### staticController 구현
 
 정적 파일을 서빙하는 컨트롤러를 구현했습니다.
@@ -497,35 +503,42 @@ staticRoute['/'] << method 있을 수 있음
 기본경로 `/`는 `index.html`을 반환하도록 하였습니다.
 
 ```ts
-const filePath = path.join(staticFilePath,  req.path === '/' ? 'html/index.html' : req.path);
-    const ext = path.extname(filePath);
-    if(fs.existsSync(filePath)){
-        const file = fs.readFileSync(filePath,'utf-8');
-        const response = new Response(200, req.headers.Connection ?? "close", ext, file);
-        return response;
-    }
-    const response = new Response(404, req.headers.Connection ?? "close");
-    return response;
+const filePath = path.join(
+  staticFilePath,
+  req.path === "/" ? "html/index.html" : req.path
+);
+const ext = path.extname(filePath);
+if (fs.existsSync(filePath)) {
+  const file = fs.readFileSync(filePath, "utf-8");
+  const response = new Response(
+    200,
+    req.headers.Connection ?? "close",
+    ext,
+    file
+  );
+  return response;
+}
+const response = new Response(404, req.headers.Connection ?? "close");
+return response;
 ```
 
 ### 정적 파일 응답 결과
+
 <img src="https://i.postimg.cc/4N47dzhS/2024-09-24-6-39-23.png" alt="2024-09-24-6-34-42" 
  width=350px>
 
 </div>
 </details>
 
-
 <details>
 <summary>수요일</summary>
 <div markdown="1">
-
 
 ### 브라우저 화면 구현하기
 
 프론트엔드 코드를 작성하기 이전에 저희는 고민을 했습니다.
 
-이전에 템플릿 엔진으로 SR을, 바닐라 자바스크립트, html, CSS를 이용해 CSR을 경험해봤는데 
+이전에 템플릿 엔진으로 SR을, 바닐라 자바스크립트, html, CSS를 이용해 CSR을 경험해봤는데
 학습을 위해 제약이 있는 서버측 코드와 달리 제약이 없는 프론트엔드 파트에서도 새로운 도전을 해볼 수 있지 않을까? 라는 고민이었습니다.
 
 구현해야 할 웹 페이지 디자인을 봤을 때 재사용하는 컴포넌트가 굉장히 많아 보였고,
@@ -557,19 +570,20 @@ npm run dev
 
 전체 화면을 구성하기 이전에 디자인을 토대로 재사용되는 컴포넌트들을 먼저 작성하기로 했습니다.
 
-대표적으로 입력 폼, 네비게이터, 버튼이 재사용됨을 확인했고 
+대표적으로 입력 폼, 네비게이터, 버튼이 재사용됨을 확인했고
 
 해당 컴포넌트와 적용될 stylesheets를 작성해줬씁니다.
 
 ```tsx
 // FE/src/components/Button.tsx
-const Button: React.FC<ButtonProps> = ({ text, size, onClick, disabled = false }) => {
+const Button: React.FC<ButtonProps> = ({
+  text,
+  size,
+  onClick,
+  disabled = false,
+}) => {
   return (
-    <button 
-      className={`button ${size}`} 
-      onClick={onClick} 
-      disabled={disabled}
-    >
+    <button className={`button ${size}`} onClick={onClick} disabled={disabled}>
       {text}
     </button>
   );
@@ -579,25 +593,25 @@ const Button: React.FC<ButtonProps> = ({ text, size, onClick, disabled = false }
 ```tsx
 // FE/src/components/InputBox.tsx
 const InputBox: React.FC<InputBoxProps> = ({
-    label,
-    type,
-    placeholder,
-    value,
-    onChange,
-    required = true,
+  label,
+  type,
+  placeholder,
+  value,
+  onChange,
+  required = true,
 }) => {
-    return(
-        <div className = "input-container" >
-            <label>{label}</label>
-            <input
-                type={type}
-                placeholder={placeholder}
-                value={value}
-                onChange={onChange}
-                required={required}
-            />
-        </div>
-    )
+  return (
+    <div className="input-container">
+      <label>{label}</label>
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        required={required}
+      />
+    </div>
+  );
 };
 ```
 
@@ -607,37 +621,33 @@ const InputBox: React.FC<InputBoxProps> = ({
 
 ```tsx
 // FE/src/components/Frame.tsx
-const Navigation: React.FC<NavigationProps> = ({title, children}) => {
-    return (
-        <div className="navigation">
-            <h3>{title}</h3>
-            {children}
-        </div>
-    );
-}
+const Navigation: React.FC<NavigationProps> = ({ title, children }) => {
+  return (
+    <div className="navigation">
+      <h3>{title}</h3>
+      {children}
+    </div>
+  );
+};
 
-const Information: React.FC<TitleProps> = ({title}) => {
-    return (
-        <div className="information">
-            <h1>{title}</h1>
-        </div>
-    );
-}
+const Information: React.FC<TitleProps> = ({ title }) => {
+  return (
+    <div className="information">
+      <h1>{title}</h1>
+    </div>
+  );
+};
 
-const HugFrame: React.FC<{children: React.ReactNode }> = ({children}) => {
-    return (
-        <div className="hug-frame">
-            {children}
-        </div>
-    );
-}
+const HugFrame: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return <div className="hug-frame">{children}</div>;
+};
 ```
 
 실제로 사용되는 모습은 아래처럼 구성중입니다.
 
 ```tsx
 // FE/src/main.tsx
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Router>
       <Routes>
@@ -645,31 +655,50 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
-  </StrictMode>,
-)
+  </StrictMode>
+);
 
 // FE/src/layouts/Login.tsx
 const Login: React.FC = () => {
-      return (
-        <>
-            <Navigation title="HELLO, WEB!">
-                <Button text="로그인/회원가입" size="small" onClick={navigateToRegister} />
-            </Navigation>
-            <Information title="로그인" />
-            <HugFrame>
-                <InputBox label="이메일" type="email" placeholder="이메일을 입력해주세요" value={email} onChange={(e) => setEmail(e.target.value)} />
-                <InputBox label="비밀번호" type="password" placeholder="비밀번호를 입력해주세요" value={password} onChange={(e) => setPassword(e.target.value)} />
-            </HugFrame>
-            <HugFrame>
-                <Button text="로그인" size="large" onClick= {fetchLogin}/>
-                <span className='signup-info'>
-                  아직 회원가입을 안하셨나요?
-                  <a href="http://localhost:5417/signup" className="text-link"> 회원가입하기</a>
-                </span>
-            </HugFrame>
-        </>
-    );
-}
+  return (
+    <>
+      <Navigation title="HELLO, WEB!">
+        <Button
+          text="로그인/회원가입"
+          size="small"
+          onClick={navigateToRegister}
+        />
+      </Navigation>
+      <Information title="로그인" />
+      <HugFrame>
+        <InputBox
+          label="이메일"
+          type="email"
+          placeholder="이메일을 입력해주세요"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <InputBox
+          label="비밀번호"
+          type="password"
+          placeholder="비밀번호를 입력해주세요"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </HugFrame>
+      <HugFrame>
+        <Button text="로그인" size="large" onClick={fetchLogin} />
+        <span className="signup-info">
+          아직 회원가입을 안하셨나요?
+          <a href="http://localhost:5417/signup" className="text-link">
+            {" "}
+            회원가입하기
+          </a>
+        </span>
+      </HugFrame>
+    </>
+  );
+};
 ```
 
 ### 만들어진 결과 (회원가입 페이지)
@@ -677,12 +706,11 @@ const Login: React.FC = () => {
 <img src="https://i.ibb.co/JqWJtt5/image.png" alt="register">
 
 이번 주를 계획할 때는 가입 완료 페이지도 따로 만들 계획을 세웠지만,
-로그인 페이지와 기능이 동일하기 때문에 기존 로그인 페이지를 재활용해 리디렉션 후 
+로그인 페이지와 기능이 동일하기 때문에 기존 로그인 페이지를 재활용해 리디렉션 후
 DOM Object를 수정하는 방향으로 결정했습니다.
 
 </div>
 </details>
-
 
 <details>
 <summary>목요일</summary>
@@ -700,18 +728,18 @@ DOM Object를 수정하는 방향으로 결정했습니다.
 제안하고 싶은 부분
 
 1. path가 라우터에 등록될 때 `:` 로 시작하는 경우 뒤의 문자열을 날려서 변수 Path임을 파악할 수 있게 만드는 로직 작성
-   
-2. request path에 대해 모든 경우의 수를 만드는 로직 작성  
-   ex) /user/data -> /user/:, /:/data, /:/:  
+
+2. request path에 대해 모든 경우의 수를 만드는 로직 작성
+   ex) /user/data -> /user/:, /:/data, /:/:
 (경우의 수 만들 때 변수 : 로 변환되는 Path는 따로 parameters로 저장되어야 함)
 
 3. 경우의 수로 route 탐색하도록 변경
-   
+
 4. parameters를 분리해서 반환하는 함수 만들기 (편집됨)
 */
 ```
 
-위와 같이 정리했을 때 대부분은 구현을 간단하게 할 수 있었지만 
+위와 같이 정리했을 때 대부분은 구현을 간단하게 할 수 있었지만
 2.request path에 대해 모든 경우의 수를 만드는 로직 작성 를 만드는 과정이 조금 복잡해졌는데
 
 path를 각각 분리한 이후 모든 자리에 `:`으로 변환하며 path를 다시 재조합해 저장하는 과정과,
@@ -724,7 +752,7 @@ path를 각각 분리한 이후 모든 자리에 `:`으로 변환하며 path를 
 ```ts
     private createCaseOfRoute(pathList: Array<string>) : Route[] {
         const caseResult: Route[] = [];
-        
+
         pathList.forEach((_, index) => {
             const tempPathList = [...pathList];
             let tempParameters: Array<string> = [];
@@ -739,7 +767,7 @@ path를 각각 분리한 이후 모든 자리에 `:`으로 변환하며 path를 
             tempParameters = [];
         });
         caseResult.push({path: "/" + pathList.join("/"), parameters: []});
-        
+
         const sortedCaseResult = this.sortCaseOfRoutes(caseResult);
         return sortedCaseResult;
     }
@@ -752,37 +780,34 @@ path를 각각 분리한 이후 모든 자리에 `:`으로 변환하며 path를 
 나중에 개선한다면?
 https://dear-sawfish-e55.notion.site/1-10dd6568ef4b803f8e23cf39bac56c20
 
-
 ### router를 분리했을 때 요청으로 들어온 경로를 어떤 router에 연결할 것인가
 
 각 기능별로 라우터를 분리하였을 때, 엔트리포인트인 `app.ts`에서 `request.path`에 적합한 `Router` 객체를 어떤 방식으로 매칭할 지에 대한 고민이 있었습니다.
 실제 express에서는 전역미들웨어를 통해 위의 문제를 처리하지만, 저희는 미들웨어를 구현하기는 무리가 있다고 판단하여 `RouteStack`에서 이를 처리하기로 하였습니다.
 
-
 ```ts
 // ./route/RouteStack.ts
 
 class RouteStack {
-    routes: Array<{ [key: string]: Router }> = [];
+  routes: Array<{ [key: string]: Router }> = [];
 
-    use(route, router) {
-        this.routes.push({[route]: router});
-        this.routes.sort((a, b) => {
-            const aKey = Object.keys(a)[0];
-            const bKey = Object.keys(b)[0];
-            
-            return bKey.length - aKey.length
-        });
-    }
+  use(route, router) {
+    this.routes.push({ [route]: router });
+    this.routes.sort((a, b) => {
+      const aKey = Object.keys(a)[0];
+      const bKey = Object.keys(b)[0];
 
-    find(path) {
-        for(let i = 0; i < this.routes.length; i++) {
-            const routePath = Object.keys(this.routes[i])[0];
-            if(path.startsWith(routePath))
-                return this.routes[i][routePath];
-        }
-        return null;
+      return bKey.length - aKey.length;
+    });
+  }
+
+  find(path) {
+    for (let i = 0; i < this.routes.length; i++) {
+      const routePath = Object.keys(this.routes[i])[0];
+      if (path.startsWith(routePath)) return this.routes[i][routePath];
     }
+    return null;
+  }
 }
 ```
 
@@ -794,8 +819,6 @@ class RouteStack {
 처음에 `request.path`와 라우터 객체를 어떻게 매칭 시킬 것인가에 대한 고민이 많았습니다.
 실제 express의 라우터에서는 등록된 순서대로 경로를 매칭하게 되지만, 저희는 이 기능의 필요성에 대해 의문을 가졌고
 이러한 방식 대신 `Longest prefix matching` 방식을 이용하여, 배열 정렬을 사용한 더 단순한 구조를 채택하였습니다.
-
-
 
 ### 리액트 빌드
 
@@ -820,10 +843,10 @@ VM을 이용하여 연결하는 것은 현재 프로젝트를 공유하고 있�
 
 클라우드의 경우 현재 3인이서 한 개의 로컬 PC에서 공유하며 프로젝트를 수행하고 있기 때문에 이후에 개인으로 분할됐을 때 활용하기 어렵다고 판단했습니다.
 
-Docker를 사용한 이유 
+Docker를 사용한 이유
+
 1. VM보다 성능 상 이점,
 2. 도커 허브에서 컨테이너 이미지를 이용해 보다 간편한 환경 구성이 가능
-
 
 `docker-compose.yml`과 `Dockerfile`을 생성해 간편하게 환경을 구성할 수 있었고, 연결 또한 문제 없이 수행할 수 있었습니다.
 
@@ -858,7 +881,6 @@ CMD ["mysqld"]
 lmysql의 공식 이미지를 사용하였습니다.
 환경 변수의 경우 추후 `docker-compose.yml`에서 받아오도록 개선할 예정입니다.
 
-
 ```
 # ./docker-compose.yml
 
@@ -886,7 +908,6 @@ services:
 `volumn` 연결을 통해 `init.sql`을 컨테이너로 전달시켜 DB가 자동으로 초기화 되도록 하였습니다.
 추후 보안을 위해 도커 관련 파일에서도 `.env` 파일을 사용할 예정입니다.
 
-
 ### DB 연결
 
 도커를 통해 MySQL을 이용할 수 있는 환경을 구성해줬고, 서버에서도 MySQL에 연결할 수 이도록 만들어 줬습니다.
@@ -899,19 +920,19 @@ npm install mysql2
 
 ```ts
 class DB1004 {
-    connectionPool: mysql.Pool;
-    constructor() {
-        dotenv.config();
-        this.connectionPool = mysql.createPool({
-            host: process.env.DB_HOST,
-            port: parseInt(process.env.DB_PORT!),
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_DATABASE,
-            connectionLimit: 10,
-            queueLimit: 0
-        });
-    }
+  connectionPool: mysql.Pool;
+  constructor() {
+    dotenv.config();
+    this.connectionPool = mysql.createPool({
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT!),
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_DATABASE,
+      connectionLimit: 10,
+      queueLimit: 0,
+    });
+  }
 }
 ```
 
@@ -928,7 +949,6 @@ class DB1004 {
       }
 ```
 
-
 ### 회원가입 로직 구현
 
 회원가입의 경우 `userRouter`와 `userController`에서 담당하게 됩니다.
@@ -936,15 +956,11 @@ class DB1004 {
 이를 `request` 객체에 담아 `userController`로 넘기게 되고, 컨트롤러에서는 `dao`를 이용하여 DB의 `users` 테이블에 레코드를 추가합니다.
 현재는 컨트롤러 단에서 `dao`에 직접 접근하고 있지만, 추후 `repository` 계층을 추가할 예정입니다.
 
-
 </div>
 </details>
 
-
 </div>
 </details>
-
-
 
 <details>
 <summary>2주차</summary>
@@ -956,57 +972,56 @@ class DB1004 {
 
 ⭕ POST로 회원가입
 
-	⭕ HTTP Message Body Parser 구현
+    ⭕ HTTP Message Body Parser 구현
 
-	⭕ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request)
+    ⭕ Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request)
 
-	⭕ 서버 측 회원가입 비즈니스 로직 구현
+    ⭕ 서버 측 회원가입 비즈니스 로직 구현
 
-	⭕ 성공 시, 실패 시 응답 구현 
+    ⭕ 성공 시, 실패 시 응답 구현
 
-		- 성공 시 로그인 페이지로 Redirection (302)
-		- 실패 시 서버 에러 응답
+    	- 성공 시 로그인 페이지로 Redirection (302)
+    	- 실패 시 서버 에러 응답
 
 ⭕ VM 환경의 DB와 연동
 
 ⭕ 쿠키를 이용한 로그인
 
-	⭕ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
+    ⭕ 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
 
-	⭕ HTTP Message 쿠키 검사 로직 추가
+    ⭕ HTTP Message 쿠키 검사 로직 추가
 
-	⭕ HTTP Message 쿠키를 활용할 수 있도록 변경
+    ⭕ HTTP Message 쿠키를 활용할 수 있도록 변경
 
-	⭕ Session 저장
+    ⭕ Session 저장
 
-	❌ 쿠키의 SID와 세션을 이용해 로그인 유지 기능 추가
+    ❌ 쿠키의 SID와 세션을 이용해 로그인 유지 기능 추가
 
-	❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
+    ❌ 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
 
 ⭕ 라우트 방식 개선
 
-❌ 리액트에서 바닐라로 FE 사양 변경 
+❌ 리액트에서 바닐라로 FE 사양 변경
 
-	❌ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+    ❌ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
 
-	❌ 전체 페이지를 리액트에서 바닐라로 변환
+    ❌ 전체 페이지를 리액트에서 바닐라로 변환
 
-	❌ 웹 프론트 이벤트 및 기능 Script로 변환
+    ❌ 웹 프론트 이벤트 및 기능 Script로 변환
 
 ❌ 웹 프론트 구현
 
-	❌ 메인 페이지 구현
+    ❌ 메인 페이지 구현
 
 ❌ 테스트 코드 작성
 
-  ⭕ Jest와 TS에 관한 테스트 환경 구성
+⭕ Jest와 TS에 관한 테스트 환경 구성
 
-	❌ Jest 세부 기능 학습
+    ❌ Jest 세부 기능 학습
 
-	❌ HTTP Message에 대한 테스트 코드 작성
-  
-	❌ 비즈니스 로직에 대한 테스트 코드 작성
+    ❌ HTTP Message에 대한 테스트 코드 작성
 
+    ❌ 비즈니스 로직에 대한 테스트 코드 작성
 
 ## 📝 학습 및 구현 계획
 
@@ -1015,43 +1030,46 @@ class DB1004 {
 - VM 환경의 DB와 연동
 
 - POST로 회원가입
-	- HTTP Message Body Parser 구현
-	- Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
-	- 서버 측 회원가입 비즈니스 로직 구현
-	- 성공 시, 실패 시 응답 구현 
-		- 성공 시 로그인 페이지로 Redirection (302)
-		- 실패 시 서버 에러 응답
+
+  - HTTP Message Body Parser 구현
+  - Body Length와 HTTP Header Content-Length 가 같은지 검사하는 로직 구현 (400 Bad Request
+  - 서버 측 회원가입 비즈니스 로직 구현
+  - 성공 시, 실패 시 응답 구현
+    - 성공 시 로그인 페이지로 Redirection (302)
+    - 실패 시 서버 에러 응답
 
 - 라우트 방식 개선
 
 ### 화요일
 
 - 쿠키를 이용한 로그인
-	- 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
-	- HTTP Message 쿠키 검사 로직 추가
-	- HTTP Message 쿠키를 활용할 수 있도록 변경
-	- Redis를 이용해 Session 저장
-	- 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
-	- 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
- 
+  - 로그인 성공 시 서버에서 쿠키에 SID 설정해서 응답
+  - HTTP Message 쿠키 검사 로직 추가
+  - HTTP Message 쿠키를 활용할 수 있도록 변경
+  - Redis를 이용해 Session 저장
+  - 쿠키의 SID와 Redis를 이용해 로그인 유지 기능 추가
+  - 로그아웃 요청 시 세션 및 쿠키 삭제 로직 추가
+
+
+
 ### 수요일
 
 - Custom Error 구현
-  
-- 리액트에서 바닐라로 FE 사양 변경 
-	- 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
-	- 전체 페이지를 리액트에서 바닐라로 변환
-	- 웹 프론트 이벤트 및 기능 Script로 변환
+- 리액트에서 바닐라로 FE 사양 변경
+
+  - 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+  - 전체 페이지를 리액트에서 바닐라로 변환
+  - 웹 프론트 이벤트 및 기능 Script로 변환
 
 - 웹 프론트 구현
-	- 메인 페이지 구현
+  - 메인 페이지 구현
 
 ### 목요일
 
 - 테스트 코드 작성
-	- Jest 세부 기능 학습
-	- HTTP Message에 대한 테스트 코드 작성
-	- 비즈니스 로직에 대한 테스트 코드 작성
+  - Jest 세부 기능 학습
+  - HTTP Message에 대한 테스트 코드 작성
+  - 비즈니스 로직에 대한 테스트 코드 작성
 
 ## ✏️ 고민과 해결 과정 쌓아가기
 
@@ -1097,22 +1115,25 @@ FLUSH PRIVILEGES;
 
 ```tsx
 //기존 FE/src/layouts/Register.tsx
-  const fetchRegister  = async () => {
-    await fetch(`${baseURL}/user/register?email=${email}&password=${password}&name=${name}`, {
-        method: "GET"
-    });
-  }
+const fetchRegister = async () => {
+  await fetch(
+    `${baseURL}/user/register?email=${email}&password=${password}&name=${name}`,
+    {
+      method: "GET",
+    }
+  );
+};
 ```
 
 ```tsx
 //변경 FE/src/layouts/Register.tsx
-  const fetchRegister = async () => {
-    await fetch(`${baseURL}/user/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name })
-    });
-  }
+const fetchRegister = async () => {
+  await fetch(`${baseURL}/user/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, name }),
+  });
+};
 ```
 
 결과도 정상적으로 잘 들어오는 것을 확인했습니다.
@@ -1150,7 +1171,7 @@ FLUSH PRIVILEGES;
 
 ```ts
 // BE/dto/Request.ts
-//Request { 
+//Request {
     private parseBody(bodyMsg) {
         const contentJSON = 'application/json';
         if (this.headers["Content-Type"] === contentJSON) {
@@ -1377,7 +1398,6 @@ curl localhost:3000/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z
 test: 0.166ms
 ```
 
-
 ### 기존 Router 내 함수 분리
 
 기존에 Router에서 함께 관리하던 url 관련 파싱 함수들을 Router 클래스의 복잡도를 낮추기 위해 분리해서 상속했습니다.
@@ -1409,7 +1429,7 @@ class Url {
             const [key, value] = query.split("=");
             result[key] = value;
         });
-        
+       
         return result;
     }
 }
@@ -1420,19 +1440,18 @@ class Router extends Url {
 	...
 ```
 
-
 ### 디렉토리 일부 구조 변경
 
 ```
-📦dto  
- ┣ 📜Request.ts  
+📦dto
+ ┣ 📜Request.ts
  ┗ 📜Response.ts
 
-📦route  
- ┣ 📜Router.ts  
- ┣ 📜RouteStack.ts  
- ┣ 📜staticRouter.ts  
- ┣ 📜Url.ts  
+📦route
+ ┣ 📜Router.ts
+ ┣ 📜RouteStack.ts
+ ┣ 📜staticRouter.ts
+ ┣ 📜Url.ts
  ┗ 📜userRouter.ts
 ```
 
@@ -1441,14 +1460,14 @@ class Router extends Url {
 이에 대한 책임을 옮기고자 core 디렉토리를 만들어 다양한 범위에서 사용되는 기능 및 모델을 분리하도록 하겠습니다.
 
 ```
-📦core  
- ┣ 📂http  
- ┃ ┣ 📜Request.ts  
- ┃ ┗ 📜Response.ts  
- ┣ 📂router  
- ┃ ┣ 📜Router.ts  
- ┃ ┗ 📜RouteStack.ts  
- ┗ 📂url  
+📦core
+ ┣ 📂http
+ ┃ ┣ 📜Request.ts
+ ┃ ┗ 📜Response.ts
+ ┣ 📂router
+ ┃ ┣ 📜Router.ts
+ ┃ ┗ 📜RouteStack.ts
+ ┗ 📂url
  ┃ ┗ 📜Url.ts
 ```
 
@@ -1461,36 +1480,44 @@ class Router extends Url {
 ```ts
 //Response.ts 기존
 class Response {
-    responseMsg: string;
+  responseMsg: string;
 
-    constructor(statusCode, connection, ext: string | null = null, body: string | null = null) {
-        this.setStatusLine(statusCode);
-        this.setHeaders(connection, ext, body);
-        this.setBody(body);
-    }
+  constructor(
+    statusCode,
+    connection,
+    ext: string | null = null,
+    body: string | null = null
+  ) {
+    this.setStatusLine(statusCode);
+    this.setHeaders(connection, ext, body);
+    this.setBody(body);
+  }
 
-    private setStatusLine(statusCode) {
-        const startLine = `HTTP/1.1 ${statusCode} ${statusMsg[statusCode]}\r\n`;
-        this.responseMsg = startLine;
-    }
+  private setStatusLine(statusCode) {
+    const startLine = `HTTP/1.1 ${statusCode} ${statusMsg[statusCode]}\r\n`;
+    this.responseMsg = startLine;
+  }
 
-    private setHeaders(connection, ext, body) {
-        this.responseMsg += `Server: Jinyoung\r\n`;
-        this.responseMsg += `Date: ${new Date().toString()}\r\n`;
-        if (body) {
-            this.responseMsg += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
-            this.responseMsg += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
-        }
-        this.responseMsg += `Connection: ${connection}\r\n`;
-        if (connection === 'Keep-Alive') {
-            this.responseMsg += `Keep-Alive: timeout=5, max=1000\r\n`;
-        }
-        this.responseMsg += '\r\n';
-    }
+  private setHeaders(connection, ext, body) {
+    this.responseMsg += `Server: Jinyoung\r\n`;
+    this.responseMsg += `Date: ${new Date().toString()}\r\n`;
+    if (body) {
+      this.responseMsg += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
+      this.responseMsg += `Content-Length: ${Buffer.byteLength(
+        body,
+        "utf-8"
+      )}\r\n`;
+    }
+    this.responseMsg += `Connection: ${connection}\r\n`;
+    if (connection === "Keep-Alive") {
+      this.responseMsg += `Keep-Alive: timeout=5, max=1000\r\n`;
+    }
+    this.responseMsg += "\r\n";
+  }
 
-    private setBody(body) {
-        this.responseMsg += body ?? "";
-    }
+  private setBody(body) {
+    this.responseMsg += body ?? "";
+  }
 }
 ```
 
@@ -1501,85 +1528,90 @@ class Response {
 ```ts
 //Response.ts 변경 후
 class Response {
-    private socket: net.Socket;
-    private statusCode: number = 0;
-    private cookie: string;
-    connection: string;
+  private socket: net.Socket;
+  private statusCode: number = 0;
+  private cookie: string;
+  connection: string;
 
-    constructor(socket, connection) {
-        this.socket = socket;
-        this.connection = connection ?? "close";
-    }
+  constructor(socket, connection) {
+    this.socket = socket;
+    this.connection = connection ?? "close";
+  }
 
-    send() {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        let header = this.setInitialHeaderOption();
+  send() {
+    if (!this.statusCode) throw new Error("Status code has not been set yet.");
+    const startLine = `HTTP/1.1 ${this.statusCode} ${
+      statusMsg[this.statusCode]
+    }\r\n`;
+    let header = this.setInitialHeaderOption();
 
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-    }
+    this.socket.write(startLine);
+    this.socket.write(header);
+    this.socket.write(emptyLine);
+  }
 
-    sendFile(filePath) {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        if (!fs.existsSync(filePath)) throw new Error("File does not exist");
-        const ext = path.extname(filePath);
-        const file = fs.readFileSync(filePath);
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        let header = this.setInitialHeaderOption();
-        header += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
-        header += `Content-Length: ${Buffer.byteLength(file)}\r\n`;
+  sendFile(filePath) {
+    if (!this.statusCode) throw new Error("Status code has not been set yet.");
+    if (!fs.existsSync(filePath)) throw new Error("File does not exist");
+    const ext = path.extname(filePath);
+    const file = fs.readFileSync(filePath);
+    const startLine = `HTTP/1.1 ${this.statusCode} ${
+      statusMsg[this.statusCode]
+    }\r\n`;
+    let header = this.setInitialHeaderOption();
+    header += `Content-Type: ${contentType[ext]}; charset=UTF-8\r\n`;
+    header += `Content-Length: ${Buffer.byteLength(file)}\r\n`;
 
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-        this.socket.write(file);
-    }
+    this.socket.write(startLine);
+    this.socket.write(header);
+    this.socket.write(emptyLine);
+    this.socket.write(file);
+  }
 
-    json(data: object) {
-        if (!this.statusCode) throw new Error("Status code has not been set yet.");
-        const startLine = `HTTP/1.1 ${this.statusCode} ${statusMsg[this.statusCode]}\r\n`;
-        const body = JSON.stringify(data);
-        let header = this.setInitialHeaderOption();
-        header += `Content-Type: application/json; charset=UTF-8\r\n`;
-        header += `Content-Length: ${Buffer.byteLength(body, 'utf-8')}\r\n`;
+  json(data: object) {
+    if (!this.statusCode) throw new Error("Status code has not been set yet.");
+    const startLine = `HTTP/1.1 ${this.statusCode} ${
+      statusMsg[this.statusCode]
+    }\r\n`;
+    const body = JSON.stringify(data);
+    let header = this.setInitialHeaderOption();
+    header += `Content-Type: application/json; charset=UTF-8\r\n`;
+    header += `Content-Length: ${Buffer.byteLength(body, "utf-8")}\r\n`;
 
-        this.socket.write(startLine);
-        this.socket.write(header);
-        this.socket.write(emptyLine);
-        this.socket.write(body);
-    }
+    this.socket.write(startLine);
+    this.socket.write(header);
+    this.socket.write(emptyLine);
+    this.socket.write(body);
+  }
 
-    setStatus(statusCode) {
-        const message = statusMsg[statusCode];
-        if (message) {
-            this.statusCode = statusCode;
-        } else {
-            throw new Error("This status code does not exist")
-        }
+  setStatus(statusCode) {
+    const message = statusMsg[statusCode];
+    if (message) {
+      this.statusCode = statusCode;
+    } else {
+      throw new Error("This status code does not exist");
+    }
 
-        return this;
-    }
+    return this;
+  }
 
-    setCookie(key: string, value, option: cookieOption | null) {
-        this.cookie = `${key}=${value};` + ` ${JSON.stringify(option)}`;
-        return this;
-    }
+  setCookie(key: string, value, option: cookieOption | null) {
+    this.cookie = `${key}=${value};` + ` ${JSON.stringify(option)}`;
+    return this;
+  }
 
-    private setInitialHeaderOption() {
-        let header = "";
-        header += `Server: Jinyoung\r\n`;
-        header += `Date: ${new Date().toString()}\r\n`;
-        header += `Connection: ${this.connection}\r\n`;
-        if (this.connection === 'Keep-Alive') {
-            header += `Keep-Alive: timeout=5, max=1000\r\n`;
-        }
-        return header;
-    }
+  private setInitialHeaderOption() {
+    let header = "";
+    header += `Server: Jinyoung\r\n`;
+    header += `Date: ${new Date().toString()}\r\n`;
+    header += `Connection: ${this.connection}\r\n`;
+    if (this.connection === "Keep-Alive") {
+      header += `Keep-Alive: timeout=5, max=1000\r\n`;
+    }
+    return header;
+  }
 }
 ```
-
 
 ```ts
 //기존 Response를 사용하던 모습
@@ -1591,14 +1623,11 @@ socket.write(response.responseMsg);
 //////////////////////////
 
 //변경 후
-res
-  .setStatus(400)
-  .send();
+res.setStatus(400).send();
 ```
 
 </div>
 </details>
-
 
 <details>
 <summary>수요일</summary>
@@ -1613,15 +1642,15 @@ res
 type cookieSameSiteOption = "Strict" | "Lax" | "None";
 
 type cookieOption = {
-    Domain?: string;
-    Expires?: Date;
-    HttpOnly?: boolean;
-    "Max-Age"?: number;
-    Path?: string;
-    Secure?: boolean;
-    SameSite?: cookieSameSiteOption;
-    Partitioned?: boolean;
-}
+  Domain?: string;
+  Expires?: Date;
+  HttpOnly?: boolean;
+  "Max-Age"?: number;
+  Path?: string;
+  Secure?: boolean;
+  SameSite?: cookieSameSiteOption;
+  Partitioned?: boolean;
+};
 ```
 
 이후에 Response의 setCookie 메서드를 통해 쿠키를 설정한 경우 HTTP Response header를 생성할 때 Set-Cookie 속성도 함께 보내질 수 있도록 만들었습니다.
@@ -1641,10 +1670,9 @@ type cookieOption = {
     }
 ```
 
-
 ### 잘못된 HTTP Response Message
 
-HTTP Response Message를 완성해서 보내는 것에서 개별적으로 보내는 것으로 방식을 바꾼 이후부터 
+HTTP Response Message를 완성해서 보내는 것에서 개별적으로 보내는 것으로 방식을 바꾼 이후부터
 
 Failed to load resource: net::ERR_INVALID_HTTP_RESPONSE
 
@@ -1653,13 +1681,13 @@ Failed to load resource: net::ERR_INVALID_HTTP_RESPONSE
 이전에는 발생하지 않다가 Response 를 리팩토링 하는 과정에서 발생한 문제라고 판단할 수 있었습니다.
 
 ```ts
-	this.socket.write(startLine);
-	this.socket.write(header);
-	this.socket.write(emptyLine);
-	this.socket.write(body);
+this.socket.write(startLine);
+this.socket.write(header);
+this.socket.write(emptyLine);
+this.socket.write(body);
 ```
 
-현재는 위 처럼 HTTP Response Message를 보내고 있었는데, 
+현재는 위 처럼 HTTP Response Message를 보내고 있었는데,
 
 문제의 원인은 emptyLine에 있었습니다.
 
@@ -1673,7 +1701,6 @@ const emptyLine = "\r\n";
 const emptyLine = "\r\n\r\n";
 ```
 
-
 ### DB 접근 및 비즈니스 로직 처리 계층 분리
 
 기존에는 빠르게 기능 구현을 확인하기 위해서 라우팅 과정에서 호출하는 controller 함수에 DB로 접근해 데이터를 가져오는 기능을 포함시켰습니다.
@@ -1683,49 +1710,49 @@ const emptyLine = "\r\n\r\n";
 ```ts
 //UserRepository.ts
 class UserRepository {
-    static tableName = "users";
+  static tableName = "users";
 
-    static async getUser(email) {
-        return await db1004.select({
-            table: this.tableName,
-            column: "*",
-            condition: `email="${email}"`
-        });
-    }
+  static async getUser(email) {
+    return await db1004.select({
+      table: this.tableName,
+      column: "*",
+      condition: `email="${email}"`,
+    });
+  }
 
-    static async createUser(email, password, name) {
-        return await db1004.insert({
-            table: this.tableName,
-            columns: ["email", "password", "name"],
-            values: [email, password, name]
-        });
-    }
+  static async createUser(email, password, name) {
+    return await db1004.insert({
+      table: this.tableName,
+      columns: ["email", "password", "name"],
+      values: [email, password, name],
+    });
+  }
 }
 ```
 
 ```ts
 //signUpController.ts
 function signUpController(req, res) {
-    const userData: signUpInfo = req.body as signUpInfo;
-    const [email, password, name] = [userData.email, md5Encryption(userData.password), userData.name];
+  const userData: signUpInfo = req.body as signUpInfo;
+  const [email, password, name] = [
+    userData.email,
+    md5Encryption(userData.password),
+    userData.name,
+  ];
 
-    try {
-        UserRepository.getUser(email).then((response) => {
-            const result = response[0][0];
-            const emailAvailable = result == null;
-            if (emailAvailable) {
-                UserRepository.createUser(email, password, name);
+  try {
+    UserRepository.getUser(email).then((response) => {
+      const result = response[0][0];
+      const emailAvailable = result == null;
+      if (emailAvailable) {
+        UserRepository.createUser(email, password, name);
 
-                res
-                    .setStatus(302)
-                    .send();
-            }
-        });
-    } catch (e) {
-        res
-            .setStatus(400)
-            .send();
-    }
+        res.setStatus(302).send();
+      }
+    });
+  } catch (e) {
+    res.setStatus(400).send();
+  }
 }
 ```
 
@@ -1753,7 +1780,6 @@ function cookieParser(header) {
 }
 ```
 
-
 ### HTTP Request Content 검사
 
 서버에서 HTTP Request Message의 위변조를 검사하기 위해서 body가 존재할 경우에 Content-length와 body의 크기를 비교하는 로직을 작성했습니다.
@@ -1762,16 +1788,15 @@ function cookieParser(header) {
 //Request.ts
     private parseBody(bodyMsg) {
         const bodyMsgExist = bodyMsg !== "";
-		
+
 		...중략
-		
+
         if (bodyMsgExist) {
             const checkContentLength = this.headers["Content-Length"] === Buffer.byteLength(bodyMsg).toString();
             if (!checkContentLength) this.error = "Invalid Content-Length";
         }
     }
 ```
-
 
 로직은 body를 parsing해서 저장할 때 검사하도록 했고,
 만약 일치하지 않는다면 this.error을 해당 에러로 설정해 app.ts에서 로직을 수행하기 전 검사하도록 작성했습니다.
@@ -1795,14 +1820,14 @@ const server = net.createServer(socket => {
 
 ```ts
 //signUpController.ts
-    const emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})+$"
-    const isEmailStandard = email.match(emailRegexp) != null;
-    const isPasswordStandard = password.trim() !== "";
-    const isNameStandard = name.trim() !== "";
+const emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+(.[a-zA-Z]{2,})+$";
+const isEmailStandard = email.match(emailRegexp) != null;
+const isPasswordStandard = password.trim() !== "";
+const isNameStandard = name.trim() !== "";
 
-    if (!isEmailStandard || !isPasswordStandard || !isNameStandard) res.setStatus(400).send();
+if (!isEmailStandard || !isPasswordStandard || !isNameStandard)
+  res.setStatus(400).send();
 ```
-
 
 ### 세션 구현
 
@@ -1811,19 +1836,19 @@ const server = net.createServer(socket => {
 ```ts
 //Session.ts
 class Session {
-    private storage = {};
+  private storage = {};
 
-    set(sid, data) {
-        this.storage[sid] = data;
-    }
+  set(sid, data) {
+    this.storage[sid] = data;
+  }
 
-    get(sid) {
-        return this.storage[sid];
-    }
+  get(sid) {
+    return this.storage[sid];
+  }
 
-    isExist(sid) {
-        return this.storage[sid] != null;
-    }
+  isExist(sid) {
+    return this.storage[sid] != null;
+  }
 }
 ```
 
@@ -1839,7 +1864,6 @@ if (password === result.password) {
 
 </div>
 </details>
-
 
 <details>
 <summary>목요일</summary>
@@ -1877,20 +1901,19 @@ private async executeQuery(query, values?) {
 }
 ```
 
-
 #### 쿠키 관련
 
 ```ts
 //작성한 함수명이 cookieParser기 때문에 cookie 객체만 반환하고, header에 추가하는 함수를 별도로 작성해도 좋을 거 같아요.
 function cookieParser(header) {
-    const cookieString = header.cookie;
-    const cookies = cookieString.split(";");
-    const cookieObject = cookies.reduce((obj, thisCookie) => {
-        const [key, value] = thisCookie.trim().split("=");
-        obj[key] = value;
-        return obj;
-    }, {});
-    header.cookie = cookieObject;
+  const cookieString = header.cookie;
+  const cookies = cookieString.split(";");
+  const cookieObject = cookies.reduce((obj, thisCookie) => {
+    const [key, value] = thisCookie.trim().split("=");
+    obj[key] = value;
+    return obj;
+  }, {});
+  header.cookie = cookieObject;
 }
 ```
 
@@ -1903,23 +1926,22 @@ function cookieParser(header) {
 ```ts
 //개선 후
 function cookieParser(cookieString) {
-    const cookies = cookieString.split(";");
-    const cookieObject = cookies.reduce((obj, thisCookie) => {
-        const [key, value] = thisCookie.trim().split("=");
-        obj[key] = value;
-        return obj;
-    }, {});
+  const cookies = cookieString.split(";");
+  const cookieObject = cookies.reduce((obj, thisCookie) => {
+    const [key, value] = thisCookie.trim().split("=");
+    obj[key] = value;
+    return obj;
+  }, {});
 
-    return cookieObject;
+  return cookieObject;
 }
 
 //Request.ts
 if (this.headers.cookie != null) {
-	const cookieObject = cookieParser(this.headers.cookie);
-	this.headers.cookie = cookieObject;
+  const cookieObject = cookieParser(this.headers.cookie);
+  this.headers.cookie = cookieObject;
 }
 ```
-
 
 #### 이외 로직 관련
 
@@ -1931,7 +1953,7 @@ function signUpController(req, res) {
 ...
 ```
 
-파이썬을 사용해본 적이 없어서 어떤 느낌으로 받아들이시는지는 잘 모르겠지만,  말씀하신 것 처럼 객체 디스트럭처링을 쓰면 조금 더 깔끔해지는 것 같다고 느껴 변경하게 되었습니다.
+파이썬을 사용해본 적이 없어서 어떤 느낌으로 받아들이시는지는 잘 모르겠지만, 말씀하신 것 처럼 객체 디스트럭처링을 쓰면 조금 더 깔끔해지는 것 같다고 느껴 변경하게 되었습니다.
 
 ```ts
 //개선 후
@@ -1940,7 +1962,6 @@ function signUpController(req, res) {
     const encryptionPW = md5Encryption(password);
 ...
 ```
-
 
 추가로 고민과 해결 과정에서 라우팅에 관한 개선 내용이 있었고, 개선한 부분에 대해 어떻게 생각하시는 여쭤봤을 때 인상적인 방법에 대해 추가로 알 수 있어서 이후에 더 개선하면 좋겠다고 생각했습니다.
 
@@ -1967,11 +1988,15 @@ HTTP Request 라우팅 관련 로직
 ```ts
 //app.ts
 function ifSidNotValidCookieInit(req, res) {
-    const sid = req.headers.cookie != null ? req.headers.cookie.sid : "none";
-    const ifSidNotValid = sid !== "none" && !session.isExist(sid);
-    if (ifSidNotValid) {
-        res.setCookie("sid", "Remove cookie", { HttpOnly: true, Path: "/", "Max-Age": 0 });
-    }
+  const sid = req.headers.cookie != null ? req.headers.cookie.sid : "none";
+  const ifSidNotValid = sid !== "none" && !session.isExist(sid);
+  if (ifSidNotValid) {
+    res.setCookie("sid", "Remove cookie", {
+      HttpOnly: true,
+      Path: "/",
+      "Max-Age": 0,
+    });
+  }
 }
 ```
 
@@ -1998,17 +2023,17 @@ npx ts-jest config:init
 //jest.config.js
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
 module.exports = {
-  preset: "ts-jest",
-  testEnvironment: "node",
-  transform: {
-    "^.+.ts?$": ["ts-jest", {}],
-  },
-  moduleFileExtensions: ["ts", "js"],
-  testMatch: ["**/**/*.test.ts"],
+  preset: "ts-jest",
+  testEnvironment: "node",
+  transform: {
+    "^.+.ts?$": ["ts-jest", {}],
+  },
+  moduleFileExtensions: ["ts", "js"],
+  testMatch: ["**/**/*.test.ts"],
 };
 ```
 
- 빠르게 테스트를 시작할 수 있도록 package.json의 script에도 test를 추가해줍니다.
+빠르게 테스트를 시작할 수 있도록 package.json의 script에도 test를 추가해줍니다.
 
 ```json
 //package.json
@@ -2022,8 +2047,8 @@ module.exports = {
 테스트는 실행되었지만, 아래와 같이 경고 문구를 받게 되었습니다.
 
 ```console
-ts-jest[config] (WARN) message TS151001: 
-If you have issues related to imports, you should consider setting `esModuleInterop` to `true` in your TypeScript configuration file (usually `tsconfig.json`). See 
+ts-jest[config] (WARN) message TS151001:
+If you have issues related to imports, you should consider setting `esModuleInterop` to `true` in your TypeScript configuration file (usually `tsconfig.json`). See
 https://blogs.msdn.microsoft.com/typescript/2018/01/31/announcing-typescript-2-7/#easier-ecmascript-module-interoperability for more information.
 ```
 
@@ -2033,20 +2058,17 @@ ts를 사용할 때 import 관련 에러를 겪을 수 있으니 연관 돼 있�
 
 https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8-tsconfigjson-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0-%EC%B4%9D%EC%A0%95%EB%A6%AC
 
-
 ```json
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "strict": true,
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true
-    },
-    "include": [
-        "**/*.test.ts"
-    ]
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["**/*.test.ts"]
 }
 ```
 
@@ -2054,14 +2076,11 @@ https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81
 
 ..어떻게 해야 하지? ㅠㅠ 어떻게 작성하면 좋을지 감이 안잡힙니다.
 
-
 </div>
 </details>
 
-
 </div>
 </details>
-
 
 <details>
 <summary>3주차</summary>
@@ -2071,81 +2090,77 @@ https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81
 
 ## ✅ 나만의 체크포인트 ⭕❌
 
-⭕ 리액트에서 바닐라로 FE 사양 변경 
-	⭕ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
-	⭕ 전체 페이지를 리액트에서 바닐라로 변환
-	⭕ 웹 프론트 이벤트 및 기능 Script로 변환
+⭕ 리액트에서 바닐라로 FE 사양 변경
+⭕ 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+⭕ 전체 페이지를 리액트에서 바닐라로 변환
+⭕ 웹 프론트 이벤트 및 기능 Script로 변환
 
 ⭕ 토큰 발급 설계 및 구현
 
 ⭕ 웹 프론트 구현
-	⭕ 메인 페이지 구현
-	⭕ 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
-	⭕ 로그인 상태가 아닐 경우 로그인 버튼 표시
+⭕ 메인 페이지 구현
+⭕ 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
+⭕ 로그인 상태가 아닐 경우 로그인 버튼 표시
 
 ⭕ 로그아웃 구현
-	⭕ 로그아웃 요청 시 토큰 삭제 로직 추가
+⭕ 로그아웃 요청 시 토큰 삭제 로직 추가
 
 ❌ 동적인 HTML 응답 구현
-	❌ 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
-	⭕ 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
-		- 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
+❌ 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
+⭕ 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행) - 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
 
 ⭕ 게시판 기능을 포함한 ERD 다시 그리기
 
 ❌ 게시판 기능 완성
-	❌ 메인 하단에 글쓰기 버튼 추가
-		- 글쓰기 버튼 시 write.html로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	❌ write.html에서는 글을 입력할 수 있도록
-	❌ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	❌ 404 및 기타 에러 처리 페이지 구현
+❌ 메인 하단에 글쓰기 버튼 추가 - 글쓰기 버튼 시 write.html로 이동 - 만약 비로그인 유저라면 로그인 페이지로 이동
+❌ write.html에서는 글을 입력할 수 있도록
+❌ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동 - 만약 비로그인 유저라면 로그인 페이지로 이동
+❌ 404 및 기타 에러 처리 페이지 구현
 
 ❌ 테스트 코드 작성
-	❌ Jest 세부 기능 학습
-	❌ HTTP Message에 대한 테스트 코드 작성
-	❌ 비즈니스 로직에 대한 테스트 코드 작성
+❌ Jest 세부 기능 학습
+❌ HTTP Message에 대한 테스트 코드 작성
+❌ 비즈니스 로직에 대한 테스트 코드 작성
 
 ## 📝 학습 및 구현 계획
 
 ### 월요일
 
-- 리액트에서 바닐라로 FE 사양 변경 
-	- 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
-	- 전체 페이지를 리액트에서 바닐라로 변환
-	- 웹 프론트 이벤트 및 기능 Script로 변환
+- 리액트에서 바닐라로 FE 사양 변경
+  - 리액트에서 구현한 컴포넌트를 템플릿 리터럴 방식으로 변환
+  - 전체 페이지를 리액트에서 바닐라로 변환
+  - 웹 프론트 이벤트 및 기능 Script로 변환
 
 ### 화요일
 
 - 웹 프론트 구현
-	- 메인 페이지 구현
-	- 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
-	- 로그인 상태가 아닐 경우 로그인 버튼 표시
+
+  - 메인 페이지 구현
+  - 로그인 상태일 경우 메인 페이지에 사용자 이름을 표시
+  - 로그인 상태가 아닐 경우 로그인 버튼 표시
 
 - 로그아웃 구현
-	- 로그아웃 요청 시 세션 및 토큰 삭제 로직 추가
+  - 로그아웃 요청 시 세션 및 토큰 삭제 로직 추가
 
 ### 수요일
 
 - 동적인 HTML 응답 구현
-	- 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
-	- 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
-		- 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
+  - 사용자가 로그인 상태일 경우 [http://localhost:8080/user/list](http://localhost:8080/user/list) 에서 사용자 목록을 출력
+  - 인증방식을 쿠키가 아닌 토큰을 사용하도록 변경 (필요에 따라 토큰과 세션 병행)
+    - 토큰은 무작위 문자열로 구성하고 디코딩 가능한 정보를 담지 않는다.
 
 ### 목요일
 
 - 게시판 기능을 포함한 ERD 다시 그리기
 
 - 게시판 기능 완성
-	- 메인 하단에 글쓰기 버튼 추가
-		- 글쓰기 버튼 시 write.html로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	- write.html에서는 글을 입력할 수 있도록
-	- 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	- 404 및 기타 에러 처리 페이지 구현
-
+  - 메인 하단에 글쓰기 버튼 추가
+    - 글쓰기 버튼 시 write.html로 이동
+    - 만약 비로그인 유저라면 로그인 페이지로 이동
+  - write.html에서는 글을 입력할 수 있도록
+  - 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
+    - 만약 비로그인 유저라면 로그인 페이지로 이동
+  - 404 및 기타 에러 처리 페이지 구현
 
 ## ✏️ 고민과 해결 과정 쌓아가기
 
@@ -2159,39 +2174,39 @@ https://inpa.tistory.com/entry/TS-%F0%9F%93%98-%ED%83%80%EC%9E%85%EC%8A%A4%ED%81
 
 ```
 //마이그레이션 이전
-📦FE  
- ┣ 📂src  
- ┃ ┣ 📂components  
- ┃ ┃ ┣ 📜Button.tsx  
- ┃ ┃ ┣ 📜Frame.tsx  
- ┃ ┃ ┗ 📜InputBox.tsx  
- ┃ ┣ 📂layouts  
- ┃ ┃ ┣ 📜Login.tsx  
- ┃ ┃ ┗ 📜Register.tsx  
- ┃ ┣ 📂stylesheets  
- ┃ ┃ ┣ 📜Button.css  
- ┃ ┃ ┣ 📜foundation.css  
- ┃ ┃ ┣ 📜Frame.css  
- ┃ ┃ ┣ 📜index.css  
- ┃ ┃ ┗ 📜InputBox.css  
- ┃ ┣ 📜main.tsx  
- ┃ ┗ 📜vite-env.d.ts  
- ┣ 📜.env  
- ┣ 📜.gitignore  
- ┣ 📜eslint.config.js  
- ┣ 📜index.html  
- ┣ 📜package-lock.json  
- ┣ 📜package.json  
- ┣ 📜tsconfig.app.json  
- ┣ 📜tsconfig.json  
- ┣ 📜tsconfig.node.json  
+📦FE
+ ┣ 📂src
+ ┃ ┣ 📂components
+ ┃ ┃ ┣ 📜Button.tsx
+ ┃ ┃ ┣ 📜Frame.tsx
+ ┃ ┃ ┗ 📜InputBox.tsx
+ ┃ ┣ 📂layouts
+ ┃ ┃ ┣ 📜Login.tsx
+ ┃ ┃ ┗ 📜Register.tsx
+ ┃ ┣ 📂stylesheets
+ ┃ ┃ ┣ 📜Button.css
+ ┃ ┃ ┣ 📜foundation.css
+ ┃ ┃ ┣ 📜Frame.css
+ ┃ ┃ ┣ 📜index.css
+ ┃ ┃ ┗ 📜InputBox.css
+ ┃ ┣ 📜main.tsx
+ ┃ ┗ 📜vite-env.d.ts
+ ┣ 📜.env
+ ┣ 📜.gitignore
+ ┣ 📜eslint.config.js
+ ┣ 📜index.html
+ ┣ 📜package-lock.json
+ ┣ 📜package.json
+ ┣ 📜tsconfig.app.json
+ ┣ 📜tsconfig.json
+ ┣ 📜tsconfig.node.json
  ┗ 📜vite.config.ts
 
-📦static  
- ┣ 📂assets  
- ┃ ┣ 📜index-5axTRczP.css  
- ┃ ┗ 📜index-BYA0q6UV.js  
- ┣ 📜favicon.ico  
+📦static
+ ┣ 📂assets
+ ┃ ┣ 📜index-5axTRczP.css
+ ┃ ┗ 📜index-BYA0q6UV.js
+ ┣ 📜favicon.ico
  ┗ 📜index.html
 ```
 
@@ -2199,25 +2214,24 @@ tsx 파일을 마이그레이션함과 함께 FE 디렉토리에서 정적 파�
 
 ```
 //마이그레이션 이후
-📦static  
- ┣ 📂components  
- ┃ ┣ 📜Button.ts  
- ┃ ┣ 📜Frame.ts  
- ┃ ┗ 📜InputBox.ts  
- ┣ 📂layouts  
- ┃ ┣ 📜loginLayout.ts  
- ┃ ┣ 📜mainLayout.ts  
- ┃ ┗ 📜registerLayout.ts  
- ┣ 📂stylesheets  
- ┃ ┣ 📜Button.css  
- ┃ ┣ 📜foundation.css  
- ┃ ┣ 📜Frame.css  
- ┃ ┣ 📜index.css  
- ┃ ┗ 📜InputBox.css  
- ┣ 📜favicon.ico  
+📦static
+ ┣ 📂components
+ ┃ ┣ 📜Button.ts
+ ┃ ┣ 📜Frame.ts
+ ┃ ┗ 📜InputBox.ts
+ ┣ 📂layouts
+ ┃ ┣ 📜loginLayout.ts
+ ┃ ┣ 📜mainLayout.ts
+ ┃ ┗ 📜registerLayout.ts
+ ┣ 📂stylesheets
+ ┃ ┣ 📜Button.css
+ ┃ ┣ 📜foundation.css
+ ┃ ┣ 📜Frame.css
+ ┃ ┣ 📜index.css
+ ┃ ┗ 📜InputBox.css
+ ┣ 📜favicon.ico
  ┗ 📜index.html
 ```
-
 
 ### .ts 확장자 MIME 타입 에러
 
@@ -2238,9 +2252,7 @@ Failed to load module script: Expected a JavaScript module script but the server
 
 굳이 ts가 필요한 상황은 아니었기 때문에 .js 파일로 바꾸기로 결정 했습니다.
 
-
 ### Response Content-Length에 관한 문제
-
 
 ```
 //서버에서 보내는 경우
@@ -2284,11 +2296,9 @@ private socketWrite(header, body = "\r\n") {
 </div>
 </details>
 
-
 <details>
 <summary>화요일</summary>
 <div markdown="1">
-
 
 ### 로그인 시 redirect에 대한 고민
 
@@ -2306,7 +2316,7 @@ res.setStatus(200).send("/");
 
 2. status code를 200으로 설정하고 plain/text로 redirect될 url을 내용으로 전달하는 방식
 
-만약 1번 방식을 사용하여 응답을 할 경우 브라우저에서 응답을 받았을 때 즉시 리다이렉트를 해  메인페이지에 대한 html을 받아오지만
+만약 1번 방식을 사용하여 응답을 할 경우 브라우저에서 응답을 받았을 때 즉시 리다이렉트를 해 메인페이지에 대한 html을 받아오지만
 
 현재 Ajax 방식으로 요청을 보내기 때문에 DOM 파싱을 수동으로 해줘야 한다는 문제가 있었고,
 
@@ -2320,28 +2330,29 @@ res.setStatus(200).json({ redirect: "/" });
 
 //loginLayout.js
 await fetch(`${url}/user/login`, {
-	method: "POST",
-	headers: { "Content-Type": "application/json" },
-	body: JSON.stringify({ email, password })
-}).then((response) => {
-	const isOK = 200;
-	if (response.status === isOK) return response.json();
-}).then((json) => {
-	if (json != null) window.location.href = json.redirect;
-});
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password }),
+})
+  .then((response) => {
+    const isOK = 200;
+    if (response.status === isOK) return response.json();
+  })
+  .then((json) => {
+    if (json != null) window.location.href = json.redirect;
+  });
 ```
 
 결과적으로 서버는 로그인 성공 시 status code를 200으로 설정하고 body로 리다이렉트할 url을 보내면,
 
 클라이언트는 응답받은 status code에 따라 리다이렉트를 할지, 로그인 에러 처리를 응답할지 결정하도록 했습니다.
 
-
 ### 토큰 설계 및 구현
 
 이번 주 요구사항에 맞게 기존 쿠키-세션을 이용하던 방식에서 토큰을 사용하는 방식으로 변경을 하고,
 필요하다면 세션을 함께 이용하도록 하려고 합니다.
 
-우선 토큰을 자체적으로 제작해야 하기 때문에 어떻게 구현하더라도 상관 없어서 정말 쉽게 구현하려면 쉽게 구현할 수 있겠지만, 
+우선 토큰을 자체적으로 제작해야 하기 때문에 어떻게 구현하더라도 상관 없어서 정말 쉽게 구현하려면 쉽게 구현할 수 있겠지만,
 
 제대로 발급 과정을 설계하고, 응답할 수 있도록 만들려고 합니다.
 
@@ -2415,7 +2426,7 @@ GCM 모드는 Galois 필드를 사용하여 인증 태그를 생성하고, 계�
 
 ```ts
 //AES 암호화에서 사용할 방식
-const alg = 'aes-256-cbc';
+const alg = "aes-256-cbc";
 //256비트의 랜덤 키
 const encryptedKey = crypto.randomBytes(32);
 //초기화용 벡터 값
@@ -2423,26 +2434,28 @@ const initializeVector = crypto.randomBytes(16);
 
 //암호화 함수
 function encrypt(text) {
-    const cipher = crypto.createCipheriv(alg, encryptedKey, initializeVector);
-    let encrypted = cipher.update(text, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return encrypted;
+  const cipher = crypto.createCipheriv(alg, encryptedKey, initializeVector);
+  let encrypted = cipher.update(text, "utf8", "hex");
+  encrypted += cipher.final("hex");
+  return encrypted;
 }
 
 //복호화 함수
 function decrypt(encryptedText) {
-    const decipher = crypto.createDecipheriv(alg, encryptedKey, initializeVector);
-    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return decrypted;
+  const decipher = crypto.createDecipheriv(alg, encryptedKey, initializeVector);
+  let decrypted = decipher.update(encryptedText, "hex", "utf8");
+  decrypted += decipher.final("utf8");
+  return decrypted;
 }
 
 //무결성 검사용 태그 생성 함수
 function createIntegrityTag(secret, body) {
-    return crypto.createHash("sha256").update(body + secret).digest("hex");
+  return crypto
+    .createHash("sha256")
+    .update(body + secret)
+    .digest("hex");
 }
 ```
-
 
 암호화 및 복호화에 관한 함수를 만들었으니, 이제 암호화 함수를 이용해 토큰을 발급하는 함수를 작성했습니다.
 
@@ -2451,54 +2464,57 @@ function createIntegrityTag(secret, body) {
 ```ts
 //Authorization.ts
 class Authorization {
-    static generateToken(tokenType: TokenType) {
-        const iat = new Date();
-        const exp = new Date();
-        tokenType === "Access"
-            ? exp.setMinutes(exp.getMinutes() + 15)
-            : exp.setDate(exp.getDate() + 61);
-        const grd = gradeType.USER;
-        const typ = tokenType;
-        const body: TokenBody = { iat, exp, grd, typ };
+  static generateToken(tokenType: TokenType) {
+    const iat = new Date();
+    const exp = new Date();
+    tokenType === "Access"
+      ? exp.setMinutes(exp.getMinutes() + 15)
+      : exp.setDate(exp.getDate() + 61);
+    const grd = gradeType.USER;
+    const typ = tokenType;
+    const body: TokenBody = { iat, exp, grd, typ };
 
-        const secretOfToken = encrypt(process.env.SECRET);
-        const bodyOfToken = encrypt(JSON.stringify(body));
-        const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
+    const secretOfToken = encrypt(process.env.SECRET);
+    const bodyOfToken = encrypt(JSON.stringify(body));
+    const integrityTag = createIntegrityTag(
+      process.env.SECRET,
+      JSON.stringify(body)
+    );
 
-        const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
-        return token;
-    }
+    const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
+    return token;
+  }
 }
 ```
 
-Access Token은 15분의 기한을 가지도록 했고, Refresh Token은 61일의 기한을 가지도록 했는데 
+Access Token은 15분의 기한을 가지도록 했고, Refresh Token은 61일의 기한을 가지도록 했는데
 
 Refresh Token을 61일로 설정한 이유는 특별한 이유는 아니었고,
 카카오에서 2달로 설정했다는 것을 참고해 설정했습니다.
 
 https://devtalk.kakao.com/t/refresh-token/128850
 
-
 - 토큰 검증 함수
 
 ```ts
 //Authorization.ts
 class Authorization {
-    static verifyToken(token, tokenType: TokenType) {
-        const now = new Date();
-        const [secretOfToken, bodyOfToken, integrityTag] = accessToken.split(".");
-        const secret = decrypt(secretOfToken);
-        const bodyJSON = decrypt(bodyOfToken);
-        const thisContentIntegrityTag = createIntegrityTag(secret, bodyJSON);
-        const body = JSON.parse(bodyJSON) as TokenBody;
-        const exp = new Date(body.exp);
-  
-        if (secret !== process.env.SECRET) return false;
-        if (thisContentIntegrityTag !== integrityTag) return false;
-        if (body.typ !== tokenType) return false;
-        if (exp.getTime() < now.getTime()) throw new Error(`Invalid {tokenType} Token`);
-        return true;
-    }
+  static verifyToken(token, tokenType: TokenType) {
+    const now = new Date();
+    const [secretOfToken, bodyOfToken, integrityTag] = accessToken.split(".");
+    const secret = decrypt(secretOfToken);
+    const bodyJSON = decrypt(bodyOfToken);
+    const thisContentIntegrityTag = createIntegrityTag(secret, bodyJSON);
+    const body = JSON.parse(bodyJSON) as TokenBody;
+    const exp = new Date(body.exp);
+
+    if (secret !== process.env.SECRET) return false;
+    if (thisContentIntegrityTag !== integrityTag) return false;
+    if (body.typ !== tokenType) return false;
+    if (exp.getTime() < now.getTime())
+      throw new Error(`Invalid {tokenType} Token`);
+    return true;
+  }
 }
 ```
 
@@ -2518,16 +2534,15 @@ class Authorization {
 
 ```ts
 class Authorization {
-    static tokenRefresh(refreshToken) {
-        const tokenVerifyResult = this.verifyToken(refreshToken, "Refresh");
-        if (tokenVerifyResult) return this.generateToken("Access");
-        else return false;
-    }
+  static tokenRefresh(refreshToken) {
+    const tokenVerifyResult = this.verifyToken(refreshToken, "Refresh");
+    if (tokenVerifyResult) return this.generateToken("Access");
+    else return false;
+  }
 }
 ```
 
 토큰 재발급 함수는 우선 Refresh Token에 대한 검증을 시도하고 만약 문제가 없다면 새로운 Access Token을, 문제가 있다면 fasle를 반환하도록 작성했습니다.
-
 
 </div>
 </details>
@@ -2538,7 +2553,7 @@ class Authorization {
 
 ### 로그인 시 토큰 전달
 
-기존 쿠키와 세션을 함께 사용하던 방식에서 토큰을 이용하도록 변경하기 위해 
+기존 쿠키와 세션을 함께 사용하던 방식에서 토큰을 이용하도록 변경하기 위해
 
 기존 쿠키 및 세션 설정 로직을 제거하고 토큰을 발급해서 전달하는 로직으로 수정해야 했습니다.
 
@@ -2577,18 +2592,20 @@ Fetch를 정형화 할 필요가 있다고 생각했습니다.
 //loginLayout.js
 
 await fetch(`${url}/user/login`, {
-	method: "POST",
-	headers: { "Content-Type": "application/json" },
-	body: JSON.stringify({ email, password })
-}).then((response) => {
-	const isOK = 200;
-	if (response.status === isOK) return response.json();
-}).then((json) => {
-	if (json != null) window.location.href = json.redirect;
-});
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password }),
+})
+  .then((response) => {
+    const isOK = 200;
+    if (response.status === isOK) return response.json();
+  })
+  .then((json) => {
+    if (json != null) window.location.href = json.redirect;
+  });
 ```
 
-기존에는 위처럼 각 페이지에서 fetch 모듈을 직접 호출하고 있었지만 
+기존에는 위처럼 각 페이지에서 fetch 모듈을 직접 호출하고 있었지만
 
 Access Token의 존재 여부를 확인하고 함께 전송해서 응답을 받았을 때 Access / Refresh Token이 존재한다면 갱신해주는 공용 fetch 함수를 작성해줬습니다.
 
@@ -2596,39 +2613,42 @@ Access Token의 존재 여부를 확인하고 함께 전송해서 응답을 받�
 
 https://developer.mozilla.org/en-US/docs/Web/API/Storage
 
-
 ```js
 //fetch.js
 async function fetchPOST(uri, data) {
-    const accessToken = window.localStorage.getItem("accessToken");
-    if (accessToken != null) data.accessToken = accessToken;
+  const accessToken = window.localStorage.getItem("accessToken");
+  if (accessToken != null) data.accessToken = accessToken;
 
-    await fetch(uri, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-    }).then(async (response) => {
-        const contentType = response.headers.get("Content-Type");
-        const isJSON = contentType === "application/json";
-        return [response, isJSON ? await response.json() : {}];
-    }).then(([response, body]) => {
-        if (body.accessToken != null) {
-            window.localStorage.setItem("accessToken", body.accessToken);
-        }
-        if (body.refreshToken != null) {
-            window.localStorage.setItem("refreshToken", body.refreshToken);
-        }
-        return response;
-    });
+  await fetch(uri, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  })
+    .then(async (response) => {
+      const contentType = response.headers.get("Content-Type");
+      const isJSON = contentType === "application/json";
+      return [response, isJSON ? await response.json() : {}];
+    })
+    .then(([response, body]) => {
+      if (body.accessToken != null) {
+        window.localStorage.setItem("accessToken", body.accessToken);
+      }
+      if (body.refreshToken != null) {
+        window.localStorage.setItem("refreshToken", body.refreshToken);
+      }
+      return response;
+    });
 }
 
 //loginLayout.js
-fetchPOST(`${url}/user/login`, { email, password }).then((response) => {
-	const isOK = 200;
-	if (response.status === isOK) return response.json();
-}).then((json) => {
-	 if (json != null) window.location.href = json.redirect;
-});
+fetchPOST(`${url}/user/login`, { email, password })
+  .then((response) => {
+    const isOK = 200;
+    if (response.status === isOK) return response.json();
+  })
+  .then((json) => {
+    if (json != null) window.location.href = json.redirect;
+  });
 ```
 
 ### Response 객체 중복 읽기 문제
@@ -2661,7 +2681,6 @@ Uncaught (in promise) TypeError: Failed to execute 'json' on 'Response': body st
 return [response, isJSON ? await response.clone().json() : {}];
 ```
 
-
 ### 토큰 유효성 확인하기
 
 처음에는 토큰을 이용해서 클라이언트가 어떻게 로그인 상태인 것을 알 수 있도록 구현할까? 를 고민했습니다.
@@ -2671,7 +2690,7 @@ return [response, isJSON ? await response.clone().json() : {}];
 1. Access Token을 보내서 토큰이 유효한지 확인하는 검증 요청만 보낸다.
 2. Access Token을 보내서 토큰이 유효한지 확인하고 유저 정보를 가져오도록 한다.
 
-어쨌든 결국 토큰에는 서버에서 관리하는 Secret이 포함되어 있기 때문에 Access Token을 보내서 유효한지 검증을 수행해야 한다고 생각했고, 
+어쨌든 결국 토큰에는 서버에서 관리하는 Secret이 포함되어 있기 때문에 Access Token을 보내서 유효한지 검증을 수행해야 한다고 생각했고,
 
 데이터를 제공하는 서버와 인증을 수행하는 서버가 현재는 동일하지만 인증을 수행하는 역할과 데이터를 전달하는 역할을 논리적으로 분리하고 싶다고 생각했습니다.
 
@@ -2680,53 +2699,54 @@ return [response, isJSON ? await response.clone().json() : {}];
 ```js
 // scripts/authorization.js
 async function verifyAccessTokenValid() {
-    const accessToken = window.localStorage.getItem("accessToken");
-    if (accessToken == null) return false;
+  const accessToken = window.localStorage.getItem("accessToken");
+  if (accessToken == null) return false;
 
-    return await fetchPOST(`${url}/autorization/login`, { email, password }).then(async (response) => {
-        const isOK = 200;
-        const UNATHORIZED = 401;
-        if (response.status === isOK) {
-            return true;
-        }
-        else if (response.status === UNATHORIZED) {
-            return await requestTokenRefresh();
-        } else {
-            return false;
-        }
-    });
+  return await fetchPOST(`${url}/autorization/login`, { email, password }).then(
+    async (response) => {
+      const isOK = 200;
+      const UNATHORIZED = 401;
+      if (response.status === isOK) {
+        return true;
+      } else if (response.status === UNATHORIZED) {
+        return await requestTokenRefresh();
+      } else {
+        return false;
+      }
+    }
+  );
 }
 ```
 
 클라이언트는 메인 페이지를 불러올 때 토큰이 유효한지 확인하는데, 만약 로컬 스토리지에서 Access Token을 찾지 못한다면 인증을 거치지 않고 바로 비로그인 상태로 간주하도록 했습니다.
 
-만약 토큰 검증 요청을 보냈을 때 유효하다면 상태코드 200을, 만료됐다면 401을, 
+만약 토큰 검증 요청을 보냈을 때 유효하다면 상태코드 200을, 만료됐다면 401을,
 서버 에러 혹은 토큰 변조 등으로 인한 검증이 불가능한 상황이라면 false를 반환해 비로그인 상태임을 알리도록 했습니다.
 
 ### 서버 측 토큰 검증 결과 반환 로직 작성
 
 ```ts
 //app.ts
-routeStack.use("/authorization", authorizeRouter);
+routeStack.use("/authorization", authorizeRouter);
 
 //authorizeRouter.ts
 authorizeRouter.post("/authorization/verify", verifyController);
 
 //authorizeController.ts
 function verifyController(req, res) {
-    try {
-        const accesstoken = req.body.accessToken;
-        const isVerified = Authorization.verifyToken(accesstoken, "Access");
+  try {
+    const accesstoken = req.body.accessToken;
+    const isVerified = Authorization.verifyToken(accesstoken, "Access");
 
-        if (isVerified) {
-            res.setStatus(200).send();
-        } else {
-            res.setStatus(401).send();
-        }
-    } catch (e) {
-        logger.warn("e");
-        res.setStatus(403).send();
-    }
+    if (isVerified) {
+      res.setStatus(200).send();
+    } else {
+      res.setStatus(401).send();
+    }
+  } catch (e) {
+    logger.warn("e");
+    res.setStatus(403).send();
+  }
 }
 ```
 
@@ -2738,17 +2758,19 @@ function verifyController(req, res) {
 
 ```js
 async function requestTokenRefresh() {
-    const refreshToken = window.localStorage.getItem("refreshToken");
-    if (refreshToken == null) return false;
+  const refreshToken = window.localStorage.getItem("refreshToken");
+  if (refreshToken == null) return false;
 
-    return await fetchPOST(`${url}/authorization/refresh`, { refreshToken }).then(async (response) => {
-        const isOK = 200;
-        if (response.status === isOK) {
-            return true;
-        } else {
-            return false;
-        }
-    });
+  return await fetchPOST(`${url}/authorization/refresh`, { refreshToken }).then(
+    async (response) => {
+      const isOK = 200;
+      if (response.status === isOK) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  );
 }
 ```
 
@@ -2760,18 +2782,18 @@ authorizeRouter.post("/authorization/refresh", tokenRefreshController);
 
 //authorizeController.ts
 function tokenRefreshController(req, res) {
-    try {
-        const refreshToken = req.body.refreshToken;
-        const accessToken = Authorization.tokenRefresh(refreshToken);
-        if (accessToken) {
-            res.setStatus(200).json({ accessToken });
-        } else {
-            res.setStatus(401).send();
-        }
-    } catch (e) {
-        logger.warn(e);
-        res.setStatus(403).send();
-    }
+  try {
+    const refreshToken = req.body.refreshToken;
+    const accessToken = Authorization.tokenRefresh(refreshToken);
+    if (accessToken) {
+      res.setStatus(200).json({ accessToken });
+    } else {
+      res.setStatus(401).send();
+    }
+  } catch (e) {
+    logger.warn(e);
+    res.setStatus(403).send();
+  }
 }
 ```
 
@@ -2781,7 +2803,7 @@ function tokenRefreshController(req, res) {
 //mainLayout.js
 async function render() {
     const tokenValid = await verifyAccessTokenValid();
-  
+
     const navigationNode = document
         .createRange()
         .createContextualFragment(Navigation("HELLO, WEB!",
@@ -2830,7 +2852,7 @@ CREATE TABLE member (
   name VARCHAR(20) NOT NULL,
   PRIMARY KEY (email)
 );
-  
+
 CREATE TABLE post (
   id INT AUTO_INCREMENT,
   member_email VARCHAR(30) NOT NULL,
@@ -2842,7 +2864,7 @@ CREATE TABLE post (
   PRIMARY KEY (id),
   FOREIGN KEY (member_email) REFERENCES member(email)
 );
-  
+
 CREATE TABLE comment (
   id INT AUTO_INCREMENT,
   post_id INT NOT NULL,
@@ -2865,22 +2887,22 @@ scp member.csv jinyoung@[HOST]:home/jinyoung
 ...외 2개
 ```
 
-로컬 PC의 파일을 VM 환경에 전송해줬고, mysql에서 읽을 수 있는 위치로 옮겨줬습니다. 
+로컬 PC의 파일을 VM 환경에 전송해줬고, mysql에서 읽을 수 있는 위치로 옮겨줬습니다.
 
 ```bash
 sudo mv member.csv /var/lib/mysql-files
 ...외 2개
 ```
 
-이후 `LOAD DATA`를 이용해  파일을 삽입해줬습니다.
+이후 `LOAD DATA`를 이용해 파일을 삽입해줬습니다.
 
 ```bash
-LOAD DATA INFILE '/var/lib/mysql-files/comment.csv'  
-INTO TABLE comment  
-FIELDS TERMINATED BY ','  
-ENCLOSED BY '"' LINES  
-TERMINATED BY '\n'  
-IGNORE 1 LINES  
+LOAD DATA INFILE '/var/lib/mysql-files/comment.csv'
+INTO TABLE comment
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"' LINES
+TERMINATED BY '\n'
+IGNORE 1 LINES
 (id,post_id,author,createAt,content);
 ...외 2개
 ```
@@ -2901,7 +2923,7 @@ post_id를 기준으로 내림차순 한 페이지당 10개 씩, 5페이지 단�
 ```
 시나리오
 
-주소창에 입력 -> 페이지를 내려줌 -> 토큰 인증 함수 호출 -> 
+주소창에 입력 -> 페이지를 내려줌 -> 토큰 인증 함수 호출 ->
 - 문제 없으면 데이터 요청 -> 데이터 받고 렌더링
 - 문제 있으면 로그인 창으로 리디렉션
 ```
@@ -2918,7 +2940,6 @@ class UserRepository {
     }
 ```
 
-
 ### 에러 페이지
 
 ### 피드백 반영
@@ -2926,15 +2947,12 @@ class UserRepository {
 </div>
 </details>
 
-
 </div>
 </details>
-
 
 <details>
 <summary>4주차</summary>
 <div markdown="1">
-
 
 # 🔥 나만의 주간 계획서 (4)
 
@@ -2943,82 +2961,48 @@ class UserRepository {
 ⭕ 주간 계획 수립
 
 ⭕ 게시판 기능 완성
-	
-	⭕ 게시판 레이아웃 구성
-    - 서버 측 게시판 데이터 반환 로직 작성
-    - 게시판 데이터 받아오는 함수 작성
-    - 메인 페이지 게시판 HTML 렌더링 구현
-    - 메인 페이지 게시판 CSS 구현
-	
-	⭕ 메인 하단에 글쓰기 버튼 추가
-		- 글쓰기 버튼 시 write.html로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	
-	⭕ write.html에서는 글을 입력할 수 있도록
-	
-	⭕ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
+⭕ 게시판 레이아웃 구성 - 서버 측 게시판 데이터 반환 로직 작성 - 게시판 데이터 받아오는 함수 작성 - 메인 페이지 게시판 HTML 렌더링 구현 - 메인 페이지 게시판 CSS 구현
+⭕ 메인 하단에 글쓰기 버튼 추가 - 글쓰기 버튼 시 write.html로 이동 - 만약 비로그인 유저라면 로그인 페이지로 이동
+⭕ write.html에서는 글을 입력할 수 있도록
+⭕ 로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동 - 만약 비로그인 유저라면 로그인 페이지로 이동
 
 ⭕ 글쓰기 이미지 업로드 기능 구현
-	
-	⭕ 이미지 업로드 버튼 구현
-	
-	⭕ 이미지 업로드 구현
-	
-	⭕ 서버에 이미지 파일 저장
-	
-	⭕ 이미지 요청에 대한 응답 구현
-	
-	⭕ 글 본문 이미지 표시
+⭕ 이미지 업로드 버튼 구현
+⭕ 이미지 업로드 구현
+⭕ 서버에 이미지 파일 저장
+⭕ 이미지 요청에 대한 응답 구현
+⭕ 글 본문 이미지 표시
 
 ❌ 테스트 코드 작성
-	
-	❌ HTTP Message에 대한 테스트 코드 작성
-	
-	❌ 비즈니스 로직에 대한 테스트 코드 작성
-	
-	❌ 인증 로직 테스트 코드 작성
+❌ HTTP Message에 대한 테스트 코드 작성
+❌ 비즈니스 로직에 대한 테스트 코드 작성
+❌ 인증 로직 테스트 코드 작성
 
 ## 📝 학습 및 구현 계획
 
 ### 월요일
 
 게시판 기능 완성
-	
-	게시판 레이아웃 구성
-	
-	메인 하단에 글쓰기 버튼 추가
-		- 글쓰기 버튼 시 write.html로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
-	
-	write.html에서는 글을 입력할 수 있도록
-	
-	로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동
-		- 만약 비로그인 유저라면 로그인 페이지로 이동
+게시판 레이아웃 구성
+메인 하단에 글쓰기 버튼 추가 - 글쓰기 버튼 시 write.html로 이동 - 만약 비로그인 유저라면 로그인 페이지로 이동
+write.html에서는 글을 입력할 수 있도록
+로그인한 사용자가 글 제목 클릭시 세부 내용을 볼 수 있는 페이지로 이동 - 만약 비로그인 유저라면 로그인 페이지로 이동
 
 ### 화요일
 
 글쓰기 이미지 업로드 기능 구현
-	
-	이미지 업로드 버튼 구현
-	
-	이미지 업로드 구현
-	
-	서버에 이미지 파일 저장
-	
-	이미지 요청에 대한 응답 구현
-	
-	글 본문 이미지 표시
+이미지 업로드 버튼 구현
+이미지 업로드 구현
+서버에 이미지 파일 저장
+이미지 요청에 대한 응답 구현
+글 본문 이미지 표시
 
 ### 수요일
 
 Github 로그인 구현
-	
-	Github 로그인 버튼 구현
-	
-	Github 인증 구현
-	
-	Github 리디렉션 및 프론트 로직 구현
+Github 로그인 버튼 구현
+Github 인증 구현
+Github 리디렉션 및 프론트 로직 구현
 
 ### 목요일
 
@@ -3048,7 +3032,7 @@ const INITIALIZE_VECTOR = crypto.randomBytes(16);
 ...등
 ```
 
-#### 비밀번호 암호화 bcrypt로 변경 
+#### 비밀번호 암호화 bcrypt로 변경
 
 md5는 안전한 암호화 방식이 아니라는 의견을 들을 수 있었습니다.
 암호화 방식을 sha 방식으로 바꿀지, bcrypt 방식으로 바꿀지 고민했는데 느리지만 조금 더 안전한 bcrypt 방식으로 바꾸자 했습니다.
@@ -3057,7 +3041,10 @@ md5는 안전한 암호화 방식이 아니라는 의견을 들을 수 있었습
 //기존 PW 암호화
 //For password encryption
 function md5Encryption(data) {
-    return crypto.createHash("md5").update(data + process.env.SECRET).digest("hex");
+  return crypto
+    .createHash("md5")
+    .update(data + process.env.SECRET)
+    .digest("hex");
 }
 ```
 
@@ -3065,7 +3052,7 @@ function md5Encryption(data) {
 //변경된 PW 암호화
 //For password encryption
 function passwordEncryption(data) {
-    return bcrypt.hashSync(data, process.env.SECRET);
+  return bcrypt.hashSync(data, process.env.SECRET);
 }
 ```
 
@@ -3090,7 +3077,10 @@ header += `Content-Type: application/json${CRLF}`;
 //기존 Authorization.ts
 const secretOfToken = encrypt(process.env.SECRET);
 const bodyOfToken = encrypt(JSON.stringify(body));
-const integrityTag = createIntegrityTag(process.env.SECRET, JSON.stringify(body));
+const integrityTag = createIntegrityTag(
+  process.env.SECRET,
+  JSON.stringify(body)
+);
 
 const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
 ```
@@ -3098,17 +3088,18 @@ const token = `${secretOfToken}.${bodyOfToken}.${integrityTag}`;
 ```ts
 //변경 Authorization.ts
 const token = [
-	encrypt(process.env.SECRET),
-	encrypt(JSON.stringify(body)),
-	createIntegrityTag(process.env.SECRET, JSON.stringify(body))
-].join('.');
+  encrypt(process.env.SECRET),
+  encrypt(JSON.stringify(body)),
+  createIntegrityTag(process.env.SECRET, JSON.stringify(body)),
+].join(".");
 ```
 
 ### 메인 페이지 게시판 레이아웃
 
-우선 게시글의 데이터를 어떻게 가져오면 좋을까? 를 고민했습니다. 
+우선 게시글의 데이터를 어떻게 가져오면 좋을까? 를 고민했습니다.
 
 가져와야 하는 것
+
 - 해당 페이지 글 목록
   `localhost:8080/board/post?p=1`
 
@@ -3119,7 +3110,7 @@ post_id를 기준으로 내림차순 한 페이지당 10개 씩, 5페이지 단�
 ```ts
 //boardRouter.ts
 const boardRouter = new Router();
-  
+
 boardRouter.get("/board/post", boardController);
 boardRouter.post("/board/post/:postId", postController);
 boardRouter.post("/board/comment/:postId", commentController);
@@ -3131,10 +3122,10 @@ routeStack.use("/board", boardRouter);
 아래같은 구조로 쿼리를 발생할 수 있도록 만들기 위해
 
 ```sql
-SELECT * 
+SELECT *
 FROM post
 ORDER BY createdAt DESC
-LIMIT 10 
+LIMIT 10
 OFFSET page * 10;
 ```
 
@@ -3143,20 +3134,19 @@ PostRepository와 메서드를 선언해줬습니다.
 ```ts
 //PostRepository.ts
 class PostRepository {
-    static TABLE_NAME = "post";
+  static TABLE_NAME = "post";
 
-    static async getBoard(page) {
-	    const SELECT_PAGE = page * 10 - 10;
-	    
-        return await DBManager.select({
-            table: this.TABLE_NAME,
-            column: "*",
-            orderBy: "createdAt",
-            desc: true,
-            limit: 10,
-            offset: SELECT_PAGE
-        });
-    }
+  static async getBoard(page) {
+    const SELECT_PAGE = page * 10 - 10;
+    return await DBManager.select({
+      table: this.TABLE_NAME,
+      column: "*",
+      orderBy: "createdAt",
+      desc: true,
+      limit: 10,
+      offset: SELECT_PAGE,
+    });
+  }
 }
 ```
 
@@ -3165,16 +3155,16 @@ class PostRepository {
 ```ts
 //postController.ts
 async function boardController(req, res) {
-    try {
-        const page = req.query.p;
-        PostRepository.getBoard(page).then((response) => {
-            const result = response[0];
-            res.setStatus(200).json({ result });
-        });
-    } catch (e) {
-        logger.error(e);
-        res.setStatus(500).send();
-    }
+  try {
+    const page = req.query.p;
+    PostRepository.getBoard(page).then((response) => {
+      const result = response[0];
+      res.setStatus(200).json({ result });
+    });
+  } catch (e) {
+    logger.error(e);
+    res.setStatus(500).send();
+  }
 }
 ```
 
@@ -3183,11 +3173,11 @@ async function boardController(req, res) {
 ```js
 // /scripts/board.js
 async function getBoardPage(page) {
-    const uri = url + `/board/post?p=${page}`;
-    return await fetchGET(uri).then((response) => {
-        const isOK = 200;
-        return response.status === isOK ? response.json() : { result: [] };
-    });
+  const uri = url + `/board/post?p=${page}`;
+  return await fetchGET(uri).then((response) => {
+    const isOK = 200;
+    return response.status === isOK ? response.json() : { result: [] };
+  });
 }
 ```
 
@@ -3232,11 +3222,9 @@ function addEvent(isLogin) {
 </div>
 </details>
 
-
 <details>
 <summary>화요일</summary>
 <div markdown="1">
-
 
 ### 피드백 반영
 
@@ -3246,7 +3234,7 @@ function addEvent(isLogin) {
 //DBManager.ts
 private async executeQuery(query, values?) {
         const connection = await this.connectionPool.getConnection();
-        const result = connection.query(query, values); 
+        const result = connection.query(query, values);
         connection.release();
         return result;
 }
@@ -3259,7 +3247,7 @@ const result = response[0][0];
 //DBManager.ts
 private async executeQuery(query, values?) {
         const connection = await this.connectionPool.getConnection();
-        const [result] = await connection.query(query, values); 
+        const [result] = await connection.query(query, values);
         connection.release();
         return result;
 }
@@ -3279,7 +3267,6 @@ const [headerMessage, bodyMessage] = message.split("\r\n\r\n");
 const [headerMessage, bodyMessage] = message.split(`${CRLF}${CRLF}`);
 ```
 
-
 - 글 본문 페이지 - 토큰 상태 확인 후 리디렉션하는 서버 응답 구현 - 글 본문 페이지 구현 - 글 작성 페이지 - 토큰이 유효할 때만 글쓰기 버튼이 렌더링되도록 구현 - 토큰 상태 확인 후 리디렉션하는 서버 응답 구현 - 글 작성 페이지 구현
 
 ### 글 작성 페이지
@@ -3289,19 +3276,20 @@ const [headerMessage, bodyMessage] = message.split(`${CRLF}${CRLF}`);
 ```js
 // components/Board.js
 const BoardNavigation = (children = []) => {
-    const childrenNode = children.join("\n");
-    return `<div class="board-navigation">
+  const childrenNode = children.join("\n");
+  return `<div class="board-navigation">
         ${childrenNode}
     </div>`;
-}
+};
 
 //mainLayout.js
-const boardNavigation = BoardNavigation([SmallButton("글쓰기", "write-button")]);
-
+const boardNavigation = BoardNavigation([
+  SmallButton("글쓰기", "write-button"),
+]);
 
 //addEvent() {
 document.getElementById("write-button").addEventListener("click", (_) => {
-    location.href = url + "/write.html";
+  location.href = url + "/write.html";
 });
 ```
 
@@ -3310,7 +3298,8 @@ document.getElementById("write-button").addEventListener("click", (_) => {
 write.html에선 writeLayout.js 를 호출해 화면을 렌더링하는데
 
 ```html
-    <script type="module" src="./layouts/writeLayout.js"></script>
+   
+<script type="module" src="./layouts/writeLayout.js"></script>
 ```
 
 writeLayout.js 에선 토큰의 유효성을 검증해 유효하지 않을 경우 로그인 페이지로 이동시키는 역할을 우선적으로 수행합니다.
@@ -3389,11 +3378,11 @@ https://docs.tosspayments.com/blog/rest-api-post-put-patch
 ```ts
 //Authorization.ts
 type TokenBody = {
-    iat: Date,
-    exp: Date,
-    grd: number,
-    typ: TokenType,
-    aud: string //추가됨
+  iat: Date;
+  exp: Date;
+  grd: number;
+  typ: TokenType;
+  aud: string; //추가됨
 };
 ```
 
@@ -3403,7 +3392,7 @@ type TokenBody = {
 //변경 전
 class Authorization {
     static generateToken(tokenType: TokenType) {
-    
+   
 //변경 후
 class Authorization {
     static generateToken(tokenType: TokenType, aud: string /*추가됨*/) {
@@ -3438,7 +3427,7 @@ async function postWriteController(req, res) {
         const accesstoken = req.body.accessToken;
         const isVerified = Authorization.verifyToken(accesstoken, "Access");
         if (!isVerified) return res.setStatus(401).send();
-        
+       
         const [_, bodyOfToken] = accesstoken.split(".");
         const bodyJsonString = decrypt(bodyOfToken);
         const result = await UserRepository.getUser(JSON.parse(bodyJsonString).aud);
@@ -3477,7 +3466,7 @@ boardRouter.post("/board/post", postWriteController);
 
 메인 페이지 게시판에서 특정 글을 클릭했을 때 해당 글을 상세보기 할 수 있는 페이지로 이동해야 했습니다.
 
-우선 해당 페이지를 눌렀을 때 데이터를 반환할 수 있도록 DB에 접근해 데이터를 확인하는 로직을 작성했습니다. 
+우선 해당 페이지를 눌렀을 때 데이터를 반환할 수 있도록 DB에 접근해 데이터를 확인하는 로직을 작성했습니다.
 
 ```ts
 //PostRepository.ts
@@ -3497,30 +3486,28 @@ class PostRepository {
 ```ts
 //postController.ts
 async function postController(req, res) {
-    try {
-        const postId = req.params.postId;
-        PostRepository.getPost(postId).then((response) => {
-            const post = response[0];
-            const isPostExist = post != null;
-  
-            if (isPostExist) res.setStatus(200).json(post);
-            else res.setStatus(404).send();
-        });
-    } catch (e) {
-        logger.error(e);
-        res.setStatus(500).send();
-    }
+  try {
+    const postId = req.params.postId;
+    PostRepository.getPost(postId).then((response) => {
+      const post = response[0];
+      const isPostExist = post != null;
+
+      if (isPostExist) res.setStatus(200).json(post);
+      else res.setStatus(404).send();
+    });
+  } catch (e) {
+    logger.error(e);
+    res.setStatus(500).send();
+  }
 }
 ```
 
 </div>
 </details>
 
-
 <details>
 <summary>수요일</summary>
 <div markdown="1">
-
 
 ### 남은 기간 계획 고민하기
 
@@ -3540,27 +3527,17 @@ HTTP Request 청크를 합치는 것도 의미 있는 것 경험이 될 같았�
 <!--원래 계획-->
 
 글쓰기 이미지 업로드 기능 구현
-	
-	이미지 업로드 버튼 구현
-	
-	이미지 업로드 구현
-	
-	서버에 이미지 파일 저장
-	
-	이미지 요청에 대한 응답 구현
-	
-	글 본문 이미지 표시
+이미지 업로드 버튼 구현
+이미지 업로드 구현
+서버에 이미지 파일 저장
+이미지 요청에 대한 응답 구현
+글 본문 이미지 표시
 
 Github 로그인 구현
-	
-	Github 로그인 버튼 구현
-	
-	Github 인증 구현
-	
-	Github 리디렉션 및 프론트 로직 구현
+Github 로그인 버튼 구현
+Github 인증 구현
+Github 리디렉션 및 프론트 로직 구현
 ```
-
-
 
 고민 끝에 DB를 구현해보는 것이 좋겠다고 생각해 레퍼런스를 수집하고, InnoDB Engine에 관한 지식을 학습하던 중..
 
@@ -3569,7 +3546,6 @@ Github 로그인 구현
 단순히 CRUD 기능만 트랜잭션이나, 캐시없이 구현한다면 어떻게든 구현은 할 수 있을 것으로 판단했지만 그러면 결국 더 이상 DB가 아닌 간단한 파일 시스템이 아닌가? 라는 생각을 했습니다.
 
 그래서 늦었지만 급하게 HTTP 청크와 이미지 업로드를 처리해보려고 합니다 ㅠㅠ..
-
 
 ### HTTP Request chunk
 
@@ -3588,7 +3564,7 @@ const server = net.createServer(socket => {
 
 헤더와 바디가 분리되어 오게 돼 Request 객체를 생성해줄 때 에러가 발생하는 문제였습니다.
 
-이에 대해 socketData를 Buffer 타입으로 바꾸고, 
+이에 대해 socketData를 Buffer 타입으로 바꾸고,
 `try-catch` 문으로 Request 객체 생성 부분을 감싸 에러가 발생하면 넘어가 다음 버퍼를 응답받아 합친 뒤 다시 Request 객체를 만들도록 변경했습니다.
 
 ```ts
@@ -3601,39 +3577,40 @@ const server = net.createServer(socket => {
             ...
 ```
 
-
 ### 이미지 업로드 구현
 
 ```js
 //writeLayout.js
-    const fileInput = document.getElementById("fileInput");
-    document.getElementById("add-image-button").addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        const fileType = file.type;
-        if (fileType.startsWith('image/')) {
-            image = file;
-        } else {
-            image = null;
-            alert("이미지 파일만 올려주세요");
-        }
-    });
+const fileInput = document.getElementById("fileInput");
+document
+  .getElementById("add-image-button")
+  .addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  const fileType = file.type;
+  if (fileType.startsWith("image/")) {
+    image = file;
+  } else {
+    image = null;
+    alert("이미지 파일만 올려주세요");
+  }
+});
 ```
 
 ```js
 //writeLayout.js
-        if (image) {
-            const formData = new FormData();
-            formData.append('image', image);
-            formData.append('data', { title, content });
-            fetchFormDataPOST(url + "/board/post", formData).then((response) => {
-                writeLoadingState = false;
-                const isCreate = 201;
-                if (response.status === isCreate) {
-                    location.href = url;
-                }
-            });
-        }
+if (image) {
+  const formData = new FormData();
+  formData.append("image", image);
+  formData.append("data", { title, content });
+  fetchFormDataPOST(url + "/board/post", formData).then((response) => {
+    writeLoadingState = false;
+    const isCreate = 201;
+    if (response.status === isCreate) {
+      location.href = url;
+    }
+  });
+}
 ```
 
 ### 폼데이터 전송 함수 구현
@@ -3641,45 +3618,44 @@ const server = net.createServer(socket => {
 ```js
 //fetch.js
 async function fetchFormDataPOST(uri, formData) {
-    const accessToken = window.localStorage.getItem("accessToken");
-    if (accessToken != null) formData.append('data', { accessToken });
-  
-    return await fetch(uri, {
-        method: "POST",
-        body: formData
-    }).then(async (response) => {
-        const contentType = response.headers.get("Content-Type");
-        const isJSON = contentType === "application/json";
-        return [response, isJSON ? await response.clone().json() : {}];
-    }).then(([response, body]) => {
-        if (body.accessToken != null) {
-            window.localStorage.setItem("accessToken", body.accessToken);
-        }
-        if (body.refreshToken != null) {
-            window.localStorage.setItem("refreshToken", body.refreshToken);
-        }
-        return response;
-    });
+  const accessToken = window.localStorage.getItem("accessToken");
+  if (accessToken != null) formData.append("data", { accessToken });
+
+  return await fetch(uri, {
+    method: "POST",
+    body: formData,
+  })
+    .then(async (response) => {
+      const contentType = response.headers.get("Content-Type");
+      const isJSON = contentType === "application/json";
+      return [response, isJSON ? await response.clone().json() : {}];
+    })
+    .then(([response, body]) => {
+      if (body.accessToken != null) {
+        window.localStorage.setItem("accessToken", body.accessToken);
+      }
+      if (body.refreshToken != null) {
+        window.localStorage.setItem("refreshToken", body.refreshToken);
+      }
+      return response;
+    });
 }
 ```
 
 오늘은 고민이 많았습니다. 이미지 업로드와 OAuth2.0 경험을 할지, DB를 간단하게나마 구현해보는 경험을 할지에 대해서요, 사실 저한테는 DB를 간단하게나마 구현해보는 것이 조금 더 의미있지 않을까 싶어서 InnoDB Engine을 모방해보려고 했고, 관련 레퍼런스를 모으고 설계하던 중 도저히 2일만에 결과를 볼 수 있는 스케일이 아닐 것으로 판단했습니다. 포기할 거 다 포기하고 파일 저장만 한다면 구현이야 가능하겠지만 그러면 간단한 파일시스템과 다른게 뭐지 싶더라고요, 그래서 급하게 노선을 틀었지만 이도저도 아니게 된 것 같아서 조금 아쉽네요.. 선택을 할 때에는 견적을 잘 짜야한다는 것을 새롭게 느끼며 오늘 하루를 보냈습니다 흑흑..
 
-
 </div>
 </details>
-
 
 <details>
 <summary>목요일</summary>
 <div markdown="1">
 
-
 ### multipart/form-data 타입 처리 및 이미지 저장
 
 이미지를 formdata로 전송하니까 content-type이 multipart/from-data인 경우에 많은 문제들이 발생했습니다.
 
-1. 기존에는 헤더와 바디를 `\r\n\r\n` 으로 구분해 2개로 나누도록 했었는데, 
+1. 기존에는 헤더와 바디를 `\r\n\r\n` 으로 구분해 2개로 나누도록 했었는데,
 
 ```ts
 const [headerMessage, bodyMessage] = message.split(`${CRLF}${CRLF}`);
@@ -3698,7 +3674,6 @@ Content-Disposition: form-data; name="data"
 [object Object]
 ```
 
-
 2. Request Message를 Buffer -> string 타입으로 변환해서 사용하다 보니 다시 String으로 바꿔도 이미지가 깨지는 현상이 발생하였습니다.
 
 ```
@@ -3712,41 +3687,54 @@ aB#5\x1A�U���F\x01�\x0B\x02\x02\r�\t#�X\x0F\x00�~\x00�\x06\x00
 ```ts
 //parser.ts
 function parseMultipart(bodyBuffer: Buffer, contentType) {
-    const [, boundary] = (contentType as string).split(";");
-    const [, delimiter] = boundary.trim().split("boundary=");
-  
-    const bodyBufferSplit = splitBuffer(bodyBuffer, delimiter);
-    const multipart = bodyBufferSplit.slice(1, -1);
-  
-    const CRLFBuffer = Buffer.from(CRLF);
-    const multipartData = multipart.map((part) => {
-        const partObject: { [key: string]: Buffer | string } = {};
-  
-        const headerPart = part.subarray(0, part.indexOf(`${CRLFBuffer}${CRLFBuffer}`));
-        const bodyPart = part.subarray(part.indexOf(`${CRLFBuffer}${CRLFBuffer}`) + CRLFBuffer.length * 2);
-  
-        const headerPartSplit = splitBuffer(headerPart, CRLF);
-        headerPartSplit.forEach((headerLine) => {
-            const headerLineSplit = splitBuffer(headerLine, ";");
-            headerLineSplit.forEach((attribute) => {
-                let [key, value] = splitBuffer(attribute, ":");
+  const [, boundary] = (contentType as string).split(";");
+  const [, delimiter] = boundary.trim().split("boundary=");
 
-                if (value == null) [key, value] = splitBuffer(attribute, "=");
-                if (value != null) partObject[key.toString().toLowerCase().trim()] = value.toString().replaceAll("\"", "");
-            });
-        });
-       partObject[partObject.name.toString()] = splitBuffer(bodyPart, "--")[0];
-  
-        if ((partObject["content-type"] ?? "").toString().trim().startsWith("image")) {
-            if (!fs.existsSync(imageStoragePath)) fs.mkdirSync(imageStoragePath);
+  const bodyBufferSplit = splitBuffer(bodyBuffer, delimiter);
+  const multipart = bodyBufferSplit.slice(1, -1);
 
-fs.writeFileSync(path.join(imageStoragePath, partObject.filename.toString()), bodyPart);
-        }
-  
-        return partObject;
-    });
-  
-    return multipartData;
+  const CRLFBuffer = Buffer.from(CRLF);
+  const multipartData = multipart.map((part) => {
+    const partObject: { [key: string]: Buffer | string } = {};
+
+    const headerPart = part.subarray(
+      0,
+      part.indexOf(`${CRLFBuffer}${CRLFBuffer}`)
+    );
+    const bodyPart = part.subarray(
+      part.indexOf(`${CRLFBuffer}${CRLFBuffer}`) + CRLFBuffer.length * 2
+    );
+
+    const headerPartSplit = splitBuffer(headerPart, CRLF);
+    headerPartSplit.forEach((headerLine) => {
+      const headerLineSplit = splitBuffer(headerLine, ";");
+      headerLineSplit.forEach((attribute) => {
+        let [key, value] = splitBuffer(attribute, ":");
+
+        if (value == null) [key, value] = splitBuffer(attribute, "=");
+        if (value != null)
+          partObject[key.toString().toLowerCase().trim()] = value
+            .toString()
+            .replaceAll('"', "");
+      });
+    });
+    partObject[partObject.name.toString()] = splitBuffer(bodyPart, "--")[0];
+
+    if (
+      (partObject["content-type"] ?? "").toString().trim().startsWith("image")
+    ) {
+      if (!fs.existsSync(imageStoragePath)) fs.mkdirSync(imageStoragePath);
+
+      fs.writeFileSync(
+        path.join(imageStoragePath, partObject.filename.toString()),
+        bodyPart
+      );
+    }
+
+    return partObject;
+  });
+
+  return multipartData;
 }
 ```
 
@@ -3755,23 +3743,25 @@ fs.writeFileSync(path.join(imageStoragePath, partObject.filename.toString()), bo
 ```ts
 //parser.ts
 function splitBuffer(buffer: Buffer, delimiter: string) {
-    const result = [buffer];
-    let splitCount = 0;
-  
-    while (splitCount !== result.length) {
-        splitCount++;
-        const lastIndex = result.length - 1;
-        const delimiterIndex = result[lastIndex].indexOf(Buffer.from(delimiter));
-  
-        if (delimiterIndex !== -1) {
-            const separatedPart = result[lastIndex].subarray(0, delimiterIndex);
-            const extraPart = result[lastIndex].subarray(delimiterIndex + Buffer.from(delimiter).length);
-            result[lastIndex] = separatedPart;
-            result.push(extraPart);
-        }
-    }
-  
-    return result;
+  const result = [buffer];
+  let splitCount = 0;
+
+  while (splitCount !== result.length) {
+    splitCount++;
+    const lastIndex = result.length - 1;
+    const delimiterIndex = result[lastIndex].indexOf(Buffer.from(delimiter));
+
+    if (delimiterIndex !== -1) {
+      const separatedPart = result[lastIndex].subarray(0, delimiterIndex);
+      const extraPart = result[lastIndex].subarray(
+        delimiterIndex + Buffer.from(delimiter).length
+      );
+      result[lastIndex] = separatedPart;
+      result.push(extraPart);
+    }
+  }
+
+  return result;
 }
 ```
 
@@ -3783,19 +3773,21 @@ function splitBuffer(buffer: Buffer, delimiter: string) {
 
 ```ts
 //postController.ts
-            if (post.image != null) {
-                const thisPostImagePath = path.join(imageStoragePath, post["member_email"], post.image);
-                if (fs.existsSync(thisPostImagePath)) {
-                    post.image = fs.readFileSync(thisPostImagePath).toString("base64");
-                    post.imageType = CONTENT_TYPE[path.extname(thisPostImagePath)];
-                } else post.image = null;
-            }
+if (post.image != null) {
+  const thisPostImagePath = path.join(
+    imageStoragePath,
+    post["member_email"],
+    post.image
+  );
+  if (fs.existsSync(thisPostImagePath)) {
+    post.image = fs.readFileSync(thisPostImagePath).toString("base64");
+    post.imageType = CONTENT_TYPE[path.extname(thisPostImagePath)];
+  } else post.image = null;
+}
 ```
-
 
 </div>
 </details>
-
 
 </div>
 </details>
